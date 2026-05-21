@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>מהשדה לשולחן — לוח בקרה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════════
+   DESIGN TOKENS  (Deepstash × Gezroni)
+══════════════════════════════════════ */
+:root{
+  /* Brand */
+  --green-900:#1a3a08;
+  --green-800:#2D5A1B;
+  --green-600:#4a7c29;
+  --green-400:#A5D96A;
+  --green-100:#F0F7E8;
+  --green-50:#f7fcf2;
+
+  /* Neutrals */
+  --bg:#f4f1eb;          /* warm cream — our brand bg */
+  --surface:#ffffff;
+  --dark:#1a1a1a;        /* Deepstash dark text */
+  --dark-card:#1C2B15;   /* dark green section */
+  --text-1:#1a1a1a;
+  --text-2:#555;
+  --text-3:#999;
+
+  /* Accents */
+  --orange:#f59e0b;
+  --orange-pale:#fef3c7;
+  --red:#ef4444;
+  --red-pale:#fee2e2;
+  --blue:#1a3f8f;
+
+  /* Deepstash spring easing */
+  --spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Radii — Deepstash uses 16–24px */
+  --r-pill: 999px;
+  --r-xl: 24px;
+  --r-lg: 20px;
+  --r-md: 16px;
+  --r-sm: 10px;
+
+  --nav-h: 68px;
+  --header-h: 60px;
+}
+
+/* ── RESET ── */
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Rubik',sans-serif;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);direction:rtl;min-height:100dvh;overflow-x:hidden;color:var(--text-1)}
+button{cursor:pointer;border:none;background:none;font-family:'Rubik',sans-serif}
+input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
+
+/* ══════════════════════════
+   KEYFRAMES  (Deepstash set)
+══════════════════════════ */
+@keyframes shine{
+  0%{background-position:200% center}
+  100%{background-position:-200% center}
+}
+@keyframes loop-scroll{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+@keyframes floatUp{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes countUp{
+  from{opacity:0;transform:translateY(12px) scale(0.9)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes pulseGlow{
+  0%,100%{box-shadow:0 0 0 0 rgba(165,217,106,0.5)}
+  50%{box-shadow:0 0 0 10px rgba(165,217,106,0)}
+}
+@keyframes screenIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes slideUp{
+  from{transform:translateY(100%)}
+  to{transform:translateY(0)}
+}
+@keyframes ripple{
+  from{transform:scale(0);opacity:0.4}
+  to{transform:scale(4);opacity:0}
+}
+@keyframes badgePop{
+  0%{transform:scale(0)}
+  60%{transform:scale(1.25)}
+  100%{transform:scale(1)}
+}
+@keyframes toastSlide{
+  from{opacity:0;transform:translateX(-50%) translateY(16px)}
+  to{opacity:1;transform:translateX(-50%) translateY(0)}
+}
+@keyframes tickerFade{
+  from{opacity:0;transform:translateY(-8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes shimmerBg{
+  0%{background-position:200% 0}
+  100%{background-position:-200% 0}
+}
+
+/* ══════════════════════════
+   LAYOUT SHELL
+══════════════════════════ */
+.app{max-width:430px;margin:0 auto;min-height:100dvh;position:relative;background:var(--bg)}
+
+/* ── TOP HEADER ── */
+.top-header{
+  position:fixed;top:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;
+  height:var(--header-h);
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(0,0,0,0.06);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.25rem;z-index:50;
+}
+.header-logo{display:flex;align-items:center;gap:9px}
+.header-logo-mark{
+  width:34px;height:34px;background:var(--green-800);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  transition:transform 0.3s var(--spring);
+}
+.header-logo-mark:hover{transform:rotate(-6deg) scale(1.1)}
+.header-logo-text{font-size:15px;font-weight:800;color:var(--text-1);letter-spacing:-0.3px}
+.header-logo-sub{font-size:10px;color:var(--text-3);font-weight:500}
+.icon-btn{
+  width:40px;height:40px;border-radius:var(--r-pill);
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s var(--spring);cursor:pointer;position:relative;
+  border:1px solid transparent;
+}
+.icon-btn:hover{background:#f0f0f0;border-color:rgba(0,0,0,0.06);transform:scale(1.08)}
+.icon-btn:active{transform:scale(0.92)}
+.notif-dot{
+  position:absolute;top:7px;right:7px;
+  width:8px;height:8px;background:#ef4444;
+  border-radius:50%;border:2px solid #fff;
+  animation:pulseGlow 2s infinite;
+}
+
+/* ── SCREEN CONTAINER ── */
+.screen-wrap{
+  padding-top:calc(var(--header-h) + 12px);
+  padding-bottom:calc(var(--nav-h) + 16px);
+  min-height:100dvh;
+}
+.screen{display:none;animation:screenIn 0.25s var(--ease-out) both}
+.screen.active{display:block}
+
+/* ══════════════════════════
+   BOTTOM NAV  (Deepstash style: pill indicator)
+══════════════════════════ */
+.bottom-nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;
+  height:var(--nav-h);
+  background:rgba(255,255,255,0.96);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid rgba(0,0,0,0.07);
+  display:flex;align-items:center;
+  z-index:50;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  gap:4px;padding:8px 0;cursor:pointer;position:relative;
+  transition:transform 0.3s var(--spring);
+}
+.nav-item:active{transform:scale(0.82)}
+.nav-icon{
+  width:24px;height:24px;color:var(--text-3);
+  transition:color 0.2s, transform 0.3s var(--spring);
+}
+.nav-label{font-size:10px;font-weight:600;color:var(--text-3);transition:color 0.2s;letter-spacing:0.2px}
+.nav-indicator{
+  position:absolute;top:0;left:50%;transform:translateX(-50%) scaleX(0);
+  width:24px;height:3px;border-radius:var(--r-pill);
+  background:var(--green-800);
+  transition:transform 0.35s var(--spring);
+}
+.nav-item.active .nav-indicator{transform:translateX(-50%) scaleX(1)}
+.nav-item.active .nav-icon{color:var(--green-800);transform:translateY(-2px) scale(1.12)}
+.nav-item.active .nav-label{color:var(--green-800);font-weight:700}
+.nav-badge{
+  position:absolute;top:4px;right:calc(50% - 20px);
+  background:#ef4444;color:#fff;
+  font-size:9px;font-weight:800;
+  min-width:16px;height:16px;border-radius:var(--r-pill);
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid #fff;
+  animation:badgePop 0.4s var(--spring) both;
+}
+
+/* ══════════════════════════
+   SECTION / CARD
+══════════════════════════ */
+.pad{padding:0 1rem}
+.pad-lg{padding:0 1.25rem}
+.card{
+  background:var(--surface);border-radius:var(--r-xl);
+  box-shadow:0 2px 12px rgba(0,0,0,0.06),0 1px 3px rgba(0,0,0,0.04);
+  border:1px solid rgba(0,0,0,0.05);overflow:hidden;
+}
+.sec-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;margin-top:22px;
+}
+.sec-title{font-size:16px;font-weight:800;color:var(--text-1);letter-spacing:-0.3px}
+.sec-link{
+  font-size:13px;font-weight:700;color:var(--green-800);cursor:pointer;
+  padding:5px 12px;border-radius:var(--r-pill);
+  background:var(--green-100);
+  transition:all 0.2s var(--spring);
+}
+.sec-link:hover{background:var(--green-400);color:var(--green-900);transform:scale(1.04)}
+.sec-link:active{transform:scale(0.96)}
+
+/* ══════════════════════════
+   HERO STATUS  (dark card — Deepstash dark section)
+══════════════════════════ */
+.status-card{
+  background:var(--dark-card);
+  border-radius:var(--r-xl);
+  padding:22px 22px 20px;
+  position:relative;overflow:hidden;
+  box-shadow:0 8px 32px rgba(28,43,21,0.35);
+}
+.status-card::before{
+  content:'';position:absolute;top:-60px;left:-40px;
+  width:200px;height:200px;
+  background:radial-gradient(circle,rgba(165,217,106,0.18) 0%,transparent 70%);
+  pointer-events:none;
+}
+.status-card::after{
+  content:'';position:absolute;bottom:-40px;right:-20px;
+  width:150px;height:150px;
+  background:radial-gradient(circle,rgba(45,90,27,0.3) 0%,transparent 70%);
+  pointer-events:none;
+}
+.status-greeting{font-size:12px;color:rgba(255,255,255,0.5);font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:4px}
+.status-name{
+  font-size:26px;font-weight:900;color:#fff;letter-spacing:-0.5px;line-height:1.1;
+  background:linear-gradient(90deg,#fff 0%,var(--green-400) 40%,#fff 60%,#e8f8d0 100%);
+  background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:shine 4s linear infinite;
+}
+.status-meta{font-size:13px;color:rgba(255,255,255,0.5);margin-top:6px;font-weight:500}
+.status-row{display:flex;align-items:center;gap:8px;margin-top:14px}
+.status-live{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(165,217,106,0.15);border:1px solid rgba(165,217,106,0.25);
+  border-radius:var(--r-pill);padding:5px 12px;
+}
+.live-dot{
+  width:7px;height:7px;background:var(--green-400);
+  border-radius:50%;flex-shrink:0;
+  animation:pulseGlow 2s infinite;
+}
+.live-text{font-size:12px;font-weight:700;color:rgba(255,255,255,0.9)}
+.status-region{
+  margin-right:auto;
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.12);
+  border-radius:var(--r-pill);padding:5px 12px;
+  font-size:12px;font-weight:600;color:rgba(255,255,255,0.7);
+}
+
+/* ══════════════════════════
+   STAT CARDS  (Deepstash: number as hero)
+══════════════════════════ */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat-card{
+  background:var(--surface);border-radius:var(--r-xl);
+  padding:16px 10px 14px;text-align:center;
+  box-shadow:0 2px 12px rgba(0,0,0,0.06);
+  border:1px solid rgba(0,0,0,0.05);
+  cursor:default;
+  transition:transform 0.35s var(--spring),box-shadow 0.3s ease;
+  transform-style:preserve-3d;
+  perspective:600px;
+}
+.stat-card:hover{
+  transform:translateY(-5px) rotateX(4deg);
+  box-shadow:0 12px 32px rgba(0,0,0,0.12);
+}
+.stat-card:active{transform:scale(0.93) rotateX(0deg)}
+.stat-val{
+  font-size:28px;font-weight:900;color:var(--text-1);
+  line-height:1;letter-spacing:-1px;
+  animation:countUp 0.5s var(--spring) both;
+}
+.stat-val.green{color:var(--green-800)}
+.stat-label{font-size:10px;color:var(--text-3);margin-top:5px;font-weight:600;line-height:1.3;letter-spacing:0.3px}
+.stat-delta{font-size:10px;font-weight:700;margin-top:6px;padding:2px 8px;border-radius:var(--r-pill);display:inline-block}
+.stat-delta.up{background:var(--green-100);color:var(--green-800)}
+.stat-delta.same{background:#f3f4f6;color:var(--text-3)}
+
+/* ══════════════════════════
+   ACTIVITY MARQUEE  (Deepstash loop-scroll)
+══════════════════════════ */
+.marquee-wrap{
+  overflow:hidden;padding:2px 0;
+  mask:linear-gradient(90deg,transparent,black 12%,black 88%,transparent);
+  -webkit-mask:linear-gradient(90deg,transparent,black 12%,black 88%,transparent);
+}
+.marquee-track{
+  display:flex;gap:10px;width:max-content;
+  animation:loop-scroll 22s linear infinite;
+}
+.marquee-wrap:hover .marquee-track{animation-play-state:paused}
+.marquee-chip{
+  display:flex;align-items:center;gap:7px;
+  background:var(--surface);border:1px solid rgba(0,0,0,0.07);
+  border-radius:var(--r-pill);padding:8px 14px;
+  white-space:nowrap;flex-shrink:0;
+  box-shadow:0 1px 4px rgba(0,0,0,0.05);
+  font-size:12px;font-weight:600;color:var(--text-2);
+}
+.marquee-chip .chip-dot{
+  width:6px;height:6px;border-radius:50%;flex-shrink:0;
+}
+.chip-dot.green{background:#22c55e}
+.chip-dot.orange{background:#f59e0b}
+.chip-dot.blue{background:#3b82f6}
+
+/* ══════════════════════════
+   QUICK ACTIONS  (pill buttons — Deepstash style)
+══════════════════════════ */
+.quick-actions{display:flex;gap:10px}
+.qa-pill{
+  flex:1;background:var(--surface);
+  border-radius:var(--r-pill);
+  border:1px solid rgba(0,0,0,0.07);
+  padding:14px 16px;
+  display:flex;align-items:center;gap:10px;
+  transition:all 0.3s var(--spring);
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+  cursor:pointer;
+  position:relative;overflow:hidden;
+}
+.qa-pill::after{
+  content:'';position:absolute;inset:0;
+  background:rgba(0,0,0,0);
+  transition:background 0.2s;
+}
+.qa-pill:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 10px 28px rgba(0,0,0,0.1)}
+.qa-pill:active{transform:scale(0.95)}
+.qa-pill.primary{background:var(--green-800);border-color:transparent;box-shadow:0 4px 16px rgba(45,90,27,0.35)}
+.qa-pill.primary:hover{box-shadow:0 10px 28px rgba(45,90,27,0.45)}
+.qa-icon-pill{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.qa-icon-pill.light{background:rgba(255,255,255,0.2)}
+.qa-icon-pill.green{background:var(--green-100)}
+.qa-title{font-size:13px;font-weight:800;color:var(--text-1);letter-spacing:-0.2px}
+.qa-pill.primary .qa-title{color:#fff}
+.qa-sub{font-size:11px;color:var(--text-3);margin-top:1px;font-weight:500}
+.qa-pill.primary .qa-sub{color:rgba(255,255,255,0.6)}
+
+/* ══════════════════════════
+   LIVE TICKER (new orders)
+══════════════════════════ */
+.live-ticker{
+  background:var(--green-900);border-radius:var(--r-xl);
+  padding:14px 16px;
+  display:flex;align-items:center;gap:12px;
+}
+.ticker-icon{
+  width:38px;height:38px;border-radius:var(--r-pill);
+  background:rgba(165,217,106,0.2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  animation:pulseGlow 2s infinite;
+}
+.ticker-content{flex:1;min-width:0}
+.ticker-label{font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:0.8px;text-transform:uppercase}
+.ticker-text{font-size:14px;font-weight:700;color:#fff;margin-top:1px;animation:tickerFade 0.4s var(--ease-out)}
+.ticker-badge{
+  background:var(--green-400);color:var(--green-900);
+  font-size:11px;font-weight:800;
+  padding:4px 10px;border-radius:var(--r-pill);flex-shrink:0;
+}
+
+/* ══════════════════════════
+   ORDER CARDS  (Deepstash: bigger radius, more impact)
+══════════════════════════ */
+.order-card{
+  background:var(--surface);border-radius:var(--r-xl);
+  border:1px solid rgba(0,0,0,0.06);
+  box-shadow:0 2px 12px rgba(0,0,0,0.06);
+  padding:16px 18px;
+  transition:all 0.3s var(--spring);
+}
+.order-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,0.10)}
+.order-card+.order-card{margin-top:10px}
+.order-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.order-buyer{font-size:15px;font-weight:800;color:var(--text-1);letter-spacing:-0.2px}
+.order-time{font-size:11px;color:var(--text-3);margin-top:2px;font-weight:500}
+.order-items{font-size:13px;color:var(--text-2);margin-bottom:12px;line-height:1.6;font-weight:500}
+.order-bottom{display:flex;align-items:center;justify-content:space-between}
+.order-total{font-size:20px;font-weight:900;color:var(--green-800);letter-spacing:-0.5px}
+.order-actions{display:flex;gap:8px}
+
+/* ══════════════════════════
+   BUTTONS  (pill — Deepstash)
+══════════════════════════ */
+.btn-sm{
+  padding:8px 18px;border-radius:var(--r-pill);
+  font-size:12px;font-weight:700;letter-spacing:0.2px;
+  transition:all 0.25s var(--spring);
+  position:relative;overflow:hidden;
+}
+.btn-sm:active{transform:scale(0.9)}
+.btn-confirm{
+  background:var(--green-800);color:#fff;
+  box-shadow:0 3px 12px rgba(45,90,27,0.3);
+}
+.btn-confirm:hover{background:var(--green-600);transform:scale(1.05);box-shadow:0 6px 18px rgba(45,90,27,0.4)}
+.btn-cancel{background:#f5f5f5;color:var(--text-2)}
+.btn-cancel:hover{background:#ebebeb;transform:scale(1.04)}
+.btn-view{background:var(--green-100);color:var(--green-800)}
+.btn-view:hover{background:var(--green-400);color:var(--green-900);transform:scale(1.04)}
+
+/* Shine primary button */
+.btn-shine{
+  background:linear-gradient(90deg,var(--green-800) 0%,var(--green-600) 40%,var(--green-400) 60%,var(--green-800) 100%);
+  background-size:200% auto;color:#fff;
+  animation:shimmerBg 3s linear infinite;
+  border-radius:var(--r-pill);padding:14px 24px;
+  font-size:15px;font-weight:800;border:none;
+  cursor:pointer;width:100%;
+  box-shadow:0 4px 20px rgba(45,90,27,0.4);
+  transition:transform 0.3s var(--spring),box-shadow 0.3s;
+  letter-spacing:-0.2px;
+}
+.btn-shine:hover{transform:scale(1.03) translateY(-2px);box-shadow:0 8px 28px rgba(45,90,27,0.5)}
+.btn-shine:active{transform:scale(0.96)}
+
+/* Badge */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:var(--r-pill);
+  font-size:11px;font-weight:700;letter-spacing:0.2px;
+}
+.badge.pending{background:var(--orange-pale);color:#92400e}
+.badge.active{background:var(--green-100);color:var(--green-800)}
+.badge.done{background:#f0fdf4;color:#166534}
+.badge.cancelled{background:var(--red-pale);color:#991b1b}
+.badge.paused{background:#f3f4f6;color:#374151}
+.badge.processing{background:#dbeafe;color:#1e40af}
+
+/* ══════════════════════════
+   MINI CHART  (bar chart)
+══════════════════════════ */
+.chart-wrap{margin-top:12px}
+.chart-bars{display:flex;align-items:flex-end;gap:5px;height:52px}
+.bar{
+  flex:1;border-radius:5px 5px 0 0;
+  background:var(--green-100);
+  transition:height 0.7s var(--spring);cursor:pointer;
+}
+.bar:hover{background:var(--green-400);transform:scaleY(1.06);transform-origin:bottom}
+.bar.highlight{background:var(--green-800)}
+.bar.highlight:hover{background:var(--green-900)}
+.chart-labels{display:flex;gap:5px;margin-top:4px}
+.chart-labels div{flex:1;font-size:9px;color:var(--text-3);text-align:center;font-weight:600}
+
+/* ══════════════════════════
+   PRODUCT CARDS
+══════════════════════════ */
+.product-card{
+  background:var(--surface);border-radius:var(--r-xl);
+  border:1px solid rgba(0,0,0,0.06);
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+  padding:16px 18px;
+  display:flex;align-items:center;gap:14px;
+  transition:all 0.3s var(--spring);
+}
+.product-card:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 8px 24px rgba(0,0,0,0.10)}
+.product-card+.product-card{margin-top:10px}
+.product-emoji{
+  font-size:34px;flex-shrink:0;width:52px;height:52px;
+  background:var(--green-50);border-radius:var(--r-md);
+  display:flex;align-items:center;justify-content:center;
+  transition:transform 0.3s var(--spring);
+}
+.product-card:hover .product-emoji{transform:scale(1.15) rotate(-5deg)}
+.product-info{flex:1;min-width:0}
+.product-name{font-size:15px;font-weight:800;color:var(--text-1);letter-spacing:-0.2px}
+.product-meta{font-size:12px;color:var(--text-3);margin-top:2px;font-weight:500}
+.product-price{font-size:16px;font-weight:900;color:var(--green-800);margin-top:5px;letter-spacing:-0.3px}
+.product-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;flex-shrink:0}
+
+/* ══════════════════════════
+   TOGGLE  (Deepstash style)
+══════════════════════════ */
+.toggle{position:relative;width:46px;height:26px;cursor:pointer;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{
+  position:absolute;inset:0;border-radius:var(--r-pill);
+  background:#e5e7eb;transition:background 0.25s var(--spring);
+}
+.toggle input:checked~.toggle-track{background:var(--green-800)}
+.toggle-thumb{
+  position:absolute;top:3px;right:3px;
+  width:20px;height:20px;border-radius:50%;background:#fff;
+  box-shadow:0 2px 6px rgba(0,0,0,0.2);
+  transition:transform 0.3s var(--spring),box-shadow 0.2s;
+}
+.toggle input:checked~.toggle-thumb{transform:translateX(-20px);box-shadow:0 2px 8px rgba(45,90,27,0.3)}
+
+/* ══════════════════════════
+   FAB
+══════════════════════════ */
+.fab{
+  position:fixed;bottom:calc(var(--nav-h) + 16px);
+  right:calc(50% - 215px + 16px);
+  width:56px;height:56px;border-radius:50%;
+  background:var(--green-800);color:#fff;
+  display:none;align-items:center;justify-content:center;
+  box-shadow:0 6px 24px rgba(45,90,27,0.45);
+  transition:all 0.3s var(--spring);z-index:40;
+}
+.fab:hover{transform:scale(1.12) rotate(90deg);box-shadow:0 10px 32px rgba(45,90,27,0.55)}
+.fab:active{transform:scale(0.9) rotate(90deg)}
+.fab.show{display:flex}
+
+/* ══════════════════════════
+   MODAL  (Deepstash sheet)
+══════════════════════════ */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.5);
+  z-index:200;display:none;align-items:flex-end;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.open{display:flex}
+.modal-sheet{
+  width:100%;max-width:430px;background:var(--surface);
+  border-radius:var(--r-xl) var(--r-xl) 0 0;
+  padding:0 0 env(safe-area-inset-bottom);
+  animation:slideUp 0.32s var(--spring) both;
+  max-height:90dvh;overflow-y:auto;
+}
+.modal-handle{width:36px;height:4px;background:#e0e0e0;border-radius:var(--r-pill);margin:14px auto 0}
+.modal-title{font-size:20px;font-weight:900;padding:18px 22px 0;color:var(--text-1);letter-spacing:-0.4px}
+.modal-body{padding:16px 22px 28px}
+.field{margin-bottom:16px}
+.field label{font-size:13px;font-weight:700;color:var(--text-2);display:block;margin-bottom:7px;letter-spacing:0.1px}
+.field input,.field select,.field textarea{
+  width:100%;padding:13px 16px;font-size:15px;font-weight:500;
+  border:1.5px solid #e5e7eb;border-radius:var(--r-md);
+  background:#fafafa;color:var(--text-1);direction:rtl;
+  outline:none;transition:all 0.2s var(--spring);
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--green-800);background:#fff;
+  box-shadow:0 0 0 4px rgba(45,90,27,0.10);transform:translateY(-1px);
+}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ══════════════════════════
+   ORDER TABS
+══════════════════════════ */
+.order-tabs{
+  display:flex;background:var(--surface);border-radius:var(--r-xl);
+  padding:5px;gap:5px;margin-bottom:16px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);border:1px solid rgba(0,0,0,0.05);
+}
+.otab{
+  flex:1;padding:9px 4px;text-align:center;font-size:12px;font-weight:700;
+  color:var(--text-3);border-radius:12px;cursor:pointer;
+  transition:all 0.25s var(--spring);letter-spacing:0.1px;
+}
+.otab.active{background:var(--green-800);color:#fff;transform:scale(1.02)}
+.order-section{display:none}
+.order-section.active{display:block}
+
+/* ══════════════════════════
+   PROFILE
+══════════════════════════ */
+.profile-hero{
+  background:var(--dark-card);
+  padding:32px 22px 24px;text-align:center;
+  border-radius:0 0 var(--r-xl) var(--r-xl);margin-bottom:22px;
+  position:relative;overflow:hidden;
+}
+.profile-hero::before{
+  content:'';position:absolute;top:-50px;left:50%;transform:translateX(-50%);
+  width:250px;height:250px;
+  background:radial-gradient(circle,rgba(165,217,106,0.12) 0%,transparent 70%);
+}
+.avatar{
+  width:80px;height:80px;border-radius:50%;
+  background:rgba(165,217,106,0.15);
+  border:3px solid rgba(165,217,106,0.3);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;font-size:34px;
+  transition:transform 0.4s var(--spring);cursor:pointer;
+}
+.avatar:hover{transform:scale(1.1) rotate(-5deg)}
+.profile-name{
+  font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.5px;
+  background:linear-gradient(90deg,#fff,var(--green-400));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.profile-sub{font-size:13px;color:rgba(255,255,255,0.5);margin-top:3px;font-weight:500}
+.profile-chips{display:flex;gap:7px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.profile-chip{
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.8);font-size:11px;font-weight:700;
+  padding:5px 12px;border-radius:var(--r-pill);
+  transition:all 0.2s var(--spring);cursor:pointer;
+}
+.profile-chip:hover{background:rgba(165,217,106,0.2);border-color:rgba(165,217,106,0.4);transform:scale(1.06)}
+.settings-list{
+  background:var(--surface);border-radius:var(--r-xl);
+  border:1px solid rgba(0,0,0,0.06);overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,0.05);
+}
+.settings-item{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 18px;cursor:pointer;
+  transition:all 0.2s var(--spring);
+  border-bottom:1px solid rgba(0,0,0,0.05);
+}
+.settings-item:last-child{border-bottom:none}
+.settings-item:hover{background:#fafafa;transform:translateX(-3px)}
+.settings-item:active{transform:scale(0.98) translateX(-2px)}
+.si-icon{
+  width:38px;height:38px;border-radius:var(--r-md);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:transform 0.3s var(--spring);
+}
+.settings-item:hover .si-icon{transform:scale(1.1) rotate(-5deg)}
+.si-icon.green{background:var(--green-100)}
+.si-icon.orange{background:var(--orange-pale)}
+.si-icon.red{background:var(--red-pale)}
+.si-icon.blue{background:#dbeafe}
+.si-label{font-size:14px;font-weight:700;color:var(--text-1);flex:1;letter-spacing:-0.1px}
+.si-sub{font-size:11px;color:var(--text-3);margin-top:1px;font-weight:500}
+.si-arrow{color:var(--text-3);flex-shrink:0;transition:transform 0.2s var(--spring)}
+.settings-item:hover .si-arrow{transform:translateX(-3px)}
+
+/* ══════════════════════════
+   TOAST  (Deepstash: pill toast)
+══════════════════════════ */
+.toast{
+  position:fixed;bottom:calc(var(--nav-h) + 14px);
+  left:50%;transform:translateX(-50%) translateY(20px);
+  max-width:320px;width:calc(100% - 2rem);
+  background:var(--dark);color:#fff;
+  padding:12px 18px;border-radius:var(--r-pill);
+  font-size:14px;font-weight:600;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.25);
+  z-index:300;
+  opacity:0;
+  transition:all 0.35s var(--spring);
+  pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);animation:toastSlide 0.35s var(--spring) both}
+.toast-icon{width:18px;height:18px;flex-shrink:0}
+
+/* ══════════════════════════
+   TIP CARD
+══════════════════════════ */
+.tip-card{
+  background:var(--green-100);border:1px solid var(--green-400);
+  border-radius:var(--r-xl);padding:16px 18px;
+  display:flex;gap:14px;align-items:flex-start;
+  transition:transform 0.3s var(--spring);cursor:default;
+}
+.tip-card:hover{transform:translateY(-2px)}
+.tip-label{font-size:10px;font-weight:800;color:var(--green-800);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:4px}
+.tip-card p{font-size:13px;color:var(--green-900);line-height:1.65;font-weight:500}
+.tip-card strong{font-weight:800}
+
+/* ══════════════════════════
+   REDUCED MOTION
+══════════════════════════ */
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .status-name{-webkit-text-fill-color:#fff;background:none}
+  .btn-shine{animation:none;background:var(--green-800)}
+}
+
+/* ══════════════════════════
+   RESPONSIVE
+══════════════════════════ */
+@media(max-width:380px){
+  .stat-val{font-size:22px}
+  .status-name{font-size:21px}
+  .fab{right:16px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ── TOP HEADER ── -->
+<header class="top-header">
+  <div class="header-logo">
+    <div class="header-logo-mark">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A5D96A" stroke-width="2.2" stroke-linecap="round">
+        <path d="M12 2a10 10 0 0 1 0 20"/><path d="M12 2C6.5 2 2 6.5 2 12"/><path d="M12 8v8M8 12h8"/>
+      </svg>
+    </div>
+    <div>
+      <div class="header-logo-text">מהשדה לשולחן</div>
+      <div class="header-logo-sub">פאנל חקלאי</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:4px">
+    <div class="icon-btn" onclick="showToast('אין התראות חדשות','info')">
+      <div class="notif-dot"></div>
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<div class="screen-wrap">
+
+<!-- ════════════════════════════
+     HOME SCREEN
+════════════════════════════ -->
+<div class="screen active" id="screen-home">
+<div class="pad-lg">
+
+  <!-- Status hero card (dark — Deepstash inspired) -->
+  <div class="status-card">
+    <div class="status-greeting">שלום חזרה, ישראל 👋</div>
+    <div class="status-name" id="status-name">משק הירקות של לוי</div>
+    <div class="status-meta">עמק חפר · נרשם לפיילוט בדצמבר 2024</div>
+    <div class="status-row">
+      <div class="status-live">
+        <span class="live-dot"></span>
+        <span class="live-text">פרופיל פעיל</span>
+      </div>
+      <span class="status-region">השרון</span>
+    </div>
+  </div>
+
+  <!-- Live activity ticker -->
+  <div class="sec-header">
+    <div class="sec-title">פעילות בזמן אמת</div>
+    <div style="display:flex;align-items:center;gap:5px">
+      <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;animation:pulseGlow 1.5s infinite"></span>
+      <span style="font-size:11px;color:#22c55e;font-weight:700">LIVE</span>
+    </div>
+  </div>
+  <div class="live-ticker" id="liveTicker">
+    <div class="ticker-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green-400)" stroke-width="2" stroke-linecap="round">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+      </svg>
+    </div>
+    <div class="ticker-content">
+      <div class="ticker-label">הזמנה חדשה</div>
+      <div class="ticker-text" id="tickerText">דנה כהן הזמינה עגבניות שרי 2 ק"ג</div>
+    </div>
+    <div class="ticker-badge">₪46</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="sec-header">
+    <div class="sec-title">סיכום השבוע</div>
+    <div class="sec-link" onclick="switchTab('orders')">הכל ←</div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card" onclick="switchTab('orders')">
+      <div class="stat-val green" id="stat-orders">0</div>
+      <div class="stat-label">הזמנות היום</div>
+      <div class="stat-delta up">↑ +2</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-revenue">₪0</div>
+      <div class="stat-label">הכנסות השבוע</div>
+      <div class="stat-delta up">↑ 18%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-views">0</div>
+      <div class="stat-label">צפיות</div>
+      <div class="stat-delta same">→ יציב</div>
+    </div>
+  </div>
+
+  <!-- Revenue chart -->
+  <div class="card" style="padding:16px 18px;margin-top:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div style="font-size:14px;font-weight:800;color:var(--text-1);letter-spacing:-0.2px">הכנסות 7 ימים</div>
+      <div style="font-size:14px;font-weight:900;color:var(--green-800)">₪1,230</div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-bars" id="revenueChart"></div>
+      <div class="chart-labels" id="chartLabels"></div>
+    </div>
+  </div>
+
+  <!-- Quick actions -->
+  <div class="sec-header"><div class="sec-title">פעולות מהירות</div></div>
+  <div class="quick-actions">
+    <button class="qa-pill primary" onclick="openAddProduct()">
+      <div class="qa-icon-pill light">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+      </div>
+      <div>
+        <div class="qa-title">הוסף מוצר</div>
+        <div class="qa-sub">תוצרת חדשה</div>
+      </div>
+    </button>
+    <button class="qa-pill" onclick="switchTab('orders')">
+      <div class="qa-icon-pill green">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green-800)" stroke-width="2" stroke-linecap="round">
+          <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+          <rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/>
+        </svg>
+      </div>
+      <div>
+        <div class="qa-title">הזמנות</div>
+        <div class="qa-sub">2 ממתינות</div>
+      </div>
+    </button>
+  </div>
+
+  <!-- Activity marquee -->
+  <div class="sec-header" style="margin-top:22px"><div class="sec-title">פעילות אחרונה</div></div>
+  <div class="marquee-wrap">
+    <div class="marquee-track" id="marqueeTrack">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <!-- Recent orders -->
+  <div class="sec-header"><div class="sec-title">הזמנות ממתינות</div><div class="sec-link" onclick="switchTab('orders')">כל ההזמנות ←</div></div>
+
+  <div class="order-card" id="home-order-1">
+    <div class="order-top">
+      <div><div class="order-buyer">דנה כהן</div><div class="order-time">לפני 23 דקות · כפר סבא</div></div>
+      <span class="badge pending">ממתינה</span>
+    </div>
+    <div class="order-items">🍅 עגבניות שרי 2 ק"ג · 🥒 מלפפונים 1 ק"ג</div>
+    <div class="order-bottom">
+      <div class="order-total">₪46</div>
+      <div class="order-actions">
+        <button class="btn-sm btn-cancel" onclick="cancelOrder('home-order-1')">דחה</button>
+        <button class="btn-sm btn-confirm" onclick="confirmOrder('home-order-1')">אשר ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="order-card" id="home-order-2" style="animation-delay:0.08s">
+    <div class="order-top">
+      <div><div class="order-buyer">שירה מזרחי</div><div class="order-time">לפני שעה · נתניה</div></div>
+      <span class="badge pending">ממתינה</span>
+    </div>
+    <div class="order-items">🥕 גזר 3 ק"ג · 🌿 עשבי תיבול × 2</div>
+    <div class="order-bottom">
+      <div class="order-total">₪91</div>
+      <div class="order-actions">
+        <button class="btn-sm btn-cancel" onclick="cancelOrder('home-order-2')">דחה</button>
+        <button class="btn-sm btn-confirm" onclick="confirmOrder('home-order-2')">אשר ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tip -->
+  <div class="sec-header"><div class="sec-title">טיפ השבוע</div></div>
+  <div class="tip-card">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green-800)" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-top:2px">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <div>
+      <div class="tip-label">💡 לחקלאי</div>
+      <p>פרופילים עם <strong>תמונות של השדה</strong> מקבלים 3× יותר הזמנות. הוסף תמונות מהפרופיל שלך.</p>
+    </div>
+  </div>
+
+  <div style="height:10px"></div>
+</div>
+</div>
+
+<!-- ════════════════════════════
+     PRODUCTS SCREEN
+════════════════════════════ -->
+<div class="screen" id="screen-products">
+<div class="pad-lg">
+  <div class="sec-header" style="margin-top:4px">
+    <div class="sec-title">המוצרים שלי</div>
+    <div style="font-size:12px;color:var(--text-3);font-weight:600">5 פעילים</div>
+  </div>
+
+  <div id="products-list">
+    <div class="product-card">
+      <div class="product-emoji">🍅</div>
+      <div class="product-info">
+        <div class="product-name">עגבניות שרי</div>
+        <div class="product-meta">מינימום 500 גר'</div>
+        <div class="product-price">₪9 לק"ג</div>
+      </div>
+      <div class="product-right">
+        <span class="badge active">פעיל</span>
+        <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this,'עגבניות שרי')"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-emoji">🥒</div>
+      <div class="product-info">
+        <div class="product-name">מלפפונים</div>
+        <div class="product-meta">מינימום 1 ק"ג</div>
+        <div class="product-price">₪6 לק"ג</div>
+      </div>
+      <div class="product-right">
+        <span class="badge active">פעיל</span>
+        <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this,'מלפפונים')"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-emoji">🥕</div>
+      <div class="product-info">
+        <div class="product-name">גזר</div>
+        <div class="product-meta">מינימום 2 ק"ג</div>
+        <div class="product-price">₪5 לק"ג</div>
+      </div>
+      <div class="product-right">
+        <span class="badge active">פעיל</span>
+        <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this,'גזר')"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="product-emoji">🌿</div>
+      <div class="product-info">
+        <div class="product-name">עשבי תיבול</div>
+        <div class="product-meta">אצווה שבועית</div>
+        <div class="product-price">₪12 לצרור</div>
+      </div>
+      <div class="product-right">
+        <span class="badge active">פעיל</span>
+        <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this,'עשבי תיבול')"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+      </div>
+    </div>
+    <div class="product-card" style="opacity:0.6">
+      <div class="product-emoji">🫑</div>
+      <div class="product-info">
+        <div class="product-name">פלפלים</div>
+        <div class="product-meta">עונה לא פעילה</div>
+        <div class="product-price">₪11 לק"ג</div>
+      </div>
+      <div class="product-right">
+        <span class="badge paused">מושהה</span>
+        <label class="toggle"><input type="checkbox" onchange="toggleProduct(this,'פלפלים')"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+      </div>
+    </div>
+  </div>
+  <div style="height:90px"></div>
+</div>
+<button class="fab show" onclick="openAddProduct()" aria-label="הוסף מוצר">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</button>
+</div>
+
+<!-- ════════════════════════════
+     ORDERS SCREEN
+════════════════════════════ -->
+<div class="screen" id="screen-orders">
+<div class="pad-lg">
+  <div style="margin-top:4px;margin-bottom:16px">
+    <div class="order-tabs">
+      <div class="otab active" onclick="switchOrderTab('pending',this)">ממתינות <span style="background:#ef4444;color:#fff;border-radius:99px;padding:1px 6px;font-size:10px;font-weight:800;margin-right:3px">2</span></div>
+      <div class="otab" onclick="switchOrderTab('processing',this)">בטיפול</div>
+      <div class="otab" onclick="switchOrderTab('done',this)">הושלמו</div>
+    </div>
+  </div>
+
+  <div class="order-section active" id="otab-pending">
+    <div class="order-card" id="ord-p1">
+      <div class="order-top">
+        <div><div class="order-buyer">דנה כהן</div><div class="order-time">היום, 14:32 · כפר סבא</div></div>
+        <span class="badge pending">ממתינה</span>
+      </div>
+      <div class="order-items">🍅 עגבניות שרי 2 ק"ג<br>🥒 מלפפונים 1 ק"ג</div>
+      <div style="height:1px;background:rgba(0,0,0,0.05);margin:12px 0"></div>
+      <div class="order-bottom">
+        <div class="order-total">₪46</div>
+        <div class="order-actions">
+          <button class="btn-sm btn-cancel" onclick="cancelOrder('ord-p1')">דחה</button>
+          <button class="btn-sm btn-confirm" onclick="confirmOrder('ord-p1')">אשר ✓</button>
+        </div>
+      </div>
+    </div>
+    <div class="order-card" id="ord-p2" style="animation-delay:0.08s">
+      <div class="order-top">
+        <div><div class="order-buyer">שירה מזרחי</div><div class="order-time">היום, 13:10 · נתניה</div></div>
+        <span class="badge pending">ממתינה</span>
+      </div>
+      <div class="order-items">🥕 גזר 3 ק"ג<br>🌿 עשבי תיבול × 2<br>🧅 בצל 1 ק"ג</div>
+      <div style="height:1px;background:rgba(0,0,0,0.05);margin:12px 0"></div>
+      <div class="order-bottom">
+        <div class="order-total">₪91</div>
+        <div class="order-actions">
+          <button class="btn-sm btn-cancel" onclick="cancelOrder('ord-p2')">דחה</button>
+          <button class="btn-sm btn-confirm" onclick="confirmOrder('ord-p2')">אשר ✓</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="order-section" id="otab-processing">
+    <div class="order-card">
+      <div class="order-top">
+        <div><div class="order-buyer">משה אברהם</div><div class="order-time">אתמול, 16:45 · חדרה</div></div>
+        <span class="badge processing">בטיפול</span>
+      </div>
+      <div class="order-items">🍅 עגבניות 4 ק"ג · 🫑 פלפלים 2 ק"ג</div>
+      <div style="height:1px;background:rgba(0,0,0,0.05);margin:12px 0"></div>
+      <div class="order-bottom">
+        <div class="order-total">₪118</div>
+        <button class="btn-sm btn-confirm" onclick="showToast('ההזמנה הושלמה ✓','success')">הושלם ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="order-section" id="otab-done">
+    <div class="order-card"><div class="order-top"><div><div class="order-buyer">יוסי לוי</div><div class="order-time">אתמול, 10:00</div></div><span class="badge done">הושלמה</span></div><div class="order-items">🥕 גזר 3 ק"ג · 🧅 בצל 2 ק"ג · 🌿 פטרוזיליה</div><div class="order-bottom" style="margin-top:12px"><div class="order-total">₪78</div><button class="btn-sm btn-view">פרטים</button></div></div>
+    <div class="order-card"><div class="order-top"><div><div class="order-buyer">רחל גורן</div><div class="order-time">שלשום, 09:15</div></div><span class="badge done">הושלמה</span></div><div class="order-items">🍅 עגבניות שרי 1 ק"ג · 🌿 בזיליקום</div><div class="order-bottom" style="margin-top:12px"><div class="order-total">₪33</div><button class="btn-sm btn-view">פרטים</button></div></div>
+    <div class="order-card"><div class="order-top"><div><div class="order-buyer">אלון שפירא</div><div class="order-time">לפני 4 ימים</div></div><span class="badge done">הושלמה</span></div><div class="order-items">🥒 מלפפונים 2 ק"ג · 🥕 גזר 1 ק"ג</div><div class="order-bottom" style="margin-top:12px"><div class="order-total">₪51</div><button class="btn-sm btn-view">פרטים</button></div></div>
+  </div>
+</div>
+</div>
+
+<!-- ════════════════════════════
+     PROFILE SCREEN
+════════════════════════════ -->
+<div class="screen" id="screen-profile">
+  <div class="profile-hero">
+    <div class="avatar" onclick="showToast('שנה תמונת פרופיל — בקרוב','info')">🌾</div>
+    <div class="profile-name">משק הירקות של לוי</div>
+    <div class="profile-sub">ישראל לוי · עמק חפר</div>
+    <div class="profile-chips">
+      <span class="profile-chip">🍅 עגבניות</span>
+      <span class="profile-chip">🥒 מלפפונים</span>
+      <span class="profile-chip">🥕 גזר</span>
+      <span class="profile-chip">+2</span>
+    </div>
+  </div>
+  <div class="pad-lg">
+    <div class="stats-row" style="margin-bottom:22px">
+      <div class="stat-card"><div class="stat-val green">4.9</div><div class="stat-label">דירוג ⭐</div></div>
+      <div class="stat-card"><div class="stat-val">23</div><div class="stat-label">הזמנות כולל</div></div>
+      <div class="stat-card"><div class="stat-val">94%</div><div class="stat-label">שביעות רצון</div></div>
+    </div>
+
+    <div style="font-size:11px;font-weight:800;color:var(--text-3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:10px">הגדרות המשק</div>
+    <div class="settings-list">
+      <div class="settings-item" onclick="showToast('עריכת פרטים — בקרוב','info')">
+        <div class="si-icon green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green-800)" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg></div>
+        <div style="flex:1"><div class="si-label">עריכת פרטי המשק</div><div class="si-sub">שם, כתובת, תיאור</div></div>
+        <svg class="si-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+      <div class="settings-item" onclick="showToast('שעות פעילות — בקרוב','info')">
+        <div class="si-icon orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div style="flex:1"><div class="si-label">שעות פעילות</div><div class="si-sub">א'–ה' 07:00–18:00</div></div>
+        <svg class="si-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+      <div class="settings-item" onclick="showToast('התראות — בקרוב','info')">
+        <div class="si-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+        <div style="flex:1"><div class="si-label">התראות</div><div class="si-sub">הזמנות חדשות, תזכורות</div></div>
+        <svg class="si-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+      <div class="settings-item" onclick="showToast('שיתוף — בקרוב','info')">
+        <div class="si-icon green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green-800)" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+        <div style="flex:1"><div class="si-label">שתף את הפרופיל</div><div class="si-sub">קישור ישיר לדף המשק</div></div>
+        <svg class="si-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+    </div>
+    <div style="margin-top:12px" class="settings-list">
+      <div class="settings-item" onclick="showToast('יציאה — בקרוב','info')">
+        <div class="si-icon red"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+        <div class="si-label" style="color:var(--red)">יציאה מהחשבון</div>
+        <svg class="si-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:22px;font-size:11px;color:var(--text-3);font-weight:500">מהשדה לשולחן · גרסת פיילוט · v0.1</div>
+    <div style="height:12px"></div>
+  </div>
+</div>
+
+</div><!-- /screen-wrap -->
+
+<!-- ── BOTTOM NAV ── -->
+<nav class="bottom-nav">
+  <div class="nav-item active" id="nav-home" onclick="switchTab('home')">
+    <div class="nav-indicator"></div>
+    <div class="nav-icon-wrap" style="position:relative;width:24px;height:24px">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </div>
+    <span class="nav-label">בית</span>
+  </div>
+  <div class="nav-item" id="nav-products" onclick="switchTab('products')">
+    <div class="nav-indicator"></div>
+    <div style="position:relative;width:24px;height:24px">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    </div>
+    <span class="nav-label">מוצרים</span>
+  </div>
+  <div class="nav-item" id="nav-orders" onclick="switchTab('orders')">
+    <div class="nav-indicator"></div>
+    <div style="position:relative;width:24px;height:24px">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+      <span class="nav-badge" id="orders-badge">2</span>
+    </div>
+    <span class="nav-label">הזמנות</span>
+  </div>
+  <div class="nav-item" id="nav-profile" onclick="switchTab('profile')">
+    <div class="nav-indicator"></div>
+    <div style="position:relative;width:24px;height:24px">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </div>
+    <span class="nav-label">פרופיל</span>
+  </div>
+</nav>
+
+</div><!-- /app -->
+
+<!-- ── ADD PRODUCT MODAL ── -->
+<div class="modal-overlay" id="addProductModal" onclick="closeIfOverlay(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">➕ הוסף מוצר חדש</div>
+    <div class="modal-body">
+      <div class="field"><label>שם המוצר *</label><input type="text" id="new-name" placeholder="למשל: עגבניות שרי"></div>
+      <div class="field-row">
+        <div class="field"><label>מחיר *</label><input type="number" id="new-price" placeholder="₪"></div>
+        <div class="field"><label>יחידה</label><select id="new-unit"><option>לק"ג</option><option>ליחידה</option><option>לצרור</option><option>לתא</option></select></div>
+      </div>
+      <div class="field"><label>כמות זמינה</label><input type="text" id="new-qty" placeholder='50 ק"ג השבוע'></div>
+      <div class="field"><label>הערות (לא חובה)</label><textarea id="new-note" rows="2" placeholder="אורגני, נקטף אתמול..."></textarea></div>
+      <button class="btn-shine" onclick="addProduct()">הוסף מוצר ←</button>
+      <button style="width:100%;padding:13px;margin-top:10px;font-size:14px;color:var(--text-3);font-weight:600;border-radius:var(--r-pill);transition:background 0.2s" onclick="closeAddProduct()" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='none'">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast">
+  <svg class="toast-icon" id="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg">הפעולה בוצעה</span>
+</div>
+
+<script>
+// ══════════════════════════════
+//  REVENUE CHART
+// ══════════════════════════════
+(function(){
+  var data = [95,140,80,210,175,260,270];
+  var days = ['ב׳','ג׳','ד׳','ה׳','ו׳','ש׳','א׳'];
+  var max = Math.max.apply(null, data);
+  var barsEl = document.getElementById('revenueChart');
+  var labelsEl = document.getElementById('chartLabels');
+  data.forEach(function(v,i){
+    var bar = document.createElement('div');
+    bar.className = 'bar' + (i===data.length-1?' highlight':'');
+    bar.style.height='0';bar.style.flex='1';
+    bar.title = '₪' + v;
+    barsEl.appendChild(bar);
+    setTimeout(function(){ bar.style.height = Math.round((v/max)*52)+'px'; }, 200 + i*60);
+
+    var lbl = document.createElement('div');
+    lbl.textContent = days[i];
+    labelsEl.appendChild(lbl);
+  });
+})();
+
+// ══════════════════════════════
+//  ANIMATED COUNTERS
+// ══════════════════════════════
+function animateCounter(el, from, to, prefix, suffix, duration){
+  var start = null;
+  function step(ts){
+    if(!start) start=ts;
+    var p = Math.min((ts-start)/duration,1);
+    var eased = 1-Math.pow(1-p,3);
+    var val = Math.round(from+(to-from)*eased);
+    el.textContent = (prefix||'')+val+(suffix||'');
+    if(p<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+setTimeout(function(){
+  animateCounter(document.getElementById('stat-orders'),0,3,'','',700);
+  animateCounter(document.getElementById('stat-revenue'),0,847,'₪','',900);
+  animateCounter(document.getElementById('stat-views'),0,124,'','',1100);
+},300);
+
+// ══════════════════════════════
+//  MARQUEE (Deepstash loop-scroll)
+// ══════════════════════════════
+var MARQUEE_ITEMS = [
+  {dot:'green', text:'דנה כהן הזמינה עגבניות שרי'},
+  {dot:'blue',  text:'124 אנשים צפו בפרופיל שלך היום'},
+  {dot:'green', text:'שירה מזרחי הזמינה גזר ועשבים'},
+  {dot:'orange',text:'עמק חפר — 15 משקים פעילים'},
+  {dot:'green', text:'יוסי לוי השלים הזמנה — ₪78'},
+  {dot:'blue',  text:'הפרופיל שלך דורג ⭐4.9 השבוע'},
+  {dot:'green', text:'רחל גורן הזמינה עגבניות שרי'},
+  {dot:'orange',text:'3 הזמנות חדשות הגיעו הבוקר'},
+];
+(function(){
+  var track = document.getElementById('marqueeTrack');
+  var doubled = MARQUEE_ITEMS.concat(MARQUEE_ITEMS); // loop
+  doubled.forEach(function(item){
+    var chip = document.createElement('div');
+    chip.className = 'marquee-chip';
+    chip.innerHTML = '<span class="chip-dot ' + item.dot + '"></span>' + item.text;
+    track.appendChild(chip);
+  });
+})();
+
+// ══════════════════════════════
+//  LIVE TICKER  (fake real-time)
+// ══════════════════════════════
+var TICKER_EVENTS = [
+  {label:'הזמנה חדשה', text:'דנה כהן הזמינה עגבניות שרי 2 ק"ג', badge:'₪46'},
+  {label:'צפייה בפרופיל', text:'12 אנשים צפו בפרופיל שלך', badge:'+12'},
+  {label:'הזמנה חדשה', text:'שירה מזרחי הזמינה גזר ועשבי תיבול', badge:'₪91'},
+  {label:'ביקורת חדשה', text:'יוסי לוי נתן לך ⭐5 על השירות', badge:'⭐5'},
+  {label:'הזמנה חדשה', text:'אלון שפירא הזמין מלפפונים וגזר', badge:'₪51'},
+];
+var tickerIdx = 0;
+setInterval(function(){
+  tickerIdx = (tickerIdx+1) % TICKER_EVENTS.length;
+  var ev = TICKER_EVENTS[tickerIdx];
+  var label = document.querySelector('.ticker-label');
+  var text = document.getElementById('tickerText');
+  var badge = document.querySelector('.ticker-badge');
+  if(label && text && badge){
+    text.style.opacity='0';text.style.transform='translateY(-6px)';
+    setTimeout(function(){
+      label.textContent = ev.label;
+      text.textContent = ev.text;
+      badge.textContent = ev.badge;
+      text.style.transition='all 0.35s var(--spring)';
+      text.style.opacity='1';text.style.transform='translateY(0)';
+    },220);
+  }
+}, 4000);
+
+// ══════════════════════════════
+//  TAB NAVIGATION
+// ══════════════════════════════
+var currentTab = 'home';
+function switchTab(tab){
+  document.getElementById('screen-'+currentTab).classList.remove('active');
+  document.getElementById('nav-'+currentTab).classList.remove('active');
+  currentTab = tab;
+  document.getElementById('screen-'+tab).classList.add('active');
+  document.getElementById('nav-'+tab).classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+// ══════════════════════════════
+//  ORDER TABS
+// ══════════════════════════════
+function switchOrderTab(tab,el){
+  document.querySelectorAll('.otab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.order-section').forEach(function(s){s.classList.remove('active');});
+  el.classList.add('active');
+  document.getElementById('otab-'+tab).classList.add('active');
+}
+
+// ══════════════════════════════
+//  ORDER ACTIONS
+// ══════════════════════════════
+var pendingCount = 2;
+function confirmOrder(id){
+  var card = document.getElementById(id);
+  if(!card) return;
+  var badge = card.querySelector('.badge');
+  badge.className='badge done';badge.textContent='אושרה ✓';
+  var acts = card.querySelector('.order-actions');
+  if(acts) acts.innerHTML='<button class="btn-sm btn-view">פרטים</button>';
+  showToast('ההזמנה אושרה ✓','success');
+  updateBadge(-1);
+}
+function cancelOrder(id){
+  var card = document.getElementById(id);
+  if(!card) return;
+  card.style.transition='opacity 0.3s, transform 0.35s var(--spring)';
+  card.style.opacity='0';card.style.transform='translateX(-16px) scale(0.95)';
+  setTimeout(function(){card.remove();},350);
+  showToast('ההזמנה בוטלה','warning');
+  updateBadge(-1);
+}
+function updateBadge(d){
+  pendingCount=Math.max(0,pendingCount+d);
+  var b=document.getElementById('orders-badge');
+  if(b){ if(pendingCount===0) b.remove(); else b.textContent=pendingCount; }
+}
+
+// ══════════════════════════════
+//  PRODUCT TOGGLE
+// ══════════════════════════════
+function toggleProduct(cb, name){
+  var card = cb.closest('.product-card');
+  var badge = card.querySelector('.badge');
+  if(cb.checked){
+    card.style.opacity='1';badge.className='badge active';badge.textContent='פעיל';
+    showToast(name+' הופעל ✓','success');
+  } else {
+    card.style.opacity='0.6';badge.className='badge paused';badge.textContent='מושהה';
+    showToast(name+' הושהה','warning');
+  }
+}
+
+// ══════════════════════════════
+//  ADD PRODUCT MODAL
+// ══════════════════════════════
+function openAddProduct(){
+  document.getElementById('addProductModal').classList.add('open');
+  setTimeout(function(){document.getElementById('new-name').focus();},350);
+}
+function closeAddProduct(){
+  document.getElementById('addProductModal').classList.remove('open');
+}
+function closeIfOverlay(e){
+  if(e.target===document.getElementById('addProductModal')) closeAddProduct();
+}
+var EMOJI_MAP={
+  'עגבניות':'🍅','מלפפון':'🥒','גזר':'🥕','פלפל':'🫑',
+  'חסה':'🥬','תירס':'🌽','בצל':'🧅','שום':'🧄','תפוח':'🍎',
+  'ענבים':'🍇','לימון':'🍋','אבוקדו':'🥑','תות':'🍓',
+  'אבטיח':'🍉','זית':'🫒','עשבי':'🌿','ביצ':'🥚','תפו':'🥔',
+};
+function getEmoji(n){for(var k in EMOJI_MAP){if(n.includes(k))return EMOJI_MAP[k];}return'🌾';}
+
+function addProduct(){
+  var name=document.getElementById('new-name').value.trim();
+  var price=document.getElementById('new-price').value.trim();
+  var unit=document.getElementById('new-unit').value;
+  if(!name||!price){showToast('נא למלא שם ומחיר','warning');return;}
+  var card=document.createElement('div');
+  card.className='product-card';
+  card.style.animation='screenIn 0.3s var(--spring) both';
+  card.innerHTML=
+    '<div class="product-emoji">'+getEmoji(name)+'</div>'+
+    '<div class="product-info">'+
+      '<div class="product-name">'+name+'</div>'+
+      '<div class="product-meta">נוסף עכשיו</div>'+
+      '<div class="product-price">₪'+price+' '+unit+'</div>'+
+    '</div>'+
+    '<div class="product-right">'+
+      '<span class="badge active">פעיל</span>'+
+      '<label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this,\''+name+'\')"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>'+
+    '</div>';
+  document.getElementById('products-list').prepend(card);
+  closeAddProduct();
+  showToast(name+' נוסף למוצרים ✓','success');
+  ['new-name','new-price','new-qty','new-note'].forEach(function(id){document.getElementById(id).value='';});
+  switchTab('products');
+}
+
+// ══════════════════════════════
+//  TOAST
+// ══════════════════════════════
+var toastTimer;
+function showToast(msg, type){
+  var t=document.getElementById('toast');
+  var ic=document.getElementById('toast-icon');
+  document.getElementById('toast-msg').textContent=msg;
+  if(type==='success'){
+    t.style.background='#166534';
+    ic.innerHTML='<polyline points="20 6 9 17 4 12"/>';
+  } else if(type==='warning'){
+    t.style.background='#92400e';
+    ic.innerHTML='<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>';
+  } else {
+    t.style.background='var(--dark)';
+    ic.innerHTML='<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+  }
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove('show');},3500);
+}
+
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAddProduct();});
+</script>
+</body>
+</html>
