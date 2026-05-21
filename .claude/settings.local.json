@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(ui-ux-pro-max)",
+      "Skill(ui-ux-pro-max:*)",
+      "Read(//c/Users/peleg/.claude/skills/ui-ux-pro-max/**)",
+      "Bash(python scripts/search.py \"agricultural marketplace farm-to-table consumer Israel fresh produce direct\" --design-system -p \"מהשדה לשולחן\" -f markdown)",
+      "Bash(python scripts/search.py \"dopamine interaction scroll animation delight engagement\" --domain ux -n 8)",
+      "Bash(python scripts/search.py \"marketplace ecommerce organic landing conversion\" --domain landing -n 5)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git checkout *)",
+      "Bash(git reset *)",
+      "Bash(python scripts/search.py \"farmer seller dashboard SaaS mobile management produce marketplace\" --design-system -p \"Gezroni Seller\" -f markdown)",
+      "Bash(python scripts/search.py \"seller dashboard inventory orders revenue mobile\" --domain product -n 5)",
+      "WebFetch(domain:deepstash.com)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "mcp__Claude_in_Chrome__browser_batch",
+      "mcp__Claude_in_Chrome__get_page_text",
+      "mcp__Claude_in_Chrome__read_page",
+      "mcp__Claude_in_Chrome__javascript_tool",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(ls \"E:\\\\Gezroni\\\\\")",
+      "Bash(ls /mnt/e/Gezroni/)"
+    ]
+  }
+}

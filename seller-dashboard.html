@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>מהשדה לשולחן — לוח בקרה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════════
+   DESIGN TOKENS  (Deepstash × Gezroni)
+══════════════════════════════════════ */
+:root{
+  --green-900:#1a3a08;
+  --green-800:#2D5A1B;
+  --green-600:#4a7c29;
+  --green-400:#A5D96A;
+  --green-100:#F0F7E8;
+  --green-50:#f7fcf2;
+
+  --bg:#f4f1eb;
+  --surface:#ffffff;
+  --dark:#1a1a1a;
+  --dark-card:#1C2B15;
+  --text-1:#1a1a1a;
+  --text-2:#555;
+  --text-3:#999;
+
+  --orange:#f59e0b;
+  --orange-pale:#fef3c7;
+  --red:#ef4444;
+  --red-pale:#fee2e2;
+  --blue:#1a3f8f;
+
+  --spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --r-pill: 999px;
+  --r-xl: 24px;
+  --r-lg: 20px;
+  --r-md: 16px;
+  --r-sm: 10px;
+
+  --nav-h: 68px;
+  --header-h: 60px;
+}
+
+/* ── RESET ── */
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Rubik',sans-serif;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);direction:rtl;min-height:100dvh;overflow-x:hidden;color:var(--text-1)}
+button{cursor:pointer;border:none;background:none;font-family:'Rubik',sans-serif}
+input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
+
+/* ══════════════════════════
+   KEYFRAMES  (Deepstash set)
+══════════════════════════ */
+@keyframes shine{
+  0%{background-position:200% center}
+  100%{background-position:-200% center}
+}
+@keyframes loop-scroll{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+@keyframes floatUp{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes screenIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes pulseGlow{
+  0%,100%{box-shadow:0 0 0 0 rgba(165,217,106,0.5)}
+  50%{box-shadow:0 0 0 10px rgba(165,217,106,0)}
+}
+@keyframes badgePop{
+  0%{transform:scale(0)}
+  60%{transform:scale(1.25)}
+  100%{transform:scale(1)}
+}
+@keyframes toastSlide{
+  from{opacity:0;transform:translateX(-50%) translateY(16px)}
+  to{opacity:1;transform:translateX(-50%) translateY(0)}
+}
+@keyframes tickerFade{
+  from{opacity:0;transform:translateY(-8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes shimmerBg{
+  0%{background-position:200% 0}
+  100%{background-position:-200% 0}
+}
+@keyframes countUp{
+  from{opacity:0;transform:translateY(8px) scale(0.9)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:0.01ms!important;transition-duration:0.01ms!important}
+}
+
+/* ══════════════════════════
+   LAYOUT SHELL
+══════════════════════════ */
+.app{max-width:430px;margin:0 auto;min-height:100dvh;position:relative;background:var(--bg)}
+
+/* ── TOP HEADER ── */
+.top-header{
+  position:fixed;top:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;
+  height:var(--header-h);
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(0,0,0,0.06);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.25rem;z-index:50;
+}
+.header-logo{display:flex;align-items:center;gap:9px}
+.header-logo-mark{
+  width:34px;height:34px;background:var(--green-800);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  transition:transform 0.3s var(--spring);
+}
+.header-logo-mark:hover{transform:rotate(-6deg) scale(1.1)}
+.header-logo-mark svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}
+.header-logo-text{font-size:15px;font-weight:800;color:var(--text-1);letter-spacing:-0.3px}
+.header-logo-sub{font-size:10px;color:var(--text-3);font-weight:500}
+.icon-btn{
+  width:40px;height:40px;border-radius:var(--r-pill);
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s var(--spring);cursor:pointer;position:relative;
+  border:1px solid transparent;
+}
+.icon-btn:hover{background:#f0f0f0;border-color:rgba(0,0,0,0.06);transform:scale(1.08)}
+.icon-btn:active{transform:scale(0.92)}
+.icon-btn svg{width:22px;height:22px;stroke:var(--text-2);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.notif-dot{
+  position:absolute;top:7px;right:7px;
+  width:8px;height:8px;background:#ef4444;
+  border-radius:50%;border:2px solid #fff;
+  animation:pulseGlow 2s infinite;
+}
+
+/* ── SCREEN CONTAINER ── */
+.screen-wrap{
+  padding-top:calc(var(--header-h) + 12px);
+  padding-bottom:calc(var(--nav-h) + 24px);
+}
+.screen{display:none;animation:screenIn 0.28s var(--ease-out) both}
+.screen.active{display:block}
+.pad-lg{padding:0 1rem}
+
+/* ══════════════════════════
+   BOTTOM NAV
+══════════════════════════ */
+.bottom-nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;
+  height:var(--nav-h);
+  background:rgba(255,255,255,0.96);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid rgba(0,0,0,0.07);
+  display:flex;align-items:center;
+  z-index:50;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  gap:4px;padding:8px 0;cursor:pointer;position:relative;
+  transition:transform 0.3s var(--spring);
+}
+.nav-item:active{transform:scale(0.82)}
+.nav-icon{
+  width:24px;height:24px;stroke:var(--text-3);fill:none;
+  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+  transition:stroke 0.2s, transform 0.3s var(--spring);
+}
+.nav-label{font-size:10px;font-weight:600;color:var(--text-3);transition:color 0.2s;letter-spacing:0.2px}
+.nav-indicator{
+  position:absolute;top:0;left:50%;transform:translateX(-50%) scaleX(0);
+  width:24px;height:3px;border-radius:var(--r-pill);
+  background:var(--green-800);
+  transition:transform 0.35s var(--spring);
+}
+.nav-item.active .nav-indicator{transform:translateX(-50%) scaleX(1)}
+.nav-item.active .nav-icon{stroke:var(--green-800);transform:translateY(-2px) scale(1.12)}
+.nav-item.active .nav-label{color:var(--green-800);font-weight:700}
+.nav-badge{
+  position:absolute;top:4px;right:calc(50% - 20px);
+  background:#ef4444;color:#fff;
+  font-size:9px;font-weight:800;
+  min-width:16px;height:16px;border-radius:var(--r-pill);
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid #fff;
+  animation:badgePop 0.4s var(--spring) both;
+}
+
+/* ══════════════════════════
+   HOME SCREEN
+══════════════════════════ */
+
+/* Status (Hero) Card */
+.status-card{
+  background:var(--dark-card);
+  border-radius:var(--r-xl);
+  padding:1.25rem 1.25rem 1rem;
+  margin:0.75rem 0 0;
+  position:relative;overflow:hidden;
+}
+.status-card::before{
+  content:'';position:absolute;top:-60px;left:-60px;
+  width:180px;height:180px;
+  background:radial-gradient(circle, rgba(165,217,106,0.15) 0%, transparent 70%);
+  pointer-events:none;
+}
+.status-greeting{font-size:12px;color:rgba(255,255,255,0.5);font-weight:500;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.status-name{
+  font-size:26px;font-weight:900;letter-spacing:-0.5px;line-height:1.15;
+  background:linear-gradient(90deg,#fff 0%,var(--green-400) 40%,#fff 60%,#e8f8d0 100%);
+  background-size:200% auto;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  animation:shine 4s linear infinite;
+}
+.status-meta{font-size:11.5px;color:rgba(255,255,255,0.4);margin-top:5px;line-height:1.6}
+.status-actions{display:flex;gap:8px;margin-top:1rem}
+.btn-pill-dark{
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);
+  color:#fff;font-size:12px;font-weight:600;
+  padding:7px 14px;border-radius:var(--r-pill);
+  transition:all 0.22s var(--spring);
+}
+.btn-pill-dark:hover{background:rgba(255,255,255,0.18);transform:scale(1.04)}
+.btn-pill-dark:active{transform:scale(0.94)}
+.btn-status-active{
+  background:var(--green-400);color:var(--green-900);
+  font-size:12px;font-weight:700;
+  padding:7px 14px;border-radius:var(--r-pill);
+  display:flex;align-items:center;gap:5px;
+  transition:all 0.22s var(--spring);
+}
+.btn-status-active::before{content:'';width:6px;height:6px;background:var(--green-900);border-radius:50%;animation:pulseGlow 2s infinite}
+.btn-status-active:hover{transform:scale(1.04);box-shadow:0 4px 16px rgba(165,217,106,0.4)}
+.btn-status-active:active{transform:scale(0.94)}
+
+/* Live Ticker */
+.ticker-section{margin:1rem 0 0.5rem}
+.ticker-label{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--text-3);letter-spacing:0.5px;margin-bottom:6px}
+.ticker-dot{width:6px;height:6px;background:#ef4444;border-radius:50%;animation:pulseGlow 1.5s infinite}
+.ticker-card{
+  background:var(--surface);border-radius:var(--r-md);
+  border:1px solid rgba(0,0,0,0.06);
+  padding:0.85rem 1rem;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+  min-height:60px;
+  transition:all 0.25s var(--spring);
+}
+.ticker-badge{
+  background:var(--green-800);color:#fff;
+  font-size:11px;font-weight:800;
+  padding:3px 9px;border-radius:var(--r-pill);
+  white-space:nowrap;flex-shrink:0;
+}
+.ticker-text{font-size:13px;font-weight:600;color:var(--text-1);flex:1}
+.ticker-sub{font-size:11px;color:var(--text-3)}
+.ticker-icon{
+  width:32px;height:32px;border-radius:var(--r-sm);
+  background:var(--green-100);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.ticker-icon svg{width:16px;height:16px;stroke:var(--green-800);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* Stats */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem}
+.section-title{font-size:14px;font-weight:800;color:var(--text-1);letter-spacing:-0.2px}
+.section-link{font-size:12px;font-weight:600;color:var(--green-700,var(--green-600));display:flex;align-items:center;gap:3px}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat-card{
+  background:var(--surface);border-radius:var(--r-lg);
+  padding:0.85rem 0.75rem;
+  border:1px solid rgba(0,0,0,0.05);
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+  transition:transform 0.35s var(--spring),box-shadow 0.3s ease;
+  cursor:default;
+}
+.stat-card:hover{transform:translateY(-4px) rotateX(3deg);box-shadow:0 10px 28px rgba(0,0,0,0.1)}
+.stat-card:active{transform:scale(0.94)}
+.stat-val{font-size:22px;font-weight:900;color:var(--text-1);letter-spacing:-0.5px;line-height:1}
+.stat-val.green{color:var(--green-800)}
+.stat-lbl{font-size:10px;font-weight:600;color:var(--text-3);margin-top:3px}
+.stat-trend{
+  display:inline-flex;align-items:center;gap:2px;
+  font-size:10px;font-weight:700;
+  background:var(--green-100);color:var(--green-800);
+  padding:2px 6px;border-radius:var(--r-pill);
+  margin-top:5px;
+}
+.stat-action{font-size:10px;font-weight:600;color:var(--text-3);margin-top:4px;display:flex;align-items:center;gap:2px}
+
+/* Chart */
+.chart-card{
+  background:var(--surface);border-radius:var(--r-lg);
+  padding:1rem;
+  border:1px solid rgba(0,0,0,0.05);
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+.chart-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.85rem}
+.chart-total{font-size:22px;font-weight:900;color:var(--text-1);letter-spacing:-0.5px}
+.chart-subtitle{font-size:11px;color:var(--text-3)}
+.chart-bars{display:flex;align-items:flex-end;gap:5px;height:64px}
+.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.chart-bar{
+  width:100%;border-radius:4px 4px 0 0;
+  background:var(--green-100);
+  transition:height 0.6s var(--spring);
+  position:relative;overflow:hidden;
+}
+.chart-bar.peak{background:var(--green-800)}
+.chart-bar::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,0.15) 0%,transparent 100%);
+}
+.chart-day{font-size:9px;font-weight:600;color:var(--text-3)}
+
+/* Quick Actions */
+.quick-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.quick-card{
+  background:var(--surface);border-radius:var(--r-md);
+  padding:0.9rem 1rem;
+  border:1px solid rgba(0,0,0,0.06);
+  display:flex;align-items:center;gap:10px;
+  transition:all 0.25s var(--spring);cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+.quick-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.09)}
+.quick-card:active{transform:scale(0.95)}
+.quick-icon{
+  width:36px;height:36px;border-radius:var(--r-sm);
+  background:var(--green-100);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.quick-icon svg{width:18px;height:18px;stroke:var(--green-800);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.quick-info{}
+.quick-label{font-size:12px;font-weight:700;color:var(--text-1)}
+.quick-sub{font-size:10px;color:var(--text-3);margin-top:1px}
+.quick-card.shine-card{
+  background:linear-gradient(90deg,var(--green-900) 0%,var(--green-700,var(--green-800)) 40%,var(--green-600) 60%,var(--green-900) 100%);
+  background-size:200% auto;
+  animation:shimmerBg 3s linear infinite;
+  border:none;
+}
+.quick-card.shine-card .quick-label{color:#fff}
+.quick-card.shine-card .quick-sub{color:rgba(255,255,255,0.6)}
+.quick-card.shine-card .quick-icon{background:rgba(255,255,255,0.15)}
+.quick-card.shine-card .quick-icon svg{stroke:#fff}
+
+/* section spacing */
+.section-gap{margin-top:1.1rem}
+
+/* ══════════════════════════
+   ORDERS SCREEN
+══════════════════════════ */
+.screen-title-bar{padding:1rem 1rem 0.5rem;display:flex;align-items:center;justify-content:space-between}
+.screen-title{font-size:18px;font-weight:900;color:var(--text-1);letter-spacing:-0.4px}
+.pill-tabs{display:flex;gap:6px;padding:0 1rem 0.75rem;overflow-x:auto;scrollbar-width:none}
+.pill-tabs::-webkit-scrollbar{display:none}
+.pill-tab{
+  flex-shrink:0;padding:6px 14px;border-radius:var(--r-pill);
+  font-size:12px;font-weight:700;
+  background:var(--surface);color:var(--text-3);
+  border:1px solid rgba(0,0,0,0.08);
+  transition:all 0.22s var(--spring);cursor:pointer;
+}
+.pill-tab:active{transform:scale(0.94)}
+.pill-tab.active{background:var(--green-800);color:#fff;border-color:var(--green-800)}
+.order-section{display:none}
+.order-section.active{display:block}
+.orders-list{padding:0 1rem;display:flex;flex-direction:column;gap:10px}
+.order-card{
+  background:var(--surface);border-radius:var(--r-lg);
+  padding:1rem;
+  border:1px solid rgba(0,0,0,0.06);
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+  transition:all 0.25s var(--spring);
+}
+.order-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.08)}
+.order-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.6rem}
+.order-customer{font-size:14px;font-weight:800;color:var(--text-1)}
+.order-meta{font-size:11px;color:var(--text-3);margin-top:2px}
+.order-price{font-size:18px;font-weight:900;color:var(--green-800);letter-spacing:-0.3px}
+.order-status{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;font-weight:700;padding:3px 8px;border-radius:var(--r-pill);
+}
+.order-status.pending{background:var(--orange-pale);color:#92400e}
+.order-status.processing{background:var(--green-100);color:var(--green-800)}
+.order-status.done{background:#f0fdf4;color:#166534}
+.order-items{margin-bottom:0.75rem}
+.order-item{font-size:12px;color:var(--text-2);padding:2px 0;display:flex;align-items:center;gap:5px}
+.order-actions{display:flex;gap:8px}
+.btn-approve{
+  flex:1;background:var(--green-800);color:#fff;
+  font-size:13px;font-weight:700;
+  padding:9px;border-radius:var(--r-md);
+  transition:all 0.22s var(--spring);
+  display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.btn-approve:hover{background:var(--green-900);transform:scale(1.02)}
+.btn-approve:active{transform:scale(0.95)}
+.btn-decline{
+  padding:9px 16px;border-radius:var(--r-md);
+  font-size:13px;font-weight:700;color:var(--text-3);
+  background:#f5f5f5;
+  transition:all 0.22s var(--spring);
+}
+.btn-decline:hover{background:#ebebeb;transform:scale(1.02)}
+.btn-decline:active{transform:scale(0.95)}
+.empty-orders{
+  text-align:center;padding:3rem 1rem;
+  color:var(--text-3);font-size:14px;font-weight:600;
+}
+.empty-orders .empty-icon{font-size:40px;margin-bottom:0.5rem}
+
+/* ══════════════════════════
+   PRODUCTS SCREEN
+══════════════════════════ */
+.products-list{padding:0 1rem;display:flex;flex-direction:column;gap:8px}
+.product-card{
+  background:var(--surface);border-radius:var(--r-lg);
+  padding:0.9rem 1rem;
+  border:1px solid rgba(0,0,0,0.06);
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+  display:flex;align-items:center;gap:12px;
+  transition:all 0.25s var(--spring);
+}
+.product-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.08)}
+.product-emoji{font-size:28px;flex-shrink:0;width:44px;text-align:center}
+.product-info{flex:1}
+.product-name{font-size:14px;font-weight:800;color:var(--text-1)}
+.product-min{font-size:11px;color:var(--text-3);margin-top:1px}
+.product-price{font-size:15px;font-weight:900;color:var(--green-800);margin-top:3px}
+.product-status{
+  font-size:10px;font-weight:700;
+  padding:2px 8px;border-radius:var(--r-pill);
+  flex-shrink:0;margin-right:auto;
+}
+.product-status.active{background:var(--green-100);color:var(--green-800)}
+.product-status.inactive{background:#f0f0f0;color:var(--text-3)}
+/* Toggle */
+.toggle{position:relative;width:42px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{
+  position:absolute;inset:0;border-radius:var(--r-pill);
+  background:#ddd;cursor:pointer;
+  transition:background 0.2s var(--spring);
+}
+.toggle-slider::before{
+  content:'';position:absolute;
+  width:18px;height:18px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.2);
+  bottom:3px;right:3px;
+  transition:transform 0.25s var(--spring);
+}
+.toggle input:checked + .toggle-slider{background:var(--green-800)}
+.toggle input:checked + .toggle-slider::before{transform:translateX(-18px)}
+
+/* FAB */
+.fab{
+  position:fixed;bottom:calc(var(--nav-h) + 16px);left:1.25rem;
+  width:52px;height:52px;border-radius:var(--r-pill);
+  background:var(--green-800);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 20px rgba(45,90,27,0.4);
+  transition:all 0.3s var(--spring);z-index:40;
+}
+.fab:hover{transform:scale(1.1) rotate(90deg);box-shadow:0 10px 28px rgba(45,90,27,0.5)}
+.fab:active{transform:scale(0.9)}
+.fab svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round}
+
+/* ══════════════════════════
+   PROFILE SCREEN
+══════════════════════════ */
+.profile-hero{
+  margin:0.75rem 1rem 0;
+  background:var(--dark-card);border-radius:var(--r-xl);
+  padding:1.5rem 1.25rem;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+}
+.profile-avatar{
+  width:72px;height:72px;border-radius:var(--r-pill);
+  background:linear-gradient(135deg,var(--green-600),var(--green-400));
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;margin-bottom:0.75rem;
+  box-shadow:0 4px 16px rgba(165,217,106,0.35);
+}
+.profile-name{
+  font-size:20px;font-weight:900;letter-spacing:-0.3px;
+  background:linear-gradient(90deg,#fff 0%,var(--green-400) 50%,#fff 100%);
+  background-size:200% auto;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  animation:shine 5s linear infinite;
+}
+.profile-loc{font-size:12px;color:rgba(255,255,255,0.45);margin-top:4px}
+.profile-rating{
+  display:flex;align-items:center;gap:5px;margin-top:0.75rem;
+  background:rgba(255,255,255,0.08);border-radius:var(--r-pill);
+  padding:5px 12px;
+}
+.profile-rating-stars{color:var(--orange);font-size:13px}
+.profile-rating-val{font-size:13px;font-weight:800;color:#fff}
+.profile-rating-count{font-size:11px;color:rgba(255,255,255,0.4)}
+
+.profile-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:rgba(0,0,0,0.06);border-radius:var(--r-md);overflow:hidden;margin:1rem}
+.profile-stat{background:var(--surface);padding:0.85rem 0.5rem;text-align:center}
+.profile-stat-val{font-size:18px;font-weight:900;color:var(--green-800)}
+.profile-stat-lbl{font-size:10px;font-weight:600;color:var(--text-3);margin-top:2px}
+
+.profile-section{padding:0 1rem;margin-bottom:0.75rem}
+.profile-section-title{font-size:12px;font-weight:800;color:var(--text-3);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px}
+.profile-row{
+  background:var(--surface);border-radius:var(--r-md);overflow:hidden;
+  border:1px solid rgba(0,0,0,0.06);
+}
+.profile-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.85rem 1rem;
+  border-bottom:1px solid rgba(0,0,0,0.04);
+  cursor:pointer;transition:background 0.15s;
+}
+.profile-item:last-child{border-bottom:none}
+.profile-item:hover{background:#fafafa}
+.profile-item-left{display:flex;align-items:center;gap:10px}
+.profile-item-icon{
+  width:32px;height:32px;border-radius:var(--r-sm);
+  background:var(--green-100);
+  display:flex;align-items:center;justify-content:center;
+}
+.profile-item-icon svg{width:15px;height:15px;stroke:var(--green-800);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.profile-item-label{font-size:13px;font-weight:600;color:var(--text-1)}
+.profile-item-arrow{width:16px;height:16px;stroke:var(--text-3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.btn-logout{
+  margin:0 1rem 1rem;width:calc(100% - 2rem);
+  padding:13px;border-radius:var(--r-md);
+  background:var(--red-pale);color:var(--red);
+  font-size:14px;font-weight:700;
+  transition:all 0.22s var(--spring);display:block;text-align:center;
+}
+.btn-logout:hover{background:#fecaca;transform:scale(1.01)}
+.btn-logout:active{transform:scale(0.97)}
+
+/* ══════════════════════════
+   TOAST
+══════════════════════════ */
+.toast{
+  position:fixed;bottom:calc(var(--nav-h) + 12px);left:50%;
+  transform:translateX(-50%) translateY(0);
+  background:var(--dark-card);color:#fff;
+  font-size:13px;font-weight:600;
+  padding:10px 18px;border-radius:var(--r-pill);
+  box-shadow:0 8px 24px rgba(0,0,0,0.25);
+  z-index:200;
+  animation:toastSlide 0.3s var(--spring) both;
+  display:none;white-space:nowrap;
+}
+.toast.success{background:var(--green-800)}
+.toast.error{background:var(--red)}
+
+/* ══════════════════════════
+   MODAL
+══════════════════════════ */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.45);
+  z-index:100;display:none;align-items:flex-end;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.open{display:flex}
+.modal-sheet{
+  background:var(--surface);border-radius:var(--r-xl) var(--r-xl) 0 0;
+  padding:1.25rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom));
+  width:100%;max-width:430px;
+  animation:slideUp 0.35s var(--spring) both;
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 1.1rem}
+.modal-title{font-size:17px;font-weight:900;color:var(--text-1);margin-bottom:1rem;letter-spacing:-0.3px}
+.form-field{margin-bottom:0.85rem}
+.form-label{font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:5px;display:block}
+.form-input{
+  width:100%;padding:11px 13px;border-radius:var(--r-md);
+  border:1.5px solid #e5e7eb;
+  font-size:14px;color:var(--text-1);
+  transition:border-color 0.2s, box-shadow 0.2s;
+  background:var(--surface);
+}
+.form-input:focus{outline:none;border-color:var(--green-800);box-shadow:0 0 0 3px rgba(45,90,27,0.1)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-submit{
+  width:100%;padding:13px;border-radius:var(--r-md);
+  background:var(--green-800);color:#fff;
+  font-size:15px;font-weight:800;
+  transition:all 0.22s var(--spring);margin-top:0.5rem;
+}
+.btn-submit:hover{background:var(--green-900);transform:scale(1.01)}
+.btn-submit:active{transform:scale(0.97)}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ══ TOP HEADER ══ -->
+  <header class="top-header">
+    <div class="header-logo">
+      <div class="header-logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/><path d="M8 12s1.5-2 4-2 4 2 4 2"/><path d="M12 10V7"/></svg>
+      </div>
+      <div>
+        <div class="header-logo-text">מהשדה לשולחן</div>
+        <div class="header-logo-sub">פאנל חקלאי</div>
+      </div>
+    </div>
+    <button class="icon-btn" onclick="showToast('אין התראות חדשות','')">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="notif-dot"></span>
+    </button>
+  </header>
+
+  <!-- ══ SCREENS ══ -->
+  <div class="screen-wrap">
+
+    <!-- ════ HOME ════ -->
+    <div class="screen active" id="screen-home">
+      <div class="pad-lg">
+
+        <!-- Hero card -->
+        <div class="status-card">
+          <div class="status-greeting">🌿 שלום חזרה, ישראל</div>
+          <div class="status-name">משק הירקות שלנו</div>
+          <div class="status-meta">עמק חפר • נרשם לפיילוט בדצמבר 2024</div>
+          <div class="status-actions">
+            <button class="btn-status-active">פרופיל פעיל</button>
+            <button class="btn-pill-dark">השרון</button>
+          </div>
+        </div>
+
+        <!-- Ticker -->
+        <div class="ticker-section section-gap">
+          <div class="ticker-label">
+            <span class="ticker-dot"></span>
+            פעילות בזמן אמת
+          </div>
+          <div class="ticker-card" id="ticker-card">
+            <div class="ticker-icon">
+              <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div>
+              <div class="ticker-text" id="ticker-text">טוען...</div>
+              <div class="ticker-sub" id="ticker-sub"></div>
+            </div>
+            <div class="ticker-badge" id="ticker-badge"></div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="section-gap">
+          <div class="section-header">
+            <span class="section-title">סיכום השבוע</span>
+            <span class="section-link">הכל ←</span>
+          </div>
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="stat-val" id="stat-views">0</div>
+              <div class="stat-lbl">צפיות</div>
+              <div class="stat-action">→ יציב</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-val green">₪<span id="stat-revenue">0</span></div>
+              <div class="stat-lbl">הכנסות השבוע</div>
+              <div class="stat-trend">18%↑</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-val" id="stat-orders">0</div>
+              <div class="stat-lbl">הזמנות היום</div>
+              <div class="stat-trend">2+↑</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Revenue chart -->
+        <div class="section-gap">
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <div class="chart-total">₪1,230</div>
+                <div class="chart-subtitle">הכנסות 7 ימים</div>
+              </div>
+            </div>
+            <div class="chart-bars" id="chart-bars"></div>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="section-gap">
+          <div class="section-header">
+            <span class="section-title">פעולות מהירות</span>
+          </div>
+          <div class="quick-row">
+            <div class="quick-card" onclick="switchTab('orders')">
+              <div class="quick-icon">
+                <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="M9 12h6M9 16h4"/></svg>
+              </div>
+              <div class="quick-info">
+                <div class="quick-label">הזמנות</div>
+                <div class="quick-sub">2 ממתינות</div>
+              </div>
+            </div>
+            <div class="quick-card shine-card" onclick="openAddModal()">
+              <div class="quick-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              </div>
+              <div class="quick-info">
+                <div class="quick-label">הוסף מוצר</div>
+                <div class="quick-sub">תוצרת חדשה</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════ ORDERS ════ -->
+    <div class="screen" id="screen-orders">
+      <div class="screen-title-bar">
+        <div class="screen-title">הזמנות</div>
+      </div>
+      <div class="pill-tabs">
+        <button class="pill-tab active" onclick="switchOrderTab(this,'otab-pending')">ממתינות <span style="background:rgba(255,255,255,0.25);padding:1px 5px;border-radius:999px;font-size:10px">2</span></button>
+        <button class="pill-tab" onclick="switchOrderTab(this,'otab-processing')">בטיפול</button>
+        <button class="pill-tab" onclick="switchOrderTab(this,'otab-done')">הושלמו</button>
+      </div>
+
+      <div class="order-section active" id="otab-pending">
+        <div class="orders-list">
+          <div class="order-card" id="order-1">
+            <div class="order-top">
+              <div>
+                <div class="order-customer">דנה כהן</div>
+                <div class="order-meta">היום, 14:32 • כפר סבא</div>
+              </div>
+              <div class="order-price">₪46</div>
+            </div>
+            <div class="order-items">
+              <div class="order-item">🍅 עגבניות שרי 2 ק"ג</div>
+              <div class="order-item">🥒 מלפפונים 1 ק"ג</div>
+            </div>
+            <div class="order-actions">
+              <button class="btn-approve" onclick="approveOrder('order-1',this)">
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round"><path d="M20 6L9 17l-5-5"/></svg>
+                אשר
+              </button>
+              <button class="btn-decline" onclick="declineOrder('order-1')">דחה</button>
+            </div>
+          </div>
+          <div class="order-card" id="order-2">
+            <div class="order-top">
+              <div>
+                <div class="order-customer">שירה מזרחי</div>
+                <div class="order-meta">היום, 13:10 • נתניה</div>
+              </div>
+              <div class="order-price">₪91</div>
+            </div>
+            <div class="order-items">
+              <div class="order-item">🥕 גזר 3 ק"ג</div>
+              <div class="order-item">🌿 עשבי תיבול × 2</div>
+              <div class="order-item">🧅 בצל 1 ק"ג</div>
+            </div>
+            <div class="order-actions">
+              <button class="btn-approve" onclick="approveOrder('order-2',this)">
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round"><path d="M20 6L9 17l-5-5"/></svg>
+                אשר
+              </button>
+              <button class="btn-decline" onclick="declineOrder('order-2')">דחה</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-section" id="otab-processing">
+        <div style="padding:0 1rem">
+          <div class="order-card">
+            <div class="order-top">
+              <div>
+                <div class="order-customer">יוסף לוי</div>
+                <div class="order-meta">היום, 10:45 • רעננה</div>
+              </div>
+              <div class="order-price">₪62</div>
+            </div>
+            <div class="order-items">
+              <div class="order-item">🥬 חסה 2 יח'</div>
+              <div class="order-item">🥦 ברוקולי 1 יח'</div>
+            </div>
+            <div><span class="order-status processing">בטיפול</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-section" id="otab-done">
+        <div class="empty-orders">
+          <div class="empty-icon">✅</div>
+          <div>אין הזמנות שהושלמו היום</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ PRODUCTS ════ -->
+    <div class="screen" id="screen-products">
+      <div class="screen-title-bar">
+        <div class="screen-title">המוצרים שלי</div>
+        <div style="font-size:12px;color:var(--text-3);font-weight:600">5 פעילים</div>
+      </div>
+      <div class="products-list">
+        <div class="product-card">
+          <div class="product-emoji">🍅</div>
+          <div class="product-info">
+            <div class="product-name">עגבניות שרי</div>
+            <div class="product-min">מינימום 500 גר'</div>
+            <div class="product-price">₪9 לק"ג</div>
+          </div>
+          <span class="product-status active">פעיל</span>
+          <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this)"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="product-card">
+          <div class="product-emoji">🥒</div>
+          <div class="product-info">
+            <div class="product-name">מלפפונים</div>
+            <div class="product-min">מינימום 1 ק"ג</div>
+            <div class="product-price">₪6 לק"ג</div>
+          </div>
+          <span class="product-status active">פעיל</span>
+          <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this)"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="product-card">
+          <div class="product-emoji">🥕</div>
+          <div class="product-info">
+            <div class="product-name">גזר</div>
+            <div class="product-min">מינימום 2 ק"ג</div>
+            <div class="product-price">₪5 לק"ג</div>
+          </div>
+          <span class="product-status active">פעיל</span>
+          <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this)"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="product-card">
+          <div class="product-emoji">🌿</div>
+          <div class="product-info">
+            <div class="product-name">עשבי תיבול</div>
+            <div class="product-min">אצווה שבועית</div>
+            <div class="product-price">₪12 לצרור</div>
+          </div>
+          <span class="product-status active">פעיל</span>
+          <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this)"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="product-card" style="opacity:0.6">
+          <div class="product-emoji">🫑</div>
+          <div class="product-info">
+            <div class="product-name">פלפלים</div>
+            <div class="product-min">עונה לא פעילה</div>
+            <div class="product-price">₪11 לק"ג</div>
+          </div>
+          <span class="product-status inactive">מושהה</span>
+          <label class="toggle"><input type="checkbox" onchange="toggleProduct(this)"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+
+      <button class="fab" id="fab-add" onclick="openAddModal()">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </div>
+
+    <!-- ════ PROFILE ════ -->
+    <div class="screen" id="screen-profile">
+      <div class="profile-hero">
+        <div class="profile-avatar">🌾</div>
+        <div class="profile-name">ישראל כהן</div>
+        <div class="profile-loc">📍 עמק חפר, השרון</div>
+        <div class="profile-rating">
+          <span class="profile-rating-stars">★★★★★</span>
+          <span class="profile-rating-val">4.9</span>
+          <span class="profile-rating-count">(47 ביקורות)</span>
+        </div>
+      </div>
+
+      <div class="profile-stats">
+        <div class="profile-stat">
+          <div class="profile-stat-val">5</div>
+          <div class="profile-stat-lbl">מוצרים</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-val">847</div>
+          <div class="profile-stat-lbl">₪ השבוע</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-val">38</div>
+          <div class="profile-stat-lbl">לקוחות</div>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <div class="profile-section-title">הגדרות</div>
+        <div class="profile-row">
+          <div class="profile-item">
+            <div class="profile-item-left">
+              <div class="profile-item-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+              <span class="profile-item-label">עריכת פרופיל</span>
+            </div>
+            <svg class="profile-item-arrow" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+          </div>
+          <div class="profile-item">
+            <div class="profile-item-left">
+              <div class="profile-item-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+              <span class="profile-item-label">אזור משלוח</span>
+            </div>
+            <svg class="profile-item-arrow" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+          </div>
+          <div class="profile-item">
+            <div class="profile-item-left">
+              <div class="profile-item-icon"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div>
+              <span class="profile-item-label">נתונים ודוחות</span>
+            </div>
+            <svg class="profile-item-arrow" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+          </div>
+          <div class="profile-item">
+            <div class="profile-item-left">
+              <div class="profile-item-icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+              <span class="profile-item-label">התראות</span>
+            </div>
+            <svg class="profile-item-arrow" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-logout" onclick="showToast('להתראות! 👋','')">התנתקות</button>
+    </div>
+
+  </div><!-- /screen-wrap -->
+
+  <!-- ══ BOTTOM NAV ══ -->
+  <nav class="bottom-nav">
+    <div class="nav-item active" id="nav-home" onclick="switchTab('home')">
+      <span class="nav-indicator"></span>
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="nav-label">בית</span>
+    </div>
+    <div class="nav-item" id="nav-orders" onclick="switchTab('orders')">
+      <span class="nav-indicator"></span>
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="M9 12h6M9 16h4"/></svg>
+      <span class="nav-label">הזמנות</span>
+      <span class="nav-badge">2</span>
+    </div>
+    <div class="nav-item" id="nav-products" onclick="switchTab('products')">
+      <span class="nav-indicator"></span>
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      <span class="nav-label">מוצרים</span>
+    </div>
+    <div class="nav-item" id="nav-profile" onclick="switchTab('profile')">
+      <span class="nav-indicator"></span>
+      <svg class="nav-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="nav-label">פרופיל</span>
+    </div>
+  </nav>
+
+</div><!-- /app -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Add Product Modal -->
+<div class="modal-overlay" id="add-modal" onclick="closeAddModal(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">הוסף מוצר חדש</div>
+    <div class="form-field">
+      <label class="form-label">שם המוצר</label>
+      <input class="form-input" type="text" placeholder="למשל: עגבניות שרי">
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label class="form-label">מחיר לק"ג / יחידה (₪)</label>
+        <input class="form-input" type="number" placeholder="0">
+      </div>
+      <div class="form-field">
+        <label class="form-label">מינימום הזמנה</label>
+        <input class="form-input" type="text" placeholder="1 ק&quot;ג">
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">תיאור קצר</label>
+      <input class="form-input" type="text" placeholder="גדל בשיטה טבעית...">
+    </div>
+    <button class="btn-submit" onclick="submitNewProduct()">הוסף מוצר</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════
+//  TAB SWITCHING
+// ══════════════════════════════════
+function switchTab(name){
+  var tabs = ['home','orders','products','profile'];
+  tabs.forEach(function(t){
+    var screen = document.getElementById('screen-'+t);
+    var nav = document.getElementById('nav-'+t);
+    if(t === name){
+      screen.classList.add('active');
+      nav.classList.add('active');
+    } else {
+      screen.classList.remove('active');
+      nav.classList.remove('active');
+    }
+  });
+  // show/hide FAB
+  var fab = document.getElementById('fab-add');
+  if(fab) fab.style.display = name==='products' ? 'flex' : 'none';
+}
+
+// ══════════════════════════════════
+//  ORDER TAB SWITCHING
+// ══════════════════════════════════
+function switchOrderTab(btn, tabId){
+  document.querySelectorAll('.pill-tab').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.order-section').forEach(function(s){ s.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+// ══════════════════════════════════
+//  APPROVE / DECLINE ORDERS
+// ══════════════════════════════════
+function approveOrder(id, btn){
+  var card = document.getElementById(id);
+  btn.textContent = '✓ אושר';
+  btn.style.background = 'var(--green-400)';
+  btn.style.color = 'var(--green-900)';
+  btn.disabled = true;
+  card.style.opacity = '0.6';
+  showToast('ההזמנה אושרה ✓', 'success');
+  setTimeout(function(){
+    card.style.transition = 'all 0.4s var(--spring)';
+    card.style.transform = 'translateX(100%)';
+    card.style.opacity = '0';
+    setTimeout(function(){
+      card.remove();
+      // update badge
+      var pending = document.querySelectorAll('#otab-pending .order-card').length;
+      var badge = document.querySelector('#nav-orders .nav-badge');
+      if(badge) badge.textContent = pending || '';
+      if(!pending) badge && (badge.style.display='none');
+    }, 400);
+  }, 800);
+}
+
+function declineOrder(id){
+  var card = document.getElementById(id);
+  card.style.transition = 'all 0.35s var(--spring)';
+  card.style.transform = 'translateX(100%)';
+  card.style.opacity = '0';
+  showToast('ההזמנה נדחתה', 'error');
+  setTimeout(function(){ card.remove(); }, 350);
+}
+
+// ══════════════════════════════════
+//  PRODUCT TOGGLE
+// ══════════════════════════════════
+function toggleProduct(input){
+  var card = input.closest('.product-card');
+  var statusEl = card.querySelector('.product-status');
+  if(input.checked){
+    statusEl.textContent = 'פעיל';
+    statusEl.className = 'product-status active';
+    card.style.opacity = '1';
+    showToast('המוצר פעיל ✓', 'success');
+  } else {
+    statusEl.textContent = 'מושהה';
+    statusEl.className = 'product-status inactive';
+    card.style.opacity = '0.6';
+    showToast('המוצר הושהה', '');
+  }
+}
+
+// ══════════════════════════════════
+//  MODAL
+// ══════════════════════════════════
+function openAddModal(){
+  document.getElementById('add-modal').classList.add('open');
+}
+function closeAddModal(e){
+  if(e.target === document.getElementById('add-modal')){
+    document.getElementById('add-modal').classList.remove('open');
+  }
+}
+function submitNewProduct(){
+  document.getElementById('add-modal').classList.remove('open');
+  showToast('המוצר נוסף בהצלחה! 🌱', 'success');
+}
+
+// ══════════════════════════════════
+//  TOAST
+// ══════════════════════════════════
+var _toastTimer = null;
+function showToast(msg, type){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type ? ' '+type : '');
+  t.style.display = 'block';
+  t.style.animation = 'none';
+  void t.offsetWidth;
+  t.style.animation = 'toastSlide 0.3s cubic-bezier(0.16,1,0.3,1) both';
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function(){ t.style.display='none'; }, 3000);
+}
+
+// ══════════════════════════════════
+//  COUNTER ANIMATION
+// ══════════════════════════════════
+function animateCounter(el, from, to, prefix, suffix, duration){
+  var start = null;
+  function step(ts){
+    if(!start) start = ts;
+    var p = Math.min((ts - start) / duration, 1);
+    var eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = (prefix||'') + Math.round(from + (to - from) * eased) + (suffix||'');
+    if(p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+setTimeout(function(){
+  animateCounter(document.getElementById('stat-views'), 0, 124, '', '', 900);
+  animateCounter(document.getElementById('stat-revenue'), 0, 847, '', '', 1100);
+  animateCounter(document.getElementById('stat-orders'), 0, 3, '', '', 700);
+}, 300);
+
+// ══════════════════════════════════
+//  REVENUE CHART
+// ══════════════════════════════════
+(function(){
+  var days = ['א', 'ב', 'ג', 'ד', 'ה', 'ש', 'א'];
+  var vals = [180, 220, 95, 310, 140, 180, 105];
+  var max = Math.max.apply(null, vals);
+  var container = document.getElementById('chart-bars');
+  days.forEach(function(d, i){
+    var pct = Math.round((vals[i] / max) * 64);
+    var isPeak = vals[i] === max;
+    var wrap = document.createElement('div');
+    wrap.className = 'chart-bar-wrap';
+    var bar = document.createElement('div');
+    bar.className = 'chart-bar' + (isPeak ? ' peak' : '');
+    bar.style.height = '4px';
+    var lbl = document.createElement('div');
+    lbl.className = 'chart-day';
+    lbl.textContent = d;
+    wrap.appendChild(bar);
+    wrap.appendChild(lbl);
+    container.appendChild(wrap);
+    setTimeout(function(){ bar.style.height = pct + 'px'; }, 400 + i * 60);
+  });
+})();
+
+// ══════════════════════════════════
+//  LIVE TICKER
+// ══════════════════════════════════
+var TICKER_EVENTS = [
+  { text: 'דנה כהן הזמינה עגבניות שרי 2 ק"ג', sub: 'לפני 3 דקות • כפר סבא', badge: '₪46', icon: 'order' },
+  { text: 'יוסי לוי נתן לך 5 ⭐ על השירות', sub: 'ביקורת חדשה • לפני 12 דקות', badge: '5', icon: 'star' },
+  { text: 'מוצר חדש — עשבי תיבול זמין', sub: 'הוספת לרשימה • עכשיו', badge: '🌿', icon: 'product' },
+  { text: 'הזמנה הושלמה — שירה מזרחי', sub: 'ירקות מעורבים • ₪91', badge: '✓', icon: 'done' },
+  { text: '124 צפיות בפרופיל השבוע', sub: 'עלייה של 18% לעומת שבוע שעבר', badge: '↑', icon: 'stats' }
+];
+var tickerIdx = 0;
+var tickerText = document.getElementById('ticker-text');
+var tickerSub = document.getElementById('ticker-sub');
+var tickerBadge = document.getElementById('ticker-badge');
+var tickerCard = document.getElementById('ticker-card');
+
+function updateTicker(){
+  var ev = TICKER_EVENTS[tickerIdx];
+  tickerCard.style.opacity = '0';
+  tickerCard.style.transform = 'translateY(-6px)';
+  setTimeout(function(){
+    tickerText.textContent = ev.text;
+    tickerSub.textContent = ev.sub;
+    tickerBadge.textContent = ev.badge;
+    tickerCard.style.transition = 'all 0.35s cubic-bezier(0.16,1,0.3,1)';
+    tickerCard.style.opacity = '1';
+    tickerCard.style.transform = 'translateY(0)';
+  }, 220);
+  tickerIdx = (tickerIdx + 1) % TICKER_EVENTS.length;
+}
+
+updateTicker();
+setInterval(updateTicker, 4000);
+
+// init FAB visibility
+(function(){
+  var fab = document.getElementById('fab-add');
+  if(fab) fab.style.display = 'none';
+})();
+</script>
+</body>
+</html>
