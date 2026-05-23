@@ -1,0 +1,1654 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>גזרוני - שוק חקלאי ישיר</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --color-primary: #2D5A1B;
+  --color-on-primary: #FFFFFF;
+  --color-secondary: #8BC34A;
+  --color-accent: #C4834A;
+  --color-background: #f4f1eb;
+  --color-foreground: #0F172A;
+  --color-muted: #e8e4d9;
+  --color-border: #ded8cb;
+  --color-destructive: #DC2626;
+  --color-ring: #2D5A1B;
+
+  /* Map old variables to new ones for backwards compatibility */
+  --green-900: #1B3B10;
+  --green-800: var(--color-primary);
+  --green-600: var(--color-secondary);
+  --green-400: var(--color-accent);
+  --green-100: var(--color-muted);
+  --green-50: #faf8f5;
+
+  --bg: var(--color-background);
+  --surface: #ffffff;
+  --dark: var(--color-foreground);
+  --dark-card: var(--color-primary);
+  --text-1: var(--color-foreground);
+  --text-2: #475569;
+  --text-3: #94a3b8;
+
+  --orange: #f59e0b;
+  --orange-pale: #fef3c7;
+  --red: var(--color-destructive);
+  --red-pale: #fee2e2;
+  --blue: #1d4ed8;
+  --blue-pale: #eff6ff;
+
+  --spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --r-pill: 999px;
+  --r-xl: 24px;
+  --r-lg: 20px;
+  --r-md: 16px;
+  --r-sm: 10px;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+  --shadow-xl: 0 20px 25px rgba(0,0,0,0.15);
+  
+  --transition-smooth: 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Rubik', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+  background: var(--bg);
+  direction: rtl;
+  color: var(--text-1);
+}
+
+.app-container {
+  max-width: 680px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--bg);
+  box-shadow: 0 0 40px rgba(0,0,0,0.03);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sticky Header */
+.market-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(244, 241, 235, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 0.9rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.brand-icon {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.brand-icon img {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  border-radius: 6px;
+}
+.brand-name {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--green-800);
+  letter-spacing: -0.3px;
+}
+.brand-sub {
+  font-size: 10px;
+  color: var(--text-3);
+  margin-top: -2px;
+  font-weight: 700;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cart-btn {
+  background: var(--surface);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green-800);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.22s var(--spring);
+}
+.cart-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg);
+}
+
+.map-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--dark-card);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: var(--r-md);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.22s var(--spring);
+}
+.map-toggle-btn:hover {
+  background: var(--green-900);
+  transform: scale(1.02);
+}
+
+/* Hero */
+.market-hero {
+  padding: 1.5rem 1.25rem 0.5rem;
+}
+.hero-tagline {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--dark-card);
+  line-height: 1.3;
+}
+.hero-sub {
+  font-size: 13px;
+  color: var(--text-2);
+  margin-top: 4px;
+}
+
+/* Region Filter */
+.regions-row {
+  display: flex;
+  gap: 8px;
+  padding: 1rem 1.25rem 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.regions-row::-webkit-scrollbar {
+  display: none;
+}
+.region-pill {
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  border: 1px solid rgba(0,0,0,0.06);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.22s var(--spring);
+  white-space: nowrap;
+}
+.region-pill.active {
+  background: var(--green-800);
+  color: #fff;
+  border-color: var(--green-800);
+  box-shadow: 0 4px 10px rgba(45,90,27,0.15);
+}
+
+/* Categories Filter */
+.categories-row {
+  display: flex;
+  gap: 12px;
+  padding: 0.5rem 1.25rem 1.25rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.categories-row::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── FARM MARQUEE ── */
+@keyframes farm-marquee {
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+.farm-marquee-bar {
+  overflow: hidden;
+  background: var(--color-primary);
+  padding: 9px 0;
+  margin: 0 0 1rem;
+  position: relative;
+}
+.farm-marquee-bar::before,
+.farm-marquee-bar::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 40px;
+  z-index: 2;
+  pointer-events: none;
+}
+.farm-marquee-bar::before {
+  right: 0;
+  background: linear-gradient(to left, var(--color-primary), transparent);
+}
+.farm-marquee-bar::after {
+  left: 0;
+  background: linear-gradient(to right, var(--color-primary), transparent);
+}
+.farm-marquee-label {
+  position: absolute;
+  right: 12px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  white-space: nowrap;
+  z-index: 3;
+  letter-spacing: 0.5px;
+}
+.farm-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: farm-marquee 32s linear infinite;
+  gap: 0;
+}
+.farm-marquee-bar:hover .farm-marquee-track {
+  animation-play-state: paused;
+}
+.farm-marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 24px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  border-right: 1px solid rgba(255,255,255,0.15);
+}
+.farm-marquee-item:first-child { border-right: none; }
+.farm-marquee-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  flex-shrink: 0;
+}
+.category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  cursor: pointer;
+  text-decoration: none;
+}
+.category-icon-wrap {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.22s var(--spring);
+  color: var(--green-800);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+.category-card:hover .category-icon-wrap {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(45,90,27,0.1);
+}
+.category-card.active .category-icon-wrap {
+  background: var(--green-800);
+  color: #fff;
+  border-color: var(--green-800);
+  box-shadow: 0 4px 12px rgba(45,90,27,0.25);
+}
+.category-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-2);
+  transition: color 0.2s;
+}
+.category-card.active .category-label {
+  color: var(--green-800);
+}
+.category-icon-wrap svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* Grid & Cards */
+.market-content {
+  flex: 1;
+  padding: 0 1.25rem 3rem;
+  display: flex;
+  flex-direction: column;
+}
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media (max-width: 400px) {
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.product-card {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(0,0,0,0.06);
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: all 0.25s var(--spring);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+}
+.product-visual {
+  height: 100px;
+  background: linear-gradient(135deg, var(--green-50) 0%, var(--green-100) 100%);
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  position: relative;
+  overflow: hidden;
+  color: var(--green-800);
+}
+.product-visual svg {
+  width: 44px;
+  height: 44px;
+}
+.product-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: var(--green-800);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--r-pill);
+}
+.product-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-1);
+  margin-bottom: 2px;
+}
+.product-farmer {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}
+.product-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+}
+.product-price {
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--green-800);
+}
+.add-to-cart-btn {
+  background: var(--green-800);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-md);
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s var(--spring);
+}
+.add-to-cart-btn:hover {
+  background: var(--green-900);
+}
+
+/* Quantity Selector in Grid */
+.qty-selector {
+  display: flex;
+  align-items: center;
+  background: var(--green-50);
+  border-radius: var(--r-md);
+  border: 1px solid var(--green-100);
+  padding: 2px;
+}
+.qty-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  color: var(--green-800);
+  font-weight: bold;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s var(--spring);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.qty-btn:active {
+  transform: scale(0.9);
+}
+.qty-val {
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 22px;
+  text-align: center;
+}
+
+/* Maps Container */
+.map-view-container {
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Cart Drawer */
+/* Cart Drawer */
+.cart-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.cart-drawer-overlay.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.cart-drawer {
+  background: var(--surface);
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  padding: 1.25rem;
+  width: 100%;
+  max-width: 430px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.3s var(--spring);
+}
+.cart-drawer-overlay.open .cart-drawer {
+  transform: translateY(0);
+}
+.drawer-handle {
+  width: 36px;
+  height: 4px;
+  background: #e0e0e0;
+  border-radius: 2px;
+  margin: 0 auto 1rem;
+}
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+.drawer-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text-1);
+}
+.drawer-close {
+  background: var(--bg);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.cart-items-list {
+  overflow-y: auto;
+  max-height: 30vh;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg);
+  padding: 0.75rem 1rem;
+  border-radius: var(--r-md);
+}
+.cart-item-info {
+  flex: 1;
+}
+.cart-item-title {
+  font-size: 13px;
+  font-weight: 800;
+}
+.cart-item-sub {
+  font-size: 10px;
+  color: var(--text-3);
+  margin-top: 1px;
+}
+.cart-item-price {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--green-800);
+  margin-left: 1rem;
+}
+
+.cart-fields {
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.form-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-2);
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  border: 1.5px solid #e5e7eb;
+  font-size: 13px;
+  background: #fff;
+  transition: all 0.2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--green-800);
+}
+.form-textarea {
+  height: 50px;
+  resize: none;
+}
+
+.cart-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1rem 0;
+  font-weight: bold;
+}
+.cart-total-lbl {
+  font-size: 14px;
+}
+.cart-total-val {
+  font-size: 18px;
+  color: var(--green-800);
+}
+.checkout-btn {
+  width: 100%;
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: var(--r-md);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.22s var(--spring);
+}
+.checkout-btn:hover {
+  background: #047857;
+  transform: translateY(-1px);
+}
+.checkout-btn:disabled {
+  background: var(--text-3);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Empty Cart State */
+.empty-cart-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-3);
+  font-size: 13px;
+}
+.empty-cart-state div {
+  font-size: 36px;
+  margin-bottom: 0.5rem;
+}
+
+/* Success Overlay */
+.success-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.success-overlay.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.success-card {
+  background: #fff;
+  border-radius: var(--r-xl);
+  padding: 2.5rem 1.5rem;
+  box-shadow: var(--shadow-xl);
+  max-width: 360px;
+  width: 100%;
+  transform: scale(0.9);
+  transition: transform 0.3s var(--spring);
+}
+.success-overlay.open .success-card {
+  transform: scale(1);
+}
+.success-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--green-100);
+  color: var(--color-accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 1.25rem;
+  box-shadow: 0 4px 12px rgba(165,217,106,0.3);
+}
+.success-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--green-900);
+  margin-bottom: 8px;
+}
+.success-text {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
+}
+.success-btn {
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: all 0.22s var(--spring);
+}
+.success-btn:hover {
+  background: #047857;
+}
+
+/* Confetti */
+.confetti-wrap {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 210;
+  overflow: hidden;
+}
+.conf-dot {
+  position: absolute;
+  top: -10px;
+  will-change: transform;
+  animation: fall linear forwards;
+}
+@keyframes fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(105vh) rotate(360deg); opacity: 0.3; }
+}
+
+/* ══════════════════════════════════════
+   DESKTOP MEDIA QUERIES (min-width: 1024px)
+   ══════════════════════════════════════ */
+@media (min-width: 1024px) {
+  .app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    box-shadow: 0 0 80px rgba(45, 90, 27, 0.05);
+  }
+
+  /* Set sticky header height to exactly 90px to match map top offset */
+  .market-header {
+    height: 90px;
+    padding: 0 2rem;
+    box-sizing: border-box;
+  }
+
+  .market-hero {
+    padding: 2.5rem 2rem 1rem;
+  }
+  .hero-tagline {
+    font-size: 28px;
+  }
+
+  /* Flex wrap categories and regions instead of scroll */
+  .regions-row {
+    flex-wrap: wrap;
+    padding: 1rem 2rem 0.5rem;
+    overflow-x: visible;
+  }
+  .categories-row {
+    flex-wrap: wrap;
+    padding: 0.5rem 2rem 1.5rem;
+    overflow-x: visible;
+    gap: 16px;
+  }
+
+  /* Content split grid layout */
+  .market-content {
+    display: grid !important;
+    grid-template-columns: 1.25fr 0.75fr; /* 1.25fr products grid on right, 0.75fr map on left */
+    gap: 32px;
+    padding: 0 2rem 4rem;
+    align-items: start;
+  }
+
+  .products-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
+    gap: 16px;
+  }
+
+  /* Sticky map container with top offset matching header height */
+  .map-view-container {
+    display: block !important; /* Force visible on desktop */
+    position: sticky;
+    top: 90px; /* Perfectly matches header height */
+    height: calc(100vh - 120px);
+    min-height: 500px;
+    border-radius: var(--r-xl);
+  }
+  #map {
+    height: 100% !important;
+    min-height: 100% !important;
+    border-radius: var(--r-xl);
+  }
+
+  /* Hide toggle button on desktop since both grid and map are side-by-side */
+  .map-toggle-btn {
+    display: none !important;
+  }
+
+  /* Modal sheets should be centered on desktop */
+  .cart-drawer-overlay {
+    align-items: center;
+  }
+  .cart-drawer {
+    border-radius: var(--r-xl);
+    max-height: 80vh;
+    box-shadow: var(--shadow-xl);
+    animation: popIn 0.3s var(--spring) both;
+  }
+  .drawer-handle {
+    display: none;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- Market Header -->
+  <header class="market-header">
+    <a href="#" class="header-brand">
+      <div class="brand-icon">
+        <img src="logo.svg" alt="גזרוני">
+      </div>
+      <div>
+        <div class="brand-name">גזרוני</div>
+        <div class="brand-sub">תוצרת מקומית עם אופי</div>
+      </div>
+    </a>
+    <div class="header-actions">
+      <button class="map-toggle-btn" id="map-toggle" onclick="toggleMapView()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+        <span>הצג מפה</span>
+      </button>
+      <button class="cart-btn" onclick="openCartDrawer()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        <span class="cart-badge" id="cart-badge-count">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero block -->
+  <section class="market-hero" id="market-hero-sec">
+    <h1 class="hero-tagline">תוצרת חקלאית פראית</h1>
+    <p class="hero-sub">חיבור ישיר לחקלאים בעמק חפר ודרום השרון. קנייה ישירה בלי פערי תיווך.</p>
+  </section>
+
+  <!-- Region pills -->
+  <div class="regions-row" id="regions-sec">
+    <div class="region-pill active" onclick="selectRegion(this, 'all')">כל האזורים</div>
+    <div class="region-pill" onclick="selectRegion(this, 'עמק חפר')">עמק חפר (כפר ויתקין)</div>
+    <div class="region-pill" onclick="selectRegion(this, 'דרום השרון')">דרום השרון (חרוצים)</div>
+  </div>
+
+  <!-- Categories scrolling row -->
+  <div class="categories-row" id="categories-sec">
+    <div class="category-card active" onclick="selectCategory(this, 'all')">
+      <div class="category-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <span class="category-label">הכל</span>
+    </div>
+    
+    <div class="category-card" onclick="selectCategory(this, 'vegetables')">
+      <div class="category-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="13" r="8"/>
+          <path d="M12 5c0-1.5 1-2 1-2s-1.5.5-2 1.5"/>
+          <path d="M9 5c1 .5 2 0 3-1"/>
+          <path d="M15 5c-1 .5-2 0-3-1"/>
+        </svg>
+      </div>
+      <span class="category-label">ירקות</span>
+    </div>
+
+    <div class="category-card" onclick="selectCategory(this, 'greens')">
+      <div class="category-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22V12"/>
+          <path d="M12 12c2.5-3.5 5-3.5 7-1a5 5 0 0 1-1 7c-2 2-4.5 0-6-6z"/>
+          <path d="M12 12c-2.5-3.5-5-3.5-7-1a5 5 0 0 0 1 7c2 2 4.5 0 6-6z"/>
+        </svg>
+      </div>
+      <span class="category-label">עלים וירוקים</span>
+    </div>
+
+    <div class="category-card" onclick="selectCategory(this, 'roots')">
+      <div class="category-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18.8 5.2c-1.8-1.8-4.5-1.8-6.3 0L3.8 13.9c-.8.8-.8 2 0 2.8l3.5 3.5c.8.8 2 .8 2.8 0l8.7-8.7c1.7-1.8 1.7-4.5 0-6.3z"/>
+          <path d="M10 9l5 5"/>
+          <path d="M5.5 18.5l-2 2"/>
+        </svg>
+      </div>
+      <span class="category-label">גזרים ושורשים</span>
+    </div>
+  </div>
+
+  <!-- Farm marquee ticker — above map/grid -->
+  <div class="farm-marquee-bar" aria-label="משקים פעילים באזורך">
+    <span class="farm-marquee-label">משקים פעילים:</span>
+    <div class="farm-marquee-track" id="farm-marquee-track">
+      <!-- doubled for seamless CSS loop -->
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משק מלמד (כפר ויתקין) — ירקות ישר מהשדה</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>בוסתן חרוצים — עגבניות עם אופי</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>החווה הירוקה — עלים ירוקים רעננים</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משק שחל (אביחיל) — גזר ושורשים טריים</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>אורגני עמק חפר — מגוון עונתי ללא ריסוס</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משפחת לוי — עשבי תיבול ופלפלים</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>גינת הכפר (חרוצים) — עלי בייבי ורוקט</div>
+      <!-- duplicate for seamless loop -->
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משק מלמד (כפר ויתקין) — ירקות ישר מהשדה</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>בוסתן חרוצים — עגבניות עם אופי</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>החווה הירוקה — עלים ירוקים רעננים</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משק שחל (אביחיל) — גזר ושורשים טריים</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>אורגני עמק חפר — מגוון עונתי ללא ריסוס</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משפחת לוי — עשבי תיבול ופלפלים</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>גינת הכפר (חרוצים) — עלי בייבי ורוקט</div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <main class="market-content">
+    
+    <!-- Grid view -->
+    <div class="products-grid" id="products-grid">
+      <!-- Dynamically filled -->
+    </div>
+
+    <!-- Map view -->
+    <div class="map-view-container" id="map-container" style="display:none; flex:1; min-height:480px; position:relative;">
+      <div id="map" style="width:100%; height:100%; min-height:480px; border-radius:var(--r-xl); overflow:hidden;"></div>
+    </div>
+
+  </main>
+
+</div><!-- /app-container -->
+
+<!-- Cart Drawer Modal -->
+<div class="cart-drawer-overlay" id="cart-drawer-overlay" onclick="closeCartDrawer(event)">
+  <div class="cart-drawer">
+    <div class="drawer-handle"></div>
+    <div class="drawer-header">
+      <div class="drawer-title">סל הקניות שלי</div>
+      <button class="drawer-close" onclick="closeCartDrawer(null)">×</button>
+    </div>
+
+    <div class="cart-items-list" id="cart-items-list">
+      <!-- Dynamically filled -->
+    </div>
+
+    <div class="cart-fields" id="cart-fields-sec" style="display:none;">
+      <div class="form-field">
+        <label class="form-label">טלפון ליצירת קשר</label>
+        <input class="form-input" id="cart-phone" type="tel" placeholder="050-0000000">
+      </div>
+      <div class="form-field">
+        <label class="form-label">אופן קבלת ההזמנה</label>
+        <select class="form-select" id="cart-delivery-type">
+          <option value="pickup">איסוף עצמי מהמשק</option>
+          <option value="delivery">משלוח עד הבית (בתיאום טלפוני)</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="form-label">הערות להזמנה</label>
+        <textarea class="form-textarea" id="cart-notes" placeholder="למשל: תבחרו לי גזרים מתוקים במיוחד!"></textarea>
+      </div>
+    </div>
+
+    <div class="cart-summary">
+      <span class="cart-total-lbl">סה״כ לתשלום:</span>
+      <span class="cart-total-val" id="cart-total-val">₪0</span>
+    </div>
+
+    <button class="checkout-btn" id="checkout-btn" onclick="submitOrder()" disabled>סל הקניות ריק</button>
+  </div>
+</div>
+
+<!-- Order Success Screen -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-card">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;color:var(--color-accent);"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2 class="success-title">ההזמנה נשלחה בהצלחה!</h2>
+    <p class="success-text">הפרטים הועברו ישירות לחקלאי. הוא ייצור איתך קשר בהקדם לתיאום משלוח/איסוף ותשלום.</p>
+    <button class="success-btn" onclick="closeSuccessOverlay()">חזרה לשוק</button>
+  </div>
+</div>
+
+<div class="confetti-wrap" id="confetti-wrap"></div>
+
+<script>
+// ══════════════════════════════════
+//  DATA & STATE
+// ══════════════════════════════════
+const WEBHOOK_URL = ""; // יוגדר בעתיד ע"י המשתמש
+
+const PRODUCTS = [
+  {
+    id: 1,
+    name: "עגבנייה עם אופי",
+    farmer: "משק מלמד (עוז)",
+    town: "כפר ויתקין",
+    region: "עמק חפר",
+    category: "vegetables",
+    price: 9,
+    unit: "ק\"ג",
+    desc: "עגבנייה אמיתית בטעם של פעם, לא עגולה מושלמת של סופר אלא מפוצצת במיץ ואופי.",
+    badge: "מבוקש",
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 5c0-1.5 1-2 1-2s-1.5.5-2 1.5"/><path d="M9 5c1 .5 2 0 3-1"/><path d="M15 5c-1 .5-2 0-3-1"/></svg>`
+  },
+  {
+    id: 2,
+    name: "מלפפון עקום",
+    farmer: "משק מלמד (עוז)",
+    town: "כפר ויתקין",
+    region: "עמק חפר",
+    category: "vegetables",
+    price: 6,
+    unit: "ק\"ג",
+    desc: "עקום, פריך וריחני. מתיקות טבעית שנעלמת כשמיישרים אותם במפעל.",
+    badge: "הכי טרי",
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-2.5-2.5-2.5-6.5 0-9s6.5-2.5 9 0l6 6c2.5 2.5 2.5 6.5 0 9s-6.5 2.5-9 0l-6-6z"/><path d="M8.5 9.5c.3-.3.7-.3 1 0"/><path d="M11.5 12.5c.3-.3.7-.3 1 0"/></svg>`
+  },
+  {
+    id: 3,
+    name: "גזר שמח",
+    farmer: "משק שדה (נטע)",
+    town: "חרוצים",
+    region: "דרום השרון",
+    category: "roots",
+    price: 5,
+    unit: "ק\"ג",
+    desc: "מתוק במיוחד, נשלף הבוקר מהאדמה החולית של השרון. מצוין לנשנוש או למיץ.",
+    badge: "מומלץ",
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18.8 5.2c-1.8-1.8-4.5-1.8-6.3 0L3.8 13.9c-.8.8-.8 2 0 2.8l3.5 3.5c.8.8 2 .8 2.8 0l8.7-8.7c1.7-1.8 1.7-4.5 0-6.3z"/><path d="M10 9l5 5"/><path d="M5.5 18.5l-2 2"/></svg>`
+  },
+  {
+    id: 4,
+    name: "צרור חסה פריכה",
+    farmer: "משק מלמד (עוז)",
+    town: "כפר ויתקין",
+    region: "עמק חפר",
+    category: "greens",
+    price: 8,
+    unit: "יח'",
+    desc: "חסה הידרופונית נקייה, פריכה ברמה ששומעים בכל ביס. נקטפת עם השורש.",
+    badge: "",
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 12c2.5-3.5 5-3.5 7-1a5 5 0 0 1-1 7c-2 2-4.5 0-6-6z"/><path d="M12 12c-2.5-3.5-5-3.5-7-1a5 5 0 0 0 1 7c2 2 4.5 0 6-6z"/></svg>`
+  },
+  {
+    id: 5,
+    name: "עלי תרד בלאדי",
+    farmer: "משק שדה (נטע)",
+    town: "חרוצים",
+    region: "דרום השרון",
+    category: "greens",
+    price: 7,
+    unit: "צרור",
+    desc: "עלים בשרניים בטעם עמוק ועשיר. מושלם לבישול, שייקים או סלט ירוק מרענן.",
+    badge: "אורגני",
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 8c0-3.5 2.5-6 5-6s4 3 2 6c-2.5 3-5 1.5-7 0z"/><path d="M12 8c0-3.5-2.5-6-5-6s-4 3-2 6c2.5 3 5 1.5 7 0z"/></svg>`
+  },
+  {
+    id: 6,
+    name: "סלק מתוק מהאדמה",
+    farmer: "משק שדה (נטע)",
+    town: "חרוצים",
+    region: "דרום השרון",
+    category: "roots",
+    price: 6,
+    unit: "ק\"ג",
+    desc: "סלקים קטנים ומרוכזים, עמוסים במתיקות אדמתית ובריאות. נהדרים לצלייה בתנור.",
+    badge: "",
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18.8 5.2c-1.8-1.8-4.5-1.8-6.3 0L3.8 13.9c-.8.8-.8 2 0 2.8l3.5 3.5c.8.8 2 .8 2.8 0l8.7-8.7c1.7-1.8 1.7-4.5 0-6.3z"/><path d="M13 6l5 5"/></svg>`
+  },
+  {
+    id: 7,
+    name: "עגבנייה עם אופי",
+    farmer: "משק האורגני (תמר)",
+    town: "כפר ויתקין",
+    region: "עמק חפר",
+    category: "vegetables",
+    price: 10,
+    unit: "ק\"ג",
+    desc: "עגבניות שרי תמר בגידול אורגני מלא, מתוקות כמו סוכריות ישירות מהמשק של תמר.",
+    badge: "אורגני",
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 5c0-1.5 1-2 1-2s-1.5.5-2 1.5"/><path d="M9 5c1 .5 2 0 3-1"/><path d="M15 5c-1 .5-2 0-3-1"/></svg>`
+  },
+  {
+    id: 8,
+    name: "עלי תרד בלאדי",
+    farmer: "משק האורגני (תמר)",
+    town: "כפר ויתקין",
+    region: "עמק חפר",
+    category: "greens",
+    price: 8,
+    unit: "צרור",
+    desc: "צרור ענק של תרד בלאדי טבעי, שטוף ונקי, נקטף ידנית בשעות הבוקר המוקדמות.",
+    badge: "אורגני",
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 8c0-3.5 2.5-6 5-6s4 3 2 6c-2.5 3-5 1.5-7 0z"/><path d="M12 8c0-3.5-2.5-6-5-6s-4 3-2 6c2.5 3 5 1.5 7 0z"/></svg>`
+  },
+  {
+    id: 9,
+    name: "גזר שמח",
+    farmer: "משק האורגני (תמר)",
+    town: "כפר ויתקין",
+    region: "עמק חפר",
+    category: "roots",
+    price: 6,
+    unit: "ק\"ג",
+    desc: "גזרים צבעוניים אורגניים - כתום, סגול וצהוב. חוויה של טעמים וצבעים לילדים ולסלטים.",
+    badge: "אורגני",
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18.8 5.2c-1.8-1.8-4.5-1.8-6.3 0L3.8 13.9c-.8.8-.8 2 0 2.8l3.5 3.5c.8.8 2 .8 2.8 0l8.7-8.7c1.7-1.8 1.7-4.5 0-6.3z"/><path d="M10 9l5 5"/><path d="M5.5 18.5l-2 2"/></svg>`
+  },
+  {
+    id: 10,
+    name: "מלפפון עקום",
+    farmer: "הגינה של ארז",
+    town: "חרוצים",
+    region: "דרום השרון",
+    category: "vegetables",
+    price: 7,
+    unit: "ק\"ג",
+    desc: "מלפפונים קטנים ומוצקים במיוחד מהגינה של ארז, מושלמים גם לכבישה עצמית.",
+    badge: "טבעי לגמרי",
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-2.5-2.5-2.5-6.5 0-9s6.5-2.5 9 0l6 6c2.5 2.5 2.5 6.5 0 9s-6.5 2.5-9 0l-6-6z"/><path d="M8.5 9.5c.3-.3.7-.3 1 0"/><path d="M11.5 12.5c.3-.3.7-.3 1 0"/></svg>`
+  },
+  {
+    id: 11,
+    name: "צרור חסה פריכה",
+    farmer: "הגינה של ארז",
+    town: "חרוצים",
+    region: "דרום השרון",
+    category: "greens",
+    price: 7,
+    unit: "יח'",
+    desc: "חסה סלנובה אדומה וירוקה, מתוקה ורכה במיוחד, נקטפת על פי הזמנה בלבד.",
+    badge: "טרי מהבוקר",
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 12c2.5-3.5 5-3.5 7-1a5 5 0 0 1-1 7c-2 2-4.5 0-6-6z"/><path d="M12 12c-2.5-3.5-5-3.5-7-1a5 5 0 0 0 1 7c2 2 4.5 0 6-6z"/></svg>`
+  },
+  {
+    id: 12,
+    name: "סלק מתוק מהאדמה",
+    farmer: "הגינה של ארז",
+    town: "חרוצים",
+    region: "דרום השרון",
+    category: "roots",
+    price: 5,
+    unit: "ק\"ג",
+    desc: "סלק אדום סוכר ישיר מהאדמה, פשוט לשטוף ולבשל או לאפות. פצצת אנרגיה.",
+    badge: "",
+    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18.8 5.2c-1.8-1.8-4.5-1.8-6.3 0L3.8 13.9c-.8.8-.8 2 0 2.8l3.5 3.5c.8.8 2 .8 2.8 0l8.7-8.7c1.7-1.8 1.7-4.5 0-6.3z"/><path d="M13 6l5 5"/></svg>`
+  }
+];
+
+let currentRegion = 'all';
+let currentCategory = 'all';
+let selectedFarmerFilter = null;
+let cart = []; // Array of { product: Object, qty: Number }
+let isMapView = false;
+
+// ══════════════════════════════════
+//  INITIALIZATION & RENDER
+// ══════════════════════════════════
+function renderProducts() {
+  const grid = document.getElementById('products-grid');
+  grid.innerHTML = '';
+
+  const filtered = PRODUCTS.filter(p => {
+    // Region Filter
+    if (currentRegion !== 'all' && p.region !== currentRegion) return false;
+    // Category Filter
+    if (currentCategory !== 'all' && p.category !== currentCategory) return false;
+    // Farmer Map Filter
+    if (selectedFarmerFilter && p.farmer !== selectedFarmerFilter) return false;
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div style="grid-column: span 2; text-align:center; padding:3rem 1rem; color:var(--text-3); font-weight:700;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;color:var(--text-3);margin:0 auto 1rem;display:block;"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+      אין מוצרים תואמים לסינון שבחרתם.
+    </div>`;
+    return;
+  }
+
+  filtered.forEach(p => {
+    const cartItem = cart.find(item => item.product.id === p.id);
+    const inCartQty = cartItem ? cartItem.qty : 0;
+
+    let badgeHtml = '';
+    if (p.badge) {
+      let iconSvg = '';
+      if (p.badge === 'מבוקש') {
+        iconSvg = `<svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;display:inline-block;margin-left:3px;vertical-align:middle;"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" fill="currentColor"/></svg>`;
+      } else if (p.badge === 'הכי טרי' || p.badge === 'אורגני' || p.badge === 'טרי מהבוקר') {
+        iconSvg = `<svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;display:inline-block;margin-left:3px;vertical-align:middle;"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.58 1 9.3A7 7 0 0 1 11 20z"/><path d="M19 2c-3 3-6.13 6-9 9"/></svg>`;
+      } else if (p.badge === 'מומלץ') {
+        iconSvg = `<svg class="badge-icon" viewBox="0 0 24 24" fill="currentColor" style="width:10px;height:10px;display:inline-block;margin-left:3px;vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+      }
+      badgeHtml = `<span class="product-badge">${iconSvg}${p.badge}</span>`;
+    }
+
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.innerHTML = `
+      <div class="product-visual">
+        ${badgeHtml}
+        ${p.svg}
+      </div>
+      <div class="product-title">${p.name}</div>
+      <div class="product-farmer">
+        <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-left:4px;color:var(--color-primary);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        ${p.farmer} • ${p.town}
+      </div>
+      <div class="product-bottom">
+        <div class="product-price">₪${p.price} / ${p.unit}</div>
+        <div class="action-container" id="action-p-${p.id}">
+          ${inCartQty > 0 ? 
+            `<div class="qty-selector">
+              <button class="qty-btn" onclick="changeQty(${p.id}, -1)">-</button>
+              <span class="qty-val">${inCartQty}</span>
+              <button class="qty-btn" onclick="changeQty(${p.id}, 1)">+</button>
+             </div>` : 
+            `<button class="add-to-cart-btn" onclick="addToCart(${p.id})">הוסף לסל</button>`
+          }
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function selectRegion(el, val) {
+  document.querySelectorAll('.region-pill').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  currentRegion = val;
+  selectedFarmerFilter = null; // Clear farmer filter when region changes
+  
+  if (isMapView && map) {
+    seedMarkers();
+  }
+  renderProducts();
+}
+
+function selectCategory(el, val) {
+  document.querySelectorAll('.category-card').forEach(b => b.classList.remove('active'));
+  el.closest('.category-card').classList.add('active');
+  currentCategory = val;
+  renderProducts();
+}
+
+function filterByFarmer(farmerName) {
+  selectedFarmerFilter = farmerName;
+  toggleMapView(false); // switch back to list view
+  
+  // Highlight "all" categories and let products render
+  renderProducts();
+  
+  // Add a helper header or visual indicator to clear filter
+  const grid = document.getElementById('products-grid');
+  const clearBanner = document.createElement('div');
+  clearBanner.style.cssText = 'grid-column: span 2; background:var(--green-100); color:var(--green-800); padding:10px 14px; border-radius:var(--r-md); font-size:12px; font-weight:700; display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;';
+  clearBanner.innerHTML = `<span>מציג תוצרת של ${farmerName} בלבד</span><span style="cursor:pointer; text-decoration:underline;" onclick="clearFarmerFilter()">הצג את כל החקלאים ×</span>`;
+  grid.insertBefore(clearBanner, grid.firstChild);
+}
+
+function clearFarmerFilter() {
+  selectedFarmerFilter = null;
+  renderProducts();
+}
+
+// ══════════════════════════════════
+//  CART WORKFLOW
+// ══════════════════════════════════
+function addToCart(productId) {
+  const prod = PRODUCTS.find(p => p.id === productId);
+  if (!prod) return;
+
+  cart.push({ product: prod, qty: 1 });
+  updateCartBadge();
+  renderProducts();
+}
+
+function changeQty(productId, diff) {
+  const idx = cart.findIndex(item => item.product.id === productId);
+  if (idx === -1) return;
+
+  cart[idx].qty += diff;
+  if (cart[idx].qty <= 0) {
+    cart.splice(idx, 1);
+  }
+
+  updateCartBadge();
+  renderProducts();
+  if (document.getElementById('cart-drawer-overlay').classList.contains('open')) {
+    renderCartItems();
+  }
+}
+
+function updateCartBadge() {
+  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+  const badge = document.getElementById('cart-badge-count');
+  if (totalItems > 0) {
+    badge.textContent = totalItems;
+    badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function openCartDrawer() {
+  document.getElementById('cart-drawer-overlay').classList.add('open');
+  renderCartItems();
+}
+
+function closeCartDrawer(e) {
+  if (e === null || e.target === document.getElementById('cart-drawer-overlay')) {
+    document.getElementById('cart-drawer-overlay').classList.remove('open');
+  }
+}
+
+function renderCartItems() {
+  const list = document.getElementById('cart-items-list');
+  const fields = document.getElementById('cart-fields-sec');
+  const btn = document.getElementById('checkout-btn');
+  const totalVal = document.getElementById('cart-total-val');
+  
+  list.innerHTML = '';
+  
+  if (cart.length === 0) {
+    list.innerHTML = `
+      <div class="empty-cart-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;color:var(--text-3);margin:0 auto 0.5rem;display:block;"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <p>סל הקניות שלכם ריק כרגע.</p>
+        <p style="font-size:11px; margin-top:4px;">הוסיפו מוצרים טריים מהשוק כדי להתחיל.</p>
+      </div>
+    `;
+    fields.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'סל הקניות ריק';
+    totalVal.textContent = '₪0';
+    return;
+  }
+
+  fields.style.display = 'flex';
+  btn.disabled = false;
+  btn.textContent = 'בצע הזמנה לחקלאי';
+
+  let total = 0;
+  cart.forEach(item => {
+    const itemTotal = item.product.price * item.qty;
+    total += itemTotal;
+    
+    const row = document.createElement('div');
+    row.className = 'cart-item';
+    row.innerHTML = `
+      <div class="cart-item-info">
+        <div class="cart-item-title">${item.product.name}</div>
+        <div class="cart-item-sub">${item.product.farmer} • ${item.product.town}</div>
+      </div>
+      <div class="qty-selector" style="margin-left: 1rem;">
+        <button class="qty-btn" onclick="changeQty(${item.product.id}, -1)">-</button>
+        <span class="qty-val">${item.qty}</span>
+        <button class="qty-btn" onclick="changeQty(${item.product.id}, 1)">+</button>
+      </div>
+      <div class="cart-item-price">₪${itemTotal}</div>
+    `;
+    list.appendChild(row);
+  });
+
+  totalVal.textContent = `₪${total}`;
+}
+
+async function submitOrder() {
+  const phone = document.getElementById('cart-phone').value.trim();
+  const deliveryType = document.getElementById('cart-delivery-type').value;
+  const notes = document.getElementById('cart-notes').value.trim();
+
+  if (!phone || phone.length < 9) {
+    alert('נא להזין מספר טלפון תקין ליצירת קשר.');
+    return;
+  }
+
+  const total = cart.reduce((sum, item) => sum + (item.product.price * item.qty), 0);
+  
+  const data = {
+    type: 'buyer_order',
+    phone: phone,
+    deliveryType: deliveryType === 'pickup' ? 'איסוף עצמי' : 'משלוח עד הבית',
+    notes: notes,
+    items: cart.map(item => ({
+      id: item.product.id,
+      name: item.product.name,
+      price: item.product.price,
+      qty: item.qty,
+      unit: item.product.unit,
+      farmer: item.product.farmer,
+      town: item.product.town
+    })),
+    total: total,
+    timestamp: new Date().toISOString()
+  };
+
+  console.log("%c[גזרוני MOCK Sheets Webhook] הזמנת קונה חדשה:", "color: #1a3f8f; font-weight: bold; font-size: 14px;", data);
+
+  if (WEBHOOK_URL) {
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+    } catch (err) {
+      console.error("Webhook error:", err);
+    }
+  }
+
+  // Clear state
+  cart = [];
+  updateCartBadge();
+  document.getElementById('cart-drawer-overlay').classList.remove('open');
+  renderProducts();
+
+  // Show Success Screen & Confetti
+  document.getElementById('success-overlay').classList.add('open');
+  launchConfetti();
+}
+
+function closeSuccessOverlay() {
+  document.getElementById('success-overlay').classList.remove('open');
+}
+
+// ══════════════════════════════════
+//  MAP VIEW TOGGLE
+// ══════════════════════════════════
+function toggleMapView(forceState) {
+  isMapView = (forceState !== undefined) ? forceState : !isMapView;
+  
+  const grid = document.getElementById('products-grid');
+  const mapCont = document.getElementById('map-container');
+  const btn = document.getElementById('map-toggle');
+  const hero = document.getElementById('market-hero-sec');
+  const categories = document.getElementById('categories-sec');
+
+  if (isMapView) {
+    grid.style.display = 'none';
+    categories.style.display = 'none';
+    mapCont.style.display = 'block';
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>
+      <span>הצג רשימה</span>
+    `;
+    
+    // Trigger map resize event
+    if (map) {
+      setTimeout(() => {
+        google.maps.event.trigger(map, 'resize');
+        var centerCoords = { lat: 32.31, lng: 34.87 };
+        map.setCenter(centerCoords);
+        seedMarkers();
+      }, 50);
+    }
+  } else {
+    grid.style.display = 'grid';
+    categories.style.display = 'flex';
+    mapCont.style.display = 'none';
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+      <span>הצג מפה</span>
+    `;
+  }
+}
+
+// ══════════════════════════════════
+//  GOOGLE MAPS API CALLBACK
+// ══════════════════════════════════
+var map;
+var markers = [];
+
+function initMap() {
+  var centerCoords = { lat: 32.31, lng: 34.87 };
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: centerCoords,
+    zoom: 11,
+    styles: [
+      { "featureType": "landscape", "elementType": "all", "stylers": [{ "color": "#f2efe9" }] },
+      { "featureType": "poi.park", "elementType": "all", "stylers": [{ "color": "#d8ebd3" }] },
+      { "featureType": "road", "elementType": "all", "stylers": [{ "saturation": -100 }, { "lightness": 45 }] },
+      { "featureType": "water", "elementType": "all", "stylers": [{ "color": "#c4e3f3" }] }
+    ]
+  });
+
+  seedMarkers();
+}
+
+function seedMarkers() {
+  markers.forEach(function(m){ m.setMap(null); });
+  markers = [];
+
+  var farmers = [
+    { name: "משק מלמד (עוז)", town: "כפר ויתקין", region: "עמק חפר", lat: 32.3831, lng: 34.8697, crops: ["עגבנייה עם אופי", "מלפפון עקום", "צרור חסה פריכה"] },
+    { name: "משק שדה (נטע)", town: "חרוצים", region: "דרום השרון", lat: 32.2356, lng: 34.8778, crops: ["גזר שמח", "עלי תרד בלאדי", "סלק מתוק מהאדמה"] },
+    { name: "משק האורגני (תמר)", town: "כפר ויתקין", region: "עמק חפר", lat: 32.3875, lng: 34.8665, crops: ["עגבנייה עם אופי", "עלי תרד בלאדי", "גזר שמח"] },
+    { name: "הגינה של ארז", town: "חרוצים", region: "דרום השרון", lat: 32.2321, lng: 34.8812, crops: ["מלפפון עקום", "צרור חסה פריכה", "סלק מתוק מהאדמה"] }
+  ];
+
+  farmers.forEach(function(f) {
+    if (currentRegion !== 'all' && f.region !== currentRegion) return;
+
+    var marker = new google.maps.Marker({
+      position: { lat: f.lat, lng: f.lng },
+      map: map,
+      title: f.name,
+      icon: {
+        url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
+          '<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="%232D5A1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3" fill="%23A5D96A"></circle></svg>'
+        ),
+        scaledSize: new google.maps.Size(38, 38)
+      }
+    });
+
+    var content = '<div style="direction:rtl; text-align:right; font-family:\'Rubik\',sans-serif; padding:4px">' +
+      '<h4 style="color:var(--green-800); margin:0 0 4px 0; font-weight:800;">' + f.name + '</h4>' +
+      '<p style="font-size:12px; color:#555; margin:0 0 8px 0">מיקום: ' + f.town + ' (' + f.region + ')</p>' +
+      '<p style="font-size:11px; margin:0 0 8px 0"><b>גידולים:</b> ' + f.crops.join(', ') + '</p>' +
+      '<button onclick="filterByFarmer(\'' + f.name + '\')" style="background:var(--green-800); color:#fff; border:none; padding:5px 10px; font-size:11px; font-weight:700; border-radius:4px; cursor:pointer;">הצג תוצרת</button>' +
+      '</div>';
+
+    var infowindow = new google.maps.InfoWindow({
+      content: content
+    });
+
+    marker.addListener('click', function() {
+      infowindow.open(map, marker);
+    });
+
+    markers.push(marker);
+  });
+}
+
+// ══════════════════════════════════
+//  CONFETTI
+// ══════════════════════════════════
+const CONF_COLORS = ['#A5D96A', '#2D5A1B', '#f59e0b', '#1a3f8f', '#ef4444'];
+function launchConfetti(){
+  var wrap = document.getElementById('confetti-wrap');
+  wrap.innerHTML = '';
+  for(var i = 0; i < 48; i++){
+    (function(i){
+      setTimeout(function(){
+        var dot = document.createElement('div');
+        dot.className = 'conf-dot';
+        var size = 6 + Math.random() * 8;
+        dot.style.cssText = [
+          'width:' + size + 'px',
+          'height:' + size + 'px',
+          'left:' + (10 + Math.random() * 80) + '%',
+          'background:' + CONF_COLORS[Math.floor(Math.random() * CONF_COLORS.length)],
+          'animation-duration:' + (1.2 + Math.random() * 1.2) + 's',
+          'animation-delay:0s',
+          'border-radius:' + (Math.random() > 0.5 ? '50%' : '2px')
+        ].join(';');
+        wrap.appendChild(dot);
+        setTimeout(function(){ dot.remove(); }, 2600);
+      }, i * 18);
+    })(i);
+  }
+}
+
+// ══════════════════════════════════
+//  LOAD HANDLER
+// ══════════════════════════════════
+window.onload = function() {
+  renderProducts();
+
+  // If maps fail to load within 3 seconds, show fallback
+  setTimeout(function() {
+    if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+      var mapEl = document.getElementById('map');
+      if (mapEl) {
+        mapEl.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:2rem;text-align:center;background:#fff;color:var(--text-2);">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;color:var(--color-primary);margin:0 auto 1rem;display:block;"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>' +
+          '<h3 style="margin-bottom:0.5rem;color:var(--green-800)">מפת החקלאים אינה זמינה כרגע</h3>' +
+          '<p style="font-size:13px;color:var(--text-3);max-width:300px">לא ניתן היה לטעון את שירות המפות של גוגל. תוכל להמשיך להזמין כרגיל דרך רשימת המוצרים.</p>' +
+          '</div>';
+      }
+    }
+  }, 3000);
+};
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXsYBu5bML-Egery9Qa4KJNkOuSJiC2fA&callback=initMap" async defer></script>
+</body>
+</html>

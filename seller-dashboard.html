@@ -11,27 +11,40 @@
 /* ══════════════════════════════════════
    DESIGN TOKENS  (Deepstash × Gezroni)
 ══════════════════════════════════════ */
-:root{
-  --green-900:#1a3a08;
-  --green-800:#2D5A1B;
-  --green-600:#4a7c29;
-  --green-400:#A5D96A;
-  --green-100:#F0F7E8;
-  --green-50:#f7fcf2;
+:root {
+  --color-primary: #2D5A1B;
+  --color-on-primary: #FFFFFF;
+  --color-secondary: #8BC34A;
+  --color-accent: #C4834A;
+  --color-background: #f4f1eb;
+  --color-foreground: #0F172A;
+  --color-muted: #e8e4d9;
+  --color-border: #ded8cb;
+  --color-destructive: #DC2626;
+  --color-ring: #2D5A1B;
 
-  --bg:#f4f1eb;
-  --surface:#ffffff;
-  --dark:#1a1a1a;
-  --dark-card:#1C2B15;
-  --text-1:#1a1a1a;
-  --text-2:#555;
-  --text-3:#999;
+  /* Map old variables to new ones for backwards compatibility */
+  --green-900: #1B3B10;
+  --green-800: var(--color-primary);
+  --green-600: var(--color-secondary);
+  --green-400: var(--color-accent);
+  --green-100: var(--color-muted);
+  --green-50: #faf8f5;
 
-  --orange:#f59e0b;
-  --orange-pale:#fef3c7;
-  --red:#ef4444;
-  --red-pale:#fee2e2;
-  --blue:#1a3f8f;
+  --bg: var(--color-background);
+  --surface: #ffffff;
+  --dark: var(--color-foreground);
+  --dark-card: var(--color-primary);
+  --text-1: var(--color-foreground);
+  --text-2: #475569;
+  --text-3: #94a3b8;
+
+  --orange: #f59e0b;
+  --orange-pale: #fef3c7;
+  --red: var(--color-destructive);
+  --red-pale: #fee2e2;
+  --blue: #1d4ed8;
+  --blue-pale: #eff6ff;
 
   --spring: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -44,6 +57,13 @@
 
   --nav-h: 68px;
   --header-h: 60px;
+  
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+  --shadow-xl: 0 20px 25px rgba(0,0,0,0.15);
+  
+  --transition-smooth: 250ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ── RESET ── */
@@ -52,6 +72,26 @@ html{scroll-behavior:smooth}
 body{background:var(--bg);direction:rtl;min-height:100dvh;overflow-x:hidden;color:var(--text-1)}
 button{cursor:pointer;border:none;background:none;font-family:'Rubik',sans-serif}
 input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
+
+/* Crop SVG icon utilities */
+.crop-svg {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  display: inline-block;
+}
+.order-item .crop-svg {
+  margin-left: 6px;
+  width: 16px;
+  height: 16px;
+}
+.product-emoji .crop-svg {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* ══════════════════════════
    KEYFRAMES  (Deepstash set)
@@ -121,12 +161,14 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
 }
 .header-logo{display:flex;align-items:center;gap:9px}
 .header-logo-mark{
-  width:34px;height:34px;background:var(--green-800);
-  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  height:34px;display:flex;align-items:center;justify-content:center;
   transition:transform 0.3s var(--spring);
 }
 .header-logo-mark:hover{transform:rotate(-6deg) scale(1.1)}
-.header-logo-mark svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}
+.header-logo-mark img{
+  height:100%;width:auto;object-fit:contain;
+  border-radius:6px;
+}
 .header-logo-text{font-size:15px;font-weight:800;color:var(--text-1);letter-spacing:-0.3px}
 .header-logo-sub{font-size:10px;color:var(--text-3);font-weight:500}
 .icon-btn{
@@ -303,30 +345,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
 }
 .stat-action{font-size:10px;font-weight:600;color:var(--text-3);margin-top:4px;display:flex;align-items:center;gap:2px}
 
-/* Chart */
-.chart-card{
-  background:var(--surface);border-radius:var(--r-lg);
-  padding:1rem;
-  border:1px solid rgba(0,0,0,0.05);
-  box-shadow:0 2px 8px rgba(0,0,0,0.04);
-}
-.chart-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:0.85rem}
-.chart-total{font-size:22px;font-weight:900;color:var(--text-1);letter-spacing:-0.5px}
-.chart-subtitle{font-size:11px;color:var(--text-3)}
-.chart-bars{display:flex;align-items:flex-end;gap:5px;height:64px}
-.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-.chart-bar{
-  width:100%;border-radius:4px 4px 0 0;
-  background:var(--green-100);
-  transition:height 0.6s var(--spring);
-  position:relative;overflow:hidden;
-}
-.chart-bar.peak{background:var(--green-800)}
-.chart-bar::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(255,255,255,0.15) 0%,transparent 100%);
-}
-.chart-day{font-size:9px;font-weight:600;color:var(--text-3)}
+/* Lead metric stat — replaces financial chart */
 
 /* Quick Actions */
 .quick-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -363,6 +382,96 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
 /* section spacing */
 .section-gap{margin-top:1.1rem}
 
+/* Dark stat card variant */
+.stat-card--dark {
+  background: var(--color-primary);
+  border-color: transparent;
+}
+.stat-val--light { color: #fff; }
+.stat-lbl--light { color: rgba(255,255,255,0.6); }
+.stat-trend--light {
+  background: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.85);
+}
+.stat-card--hidden-mobile { display: none; }
+
+/* Desktop-only blocks */
+.desktop-only-block { display: none; }
+
+/* Chart legend */
+.chart-legend { display: flex; align-items: center; gap: 10px; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.legend-lbl { font-size: 11px; color: var(--text-3); font-weight: 600; }
+
+/* Weekly bar chart */
+.weekly-chart-card {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(0,0,0,0.06);
+  padding: 1.25rem 1.25rem 0.75rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 120px;
+  padding-bottom: 28px;
+  position: relative;
+}
+.bar-chart::after {
+  content: '';
+  position: absolute;
+  bottom: 28px; left: 0; right: 0;
+  height: 1px;
+  background: rgba(0,0,0,0.06);
+}
+.bar-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  gap: 4px;
+  position: relative;
+}
+.bar-group--active .bar-pair {
+  position: relative;
+}
+.bar-group--active .bar-pair::before {
+  content: '';
+  position: absolute;
+  inset: -4px -4px 0;
+  background: rgba(45, 90, 27, 0.05);
+  border-radius: 6px 6px 0 0;
+}
+.bar-pair {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  width: 100%;
+  justify-content: center;
+}
+.bar {
+  width: 10px;
+  height: var(--h, 50%);
+  border-radius: 4px 4px 0 0;
+  transition: height 0.6s var(--spring);
+}
+.bar--views { background: var(--color-secondary); }
+.bar--inquiries { background: var(--color-accent); opacity: 0.85; }
+.bar-label {
+  position: absolute;
+  bottom: 0;
+  font-size: 10px;
+  color: var(--text-3);
+  font-weight: 600;
+  height: 20px;
+  display: flex;
+  align-items: center;
+}
+
 /* ══════════════════════════
    ORDERS SCREEN
 ══════════════════════════ */
@@ -379,8 +488,8 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
 }
 .pill-tab:active{transform:scale(0.94)}
 .pill-tab.active{background:var(--green-800);color:#fff;border-color:var(--green-800)}
-.order-section{display:none}
-.order-section.active{display:block}
+.order-section{display:none;opacity:0}
+.order-section.active{display:block;animation:screenIn 0.28s var(--ease-out) both}
 .orders-list{padding:0 1rem;display:flex;flex-direction:column;gap:10px}
 .order-card{
   background:var(--surface);border-radius:var(--r-lg);
@@ -575,20 +684,38 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
 /* ══════════════════════════
    MODAL
 ══════════════════════════ */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,0.45);
-  z-index:100;display:none;align-items:flex-end;justify-content:center;
-  backdrop-filter:blur(4px);
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
-.modal-overlay.open{display:flex}
-.modal-sheet{
-  background:var(--surface);border-radius:var(--r-xl) var(--r-xl) 0 0;
-  padding:1.25rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom));
-  width:100%;max-width:430px;
-  animation:slideUp 0.35s var(--spring) both;
+.modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
-@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.modal-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 1.1rem}
+.modal-sheet {
+  background: var(--surface);
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  padding: 1.25rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom));
+  width: 100%;
+  max-width: 430px;
+  transform: translateY(100%);
+  transition: transform 0.35s var(--spring);
+}
+.modal-overlay.open .modal-sheet {
+  transform: translateY(0);
+}
+.modal-handle{width:36px;height:4px;background:#e0e0e0;border-radius:2px;margin:0 auto 1.1rem;cursor:pointer}
 .modal-title{font-size:17px;font-weight:900;color:var(--text-1);margin-bottom:1rem;letter-spacing:-0.3px}
 .form-field{margin-bottom:0.85rem}
 .form-label{font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:5px;display:block}
@@ -610,6 +737,306 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
 .btn-submit:hover{background:var(--green-900);transform:scale(1.01)}
 .btn-submit:active{transform:scale(0.97)}
 
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2) 50%, transparent);
+  transform: translateX(-100%);
+  animation: shimmer-btn 2.5s infinite;
+}
+@keyframes shimmer-btn {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ══════════════════════════════════════
+   DESKTOP MEDIA QUERIES (min-width: 1024px)
+   ══════════════════════════════════════ */
+@media (min-width: 1024px) {
+  /* ─── App shell ─── */
+  .app {
+    max-width: 1440px;
+    margin: 0 auto;
+    background: #f2f3f7;
+  }
+
+  /* ─── Top header: search bar + profile ─── */
+  .top-header {
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 1440px;
+    width: 100%;
+    height: 64px;
+    padding: 0 2rem 0 2rem;
+    background: #fff;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  /* Inject search bar via pseudo on header (we style an existing element) */
+  .top-header::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    height: 38px;
+    border-radius: 12px;
+    background: #f2f3f7;
+    border: 1px solid rgba(0,0,0,0.08);
+    pointer-events: none;
+  }
+  .header-logo-text { font-size: 16px; font-weight: 900; }
+  .header-logo-sub { font-size: 11px; }
+
+  /* ─── Sidebar (bottom-nav → right sidebar) ─── */
+  .bottom-nav {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: auto;
+    transform: none;
+    width: 240px;
+    height: 100dvh;
+    max-width: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    border-top: none;
+    border-left: 1px solid rgba(0,0,0,0.07);
+    background: #fff;
+    padding: 0;
+    gap: 0;
+    box-sizing: border-box;
+    z-index: 60;
+  }
+  /* Sidebar logo area — 64px tall matching header */
+  .bottom-nav::before {
+    content: 'מהשדה לשולחן';
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 24px;
+    height: 64px;
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--color-primary);
+    letter-spacing: -0.3px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    flex-shrink: 0;
+    background: #fff;
+  }
+  /* Nav items section */
+  .nav-item {
+    flex: 0 0 auto; /* override mobile flex:1 so items don't expand */
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 11px 20px 11px 16px;
+    gap: 12px;
+    border-radius: 12px;
+    margin: 2px 8px;
+    width: calc(100% - 16px);
+    box-sizing: border-box;
+    transition: background 0.2s ease, transform 0.2s var(--spring);
+  }
+  .nav-item:hover { background: #f4f6f0; }
+  .nav-item:active { transform: none; } /* override mobile scale */
+  .nav-item.active { background: #eef4e8; }
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    flex-shrink: 0;
+  }
+  .nav-item.active .nav-icon { stroke: var(--color-primary); transform: none; }
+  .nav-label {
+    font-size: 14px;
+    font-weight: 600;
+    text-align: right;
+    margin: 0;
+    flex: 1;
+  }
+  .nav-item.active .nav-label { color: var(--color-primary); font-weight: 700; }
+  .nav-indicator {
+    display: none; /* replaced by background highlight */
+  }
+  .nav-badge {
+    position: static;
+    margin-right: auto;
+    margin-left: 0;
+    background: #ef4444;
+    min-width: 20px;
+    height: 20px;
+    font-size: 10px;
+    animation: none;
+  }
+
+  @media (min-width: 1440px) {
+    .bottom-nav { right: calc(50% - 720px); }
+    .top-header {
+      left: calc(50% - 720px);
+      right: calc(50% - 720px);
+      transform: none;
+      max-width: 1440px;
+    }
+  }
+
+  /* ─── Content area ─── */
+  .screen-wrap {
+    margin-right: 240px;
+    padding-top: calc(64px + 28px);
+    padding-bottom: 40px;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  /* ─── HOME screen: Donezo-style grid ─── */
+
+  /* Show desktop-only elements */
+  .desktop-only-block { display: block; }
+  .stat-card--hidden-mobile { display: block; }
+
+  #screen-home .pad-lg {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    grid-template-rows: auto auto auto;
+    gap: 20px;
+    align-items: start;
+    padding: 0;
+  }
+  #screen-home .pad-lg > * { margin: 0 !important; }
+
+  /*
+    DOM order in #screen-home .pad-lg:
+    child 1 = .status-card (hero)
+    child 2 = .ticker-section (live activity)
+    child 3 = #stats-section (4 metrics)
+    child 4 = #weekly-chart-section (desktop only)
+    child 5 = quick actions section
+
+    Donezo layout:
+    Row 1: stats (full width)
+    Row 2 left: hero card | Row 2 right: ticker
+    Row 3 left: weekly chart | Row 3 right: quick actions
+  */
+
+  #screen-home .pad-lg > div:nth-child(3) { /* Stats → Row 1 full width */
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  #screen-home .pad-lg > div:nth-child(1) { /* Hero → Row 2 left */
+    grid-column: 1;
+    grid-row: 2;
+  }
+  #screen-home .pad-lg > div:nth-child(2) { /* Ticker → Row 2 right */
+    grid-column: 2;
+    grid-row: 2;
+  }
+  #screen-home .pad-lg > div:nth-child(4) { /* Weekly chart (child 4 in DOM) → wider col */
+    grid-column: 1;
+    grid-row: 3;
+  }
+  #screen-home .pad-lg > div:nth-child(5) { /* Quick actions (child 5 in DOM) → narrower col */
+    grid-column: 2;
+    grid-row: 3;
+  }
+
+  /* 4-stat row on desktop */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .stat-card {
+    padding: 1.1rem 1.25rem;
+    border-radius: var(--r-lg);
+  }
+  .stat-card--dark {
+    background: var(--color-primary);
+  }
+  .stat-val { font-size: 28px; }
+  .stat-lbl { font-size: 12px; margin-top: 4px; }
+
+  /* Status card on desktop: side-by-side info */
+  .status-card {
+    border-radius: var(--r-lg);
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .status-name { font-size: 22px; }
+
+  /* Ticker on desktop */
+  .ticker-section { height: 100%; }
+  .ticker-card {
+    border-radius: var(--r-lg);
+    min-height: 80px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* Chart card */
+  .weekly-chart-card { min-height: 180px; }
+  .bar-chart { height: 160px; }
+  .bar { width: 14px; }
+  .bar-pair { gap: 4px; }
+  .bar-chart { gap: 12px; }
+
+  /* Quick row on desktop: vertical list */
+  .quick-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .quick-card {
+    border-radius: var(--r-lg);
+  }
+
+  /* ─── Orders & Products: card grid ─── */
+  .screen-title-bar { padding: 0 0 1rem; }
+  .pill-tabs { padding: 0 0 1rem; }
+  .orders-list, .products-list {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+    gap: 16px;
+    padding: 0;
+  }
+  .fab {
+    bottom: 24px;
+    left: 40px;
+  }
+
+  /* ─── Profile screen: 2-column ─── */
+  /* Use .active selector so JS display:none still works (class selector wins over ID) */
+  #screen-profile.active {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 24px;
+    align-items: start;
+    padding: 0;
+  }
+  #screen-profile.active .profile-hero { grid-column: 1; grid-row: 1; margin: 0; }
+  #screen-profile.active .profile-stats { grid-column: 1; grid-row: 2; margin: 0; }
+  #screen-profile.active .profile-section { grid-column: 2; margin: 0 0 24px 0; }
+  #screen-profile.active .btn-logout { grid-column: 1; grid-row: 3; margin: 0; }
+
+  /* ─── Modal center ─── */
+  .modal-overlay { align-items: center; }
+  .modal-sheet {
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-xl);
+    animation: popIn 0.3s var(--spring) both;
+  }
+  .modal-handle { display: none; }
+}
 </style>
 </head>
 <body>
@@ -620,7 +1047,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
   <header class="top-header">
     <div class="header-logo">
       <div class="header-logo-mark">
-        <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/><path d="M8 12s1.5-2 4-2 4 2 4 2"/><path d="M12 10V7"/></svg>
+        <img src="logo.svg" alt="גזרוני">
       </div>
       <div>
         <div class="header-logo-text">מהשדה לשולחן</div>
@@ -642,7 +1069,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
 
         <!-- Hero card -->
         <div class="status-card">
-          <div class="status-greeting">🌿 שלום חזרה, ישראל</div>
+          <div class="status-greeting"><svg viewBox="0 0 24 24" class="crop-svg" style="color:var(--green-400);margin-left:4px;width:16px;height:16px;"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>שלום חזרה, ישראל</div>
           <div class="status-name">משק הירקות שלנו</div>
           <div class="status-meta">עמק חפר • נרשם לפיילוט בדצמבר 2024</div>
           <div class="status-actions">
@@ -669,41 +1096,99 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
           </div>
         </div>
 
-        <!-- Stats -->
-        <div class="section-gap">
+        <!-- Lead metrics -->
+        <div class="section-gap" id="stats-section">
           <div class="section-header">
-            <span class="section-title">סיכום השבוע</span>
+            <span class="section-title">חיבורים השבוע</span>
             <span class="section-link">הכל ←</span>
           </div>
           <div class="stats-row">
-            <div class="stat-card">
-              <div class="stat-val" id="stat-views">0</div>
-              <div class="stat-lbl">צפיות</div>
-              <div class="stat-action">→ יציב</div>
+            <div class="stat-card stat-card--dark">
+              <div class="stat-lbl stat-lbl--light">צפיות בפרופיל</div>
+              <div class="stat-val stat-val--light" id="stat-views">0</div>
+              <div class="stat-trend stat-trend--light">יציב →</div>
             </div>
             <div class="stat-card">
-              <div class="stat-val green">₪<span id="stat-revenue">0</span></div>
-              <div class="stat-lbl">הכנסות השבוע</div>
-              <div class="stat-trend">18%↑</div>
+              <div class="stat-lbl">קליקים</div>
+              <div class="stat-val" id="stat-clicks">0</div>
+              <div class="stat-trend">12%↑</div>
             </div>
             <div class="stat-card">
-              <div class="stat-val" id="stat-orders">0</div>
-              <div class="stat-lbl">הזמנות היום</div>
-              <div class="stat-trend">2+↑</div>
+              <div class="stat-lbl">פניות</div>
+              <div class="stat-val" id="stat-inquiries">0</div>
+              <div class="stat-trend">3+↑</div>
+            </div>
+            <div class="stat-card stat-card--hidden-mobile">
+              <div class="stat-lbl">הזמנות</div>
+              <div class="stat-val" id="stat-orders">2</div>
+              <div class="stat-trend" style="background:var(--orange-pale);color:#92400e;">ממתינות</div>
             </div>
           </div>
         </div>
 
-        <!-- Revenue chart -->
-        <div class="section-gap">
-          <div class="chart-card">
-            <div class="chart-header">
-              <div>
-                <div class="chart-total">₪1,230</div>
-                <div class="chart-subtitle">הכנסות 7 ימים</div>
+        <!-- Weekly chart (desktop only) -->
+        <div class="section-gap desktop-only-block" id="weekly-chart-section">
+          <div class="section-header">
+            <span class="section-title">פעילות שבועית</span>
+            <div class="chart-legend">
+              <span class="legend-dot" style="background:var(--color-secondary)"></span>
+              <span class="legend-lbl">צפיות</span>
+              <span class="legend-dot" style="background:var(--color-accent)"></span>
+              <span class="legend-lbl">פניות</span>
+            </div>
+          </div>
+          <div class="weekly-chart-card">
+            <div class="bar-chart">
+              <div class="bar-group">
+                <div class="bar-pair">
+                  <div class="bar bar--views" style="--h:55%"></div>
+                  <div class="bar bar--inquiries" style="--h:30%"></div>
+                </div>
+                <div class="bar-label">א׳</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-pair">
+                  <div class="bar bar--views" style="--h:70%"></div>
+                  <div class="bar bar--inquiries" style="--h:45%"></div>
+                </div>
+                <div class="bar-label">ב׳</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-pair">
+                  <div class="bar bar--views" style="--h:48%"></div>
+                  <div class="bar bar--inquiries" style="--h:20%"></div>
+                </div>
+                <div class="bar-label">ג׳</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-pair">
+                  <div class="bar bar--views" style="--h:88%"></div>
+                  <div class="bar bar--inquiries" style="--h:60%"></div>
+                </div>
+                <div class="bar-label">ד׳</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-pair">
+                  <div class="bar bar--views" style="--h:65%"></div>
+                  <div class="bar bar--inquiries" style="--h:38%"></div>
+                </div>
+                <div class="bar-label">ה׳</div>
+              </div>
+              <div class="bar-group bar-group--active">
+                <div class="bar-pair">
+                  <div class="bar bar--views" style="--h:100%"></div>
+                  <div class="bar bar--inquiries" style="--h:72%"></div>
+                </div>
+                <div class="bar-label">ו׳</div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-pair">
+                  <div class="bar bar--views" style="--h:40%"></div>
+                  <div class="bar bar--inquiries" style="--h:18%"></div>
+                </div>
+                <div class="bar-label">ש׳</div>
               </div>
             </div>
-            <div class="chart-bars" id="chart-bars"></div>
           </div>
         </div>
 
@@ -743,9 +1228,9 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
         <div class="screen-title">הזמנות</div>
       </div>
       <div class="pill-tabs">
-        <button class="pill-tab active" onclick="switchOrderTab(this,'otab-pending')">ממתינות <span style="background:rgba(255,255,255,0.25);padding:1px 5px;border-radius:999px;font-size:10px">2</span></button>
-        <button class="pill-tab" onclick="switchOrderTab(this,'otab-processing')">בטיפול</button>
-        <button class="pill-tab" onclick="switchOrderTab(this,'otab-done')">הושלמו</button>
+        <button class="pill-tab active" onclick="switchOrderTab(this,'otab-pending')">ממתינות <span class="tab-badge-pending" style="background:rgba(255,255,255,0.25);padding:1.5px 6px;border-radius:999px;font-size:10px;margin-right:4px">2</span></button>
+        <button class="pill-tab" onclick="switchOrderTab(this,'otab-processing')">בטיפול <span class="tab-badge-processing" style="background:rgba(255,255,255,0.25);padding:1.5px 6px;border-radius:999px;font-size:10px;margin-right:4px">1</span></button>
+        <button class="pill-tab" onclick="switchOrderTab(this,'otab-done')">הושלמו <span class="tab-badge-done" style="background:rgba(255,255,255,0.25);padding:1.5px 6px;border-radius:999px;font-size:10px;margin-right:4px;display:none">0</span></button>
       </div>
 
       <div class="order-section active" id="otab-pending">
@@ -759,8 +1244,8 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
               <div class="order-price">₪46</div>
             </div>
             <div class="order-items">
-              <div class="order-item">🍅 עגבניות שרי 2 ק"ג</div>
-              <div class="order-item">🥒 מלפפונים 1 ק"ג</div>
+              <div class="order-item"><svg class="crop-svg" style="color:var(--color-destructive);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="8"/><path d="M12 2v3M10 3s2.5 1.5 2 2M14 3s-2.5 1.5-2 2"/></svg> עגבניות שרי 2 ק"ג</div>
+              <div class="order-item"><svg class="crop-svg" style="color:var(--color-accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 19C10 19 14 15 19 10C21 8 21 4 19 3C17 2 13 2 11 4C6 9 5 14 5 19Z"/></svg> מלפפונים 1 ק"ג</div>
             </div>
             <div class="order-actions">
               <button class="btn-approve" onclick="approveOrder('order-1',this)">
@@ -779,9 +1264,9 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
               <div class="order-price">₪91</div>
             </div>
             <div class="order-items">
-              <div class="order-item">🥕 גזר 3 ק"ג</div>
-              <div class="order-item">🌿 עשבי תיבול × 2</div>
-              <div class="order-item">🧅 בצל 1 ק"ג</div>
+              <div class="order-item"><svg class="crop-svg" style="color:var(--color-secondary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 19C7 19 17 9 20 6C22 4 20 2 18 4C15 7 5 17 5 19Z"/><path d="M18 4l2-2M19 5l2-1M17 3l1-2"/></svg> גזר 3 ק"ג</div>
+              <div class="order-item"><svg class="crop-svg" style="color:var(--color-accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> עשבי תיבול × 2</div>
+              <div class="order-item"><svg class="crop-svg" style="color:#c084fc;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="14" r="7"/><path d="M12 7V2M8 4l4 3 4-3"/></svg> בצל 1 ק"ג</div>
             </div>
             <div class="order-actions">
               <button class="btn-approve" onclick="approveOrder('order-2',this)">
@@ -795,8 +1280,8 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
       </div>
 
       <div class="order-section" id="otab-processing">
-        <div style="padding:0 1rem">
-          <div class="order-card">
+        <div class="orders-list">
+          <div class="order-card" id="order-3">
             <div class="order-top">
               <div>
                 <div class="order-customer">יוסף לוי</div>
@@ -805,18 +1290,25 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
               <div class="order-price">₪62</div>
             </div>
             <div class="order-items">
-              <div class="order-item">🥬 חסה 2 יח'</div>
-              <div class="order-item">🥦 ברוקולי 1 יח'</div>
+              <div class="order-item"><svg class="crop-svg" style="color:var(--color-accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/><path d="M12 6c-2.5 0-4.5 2-4.5 4.5S9.5 15 12 15s4.5-2 4.5-4.5S14.5 6 12 6z"/></svg> חסה 2 יח'</div>
+              <div class="order-item"><svg class="crop-svg" style="color:var(--color-accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6c2.5 0 4-1.5 4-4H8c0 2.5 1.5 4 4 4z"/><path d="M12 6c-3.5 0-6.5 2.5-6.5 6s3 6.5 6.5 6.5 6.5-3 6.5-6.5-3-6-6.5-6z"/><path d="M12 18.5V22"/></svg> ברוקולי 1 יח'</div>
             </div>
-            <div><span class="order-status processing">בטיפול</span></div>
+            <div class="order-actions">
+              <button class="btn-approve btn-complete shimmer" onclick="completeOrder('order-3',this)">
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round"><path d="M20 6L9 17l-5-5"/></svg>
+                סיים טיפול
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="order-section" id="otab-done">
-        <div class="empty-orders">
-          <div class="empty-icon">✅</div>
-          <div>אין הזמנות שהושלמו היום</div>
+        <div class="orders-list">
+          <div class="empty-orders">
+            <div class="empty-icon"><svg viewBox="0 0 24 24" width="40" height="40" stroke="var(--color-accent)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+            <div style="margin-top:8px">אין הזמנות שהושלמו היום</div>
+          </div>
         </div>
       </div>
     </div>
@@ -829,7 +1321,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
       </div>
       <div class="products-list">
         <div class="product-card">
-          <div class="product-emoji">🍅</div>
+          <div class="product-emoji"><svg class="crop-svg" style="color:var(--color-destructive);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="8"/><path d="M12 2v3M10 3s2.5 1.5 2 2M14 3s-2.5 1.5-2 2"/></svg></div>
           <div class="product-info">
             <div class="product-name">עגבניות שרי</div>
             <div class="product-min">מינימום 500 גר'</div>
@@ -839,7 +1331,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
           <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this)"><span class="toggle-slider"></span></label>
         </div>
         <div class="product-card">
-          <div class="product-emoji">🥒</div>
+          <div class="product-emoji"><svg class="crop-svg" style="color:var(--color-accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 19C10 19 14 15 19 10C21 8 21 4 19 3C17 2 13 2 11 4C6 9 5 14 5 19Z"/></svg></div>
           <div class="product-info">
             <div class="product-name">מלפפונים</div>
             <div class="product-min">מינימום 1 ק"ג</div>
@@ -849,7 +1341,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
           <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this)"><span class="toggle-slider"></span></label>
         </div>
         <div class="product-card">
-          <div class="product-emoji">🥕</div>
+          <div class="product-emoji"><svg class="crop-svg" style="color:var(--color-secondary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 19C7 19 17 9 20 6C22 4 20 2 18 4C15 7 5 17 5 19Z"/><path d="M18 4l2-2M19 5l2-1M17 3l1-2"/></svg></div>
           <div class="product-info">
             <div class="product-name">גזר</div>
             <div class="product-min">מינימום 2 ק"ג</div>
@@ -859,7 +1351,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
           <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this)"><span class="toggle-slider"></span></label>
         </div>
         <div class="product-card">
-          <div class="product-emoji">🌿</div>
+          <div class="product-emoji"><svg class="crop-svg" style="color:var(--color-accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
           <div class="product-info">
             <div class="product-name">עשבי תיבול</div>
             <div class="product-min">אצווה שבועית</div>
@@ -869,7 +1361,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
           <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this)"><span class="toggle-slider"></span></label>
         </div>
         <div class="product-card" style="opacity:0.6">
-          <div class="product-emoji">🫑</div>
+          <div class="product-emoji"><svg class="crop-svg" style="color:var(--color-accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2c-.6 0-1.1.4-1.2 1C10.5 4.7 9 6 7 6c-2.8 0-5 2.2-5 5v3c0 4.4 3.6 8 8 8h4c4.4 0 8-3.6 8-8v-3c0-2.8-2.2-5-5-5-2 0-3.5-1.3-3.8-3-.1-.6-.6-1-1.2-1z"/></svg></div>
           <div class="product-info">
             <div class="product-name">פלפלים</div>
             <div class="product-min">עונה לא פעילה</div>
@@ -888,9 +1380,9 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
     <!-- ════ PROFILE ════ -->
     <div class="screen" id="screen-profile">
       <div class="profile-hero">
-        <div class="profile-avatar">🌾</div>
+        <div class="profile-avatar"><svg viewBox="0 0 24 24" width="36" height="36" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
         <div class="profile-name">ישראל כהן</div>
-        <div class="profile-loc">📍 עמק חפר, השרון</div>
+        <div class="profile-loc"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-left:3px;color:rgba(255,255,255,0.6);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>עמק חפר, השרון</div>
         <div class="profile-rating">
           <span class="profile-rating-stars">★★★★★</span>
           <span class="profile-rating-val">4.9</span>
@@ -904,8 +1396,8 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
           <div class="profile-stat-lbl">מוצרים</div>
         </div>
         <div class="profile-stat">
-          <div class="profile-stat-val">847</div>
-          <div class="profile-stat-lbl">₪ השבוע</div>
+          <div class="profile-stat-val">21</div>
+          <div class="profile-stat-lbl">פניות</div>
         </div>
         <div class="profile-stat">
           <div class="profile-stat-val">38</div>
@@ -916,7 +1408,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
       <div class="profile-section">
         <div class="profile-section-title">הגדרות</div>
         <div class="profile-row">
-          <div class="profile-item">
+          <div class="profile-item" onclick="openEditProfileModal()">
             <div class="profile-item-left">
               <div class="profile-item-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
               <span class="profile-item-label">עריכת פרופיל</span>
@@ -947,7 +1439,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
         </div>
       </div>
 
-      <button class="btn-logout" onclick="showToast('להתראות! 👋','')">התנתקות</button>
+      <button class="btn-logout" onclick="showToast('להתראות!','')">התנתקות</button>
     </div>
 
   </div><!-- /screen-wrap -->
@@ -1009,6 +1501,31 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
   </div>
 </div>
 
+<!-- Edit Profile Modal -->
+<div class="modal-overlay" id="edit-profile-modal" onclick="closeEditProfileModal(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">עריכת פרופיל חקלאי</div>
+    <div class="form-field">
+      <label class="form-label">שם מלא</label>
+      <input class="form-input" id="edit-profile-name" type="text" value="ישראל כהן">
+    </div>
+    <div class="form-field">
+      <label class="form-label">שם המשק</label>
+      <input class="form-input" id="edit-profile-farm" type="text" value="משק הירקות שלנו">
+    </div>
+    <div class="form-field">
+      <label class="form-label">אזור / מיקום</label>
+      <input class="form-input" id="edit-profile-loc" type="text" value="עמק חפר, השרון">
+    </div>
+    <div class="form-field">
+      <label class="form-label">גידולים עיקריים</label>
+      <input class="form-input" id="edit-profile-crops" type="text" value="עגבניות שרי, מלפפונים, גזר, ירוקים">
+    </div>
+    <button class="btn-submit" onclick="submitEditProfile()">שמור שינויים</button>
+  </div>
+</div>
+
 <script>
 // ══════════════════════════════════
 //  TAB SWITCHING
@@ -1044,36 +1561,151 @@ function switchOrderTab(btn, tabId){
 // ══════════════════════════════════
 //  APPROVE / DECLINE ORDERS
 // ══════════════════════════════════
+function updateOrderCounts() {
+  var pendingCount = document.querySelectorAll('#otab-pending .order-card').length;
+  var processingCount = document.querySelectorAll('#otab-processing .order-card').length;
+  var doneCount = document.querySelectorAll('#otab-done .order-card').length;
+  
+  // Tab badges
+  var pendingTabBadge = document.querySelector('.tab-badge-pending');
+  if (pendingTabBadge) {
+    pendingTabBadge.textContent = pendingCount;
+    pendingTabBadge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+  }
+  var processingTabBadge = document.querySelector('.tab-badge-processing');
+  if (processingTabBadge) {
+    processingTabBadge.textContent = processingCount;
+    processingTabBadge.style.display = processingCount > 0 ? 'inline-block' : 'none';
+  }
+  var doneTabBadge = document.querySelector('.tab-badge-done');
+  if (doneTabBadge) {
+    doneTabBadge.textContent = doneCount;
+    doneTabBadge.style.display = doneCount > 0 ? 'inline-block' : 'none';
+  }
+  
+  // Bottom navigation orders badge
+  var navBadge = document.querySelector('#nav-orders .nav-badge');
+  if (navBadge) {
+    navBadge.textContent = pendingCount || '';
+    navBadge.style.display = pendingCount > 0 ? 'flex' : 'none';
+  }
+
+  // Handle empty state placeholders for each tab
+  handleEmptyState('otab-pending', 'ממתינות', 'אין הזמנות חדשות כרגע');
+  handleEmptyState('otab-processing', 'בטיפול', 'אין הזמנות בטיפול כרגע');
+  handleEmptyState('otab-done', 'הושלמו', 'אין הזמנות שהושלמו היום');
+}
+
+function handleEmptyState(tabId, typeName, msg) {
+  var tabEl = document.getElementById(tabId);
+  if (!tabEl) return;
+  var listEl = tabEl.querySelector('.orders-list');
+  if (!listEl) return;
+  var cards = listEl.querySelectorAll('.order-card');
+  var emptyEl = listEl.querySelector('.empty-orders');
+  
+  if (cards.length === 0) {
+    if (!emptyEl) {
+      emptyEl = document.createElement('div');
+      emptyEl.className = 'empty-orders';
+      var iconSvg = '';
+      if (tabId === 'otab-done') {
+        iconSvg = '<svg viewBox="0 0 24 24" width="40" height="40" stroke="var(--color-accent)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+      } else if (tabId === 'otab-processing') {
+        iconSvg = '<svg viewBox="0 0 24 24" width="40" height="40" stroke="var(--orange)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+      } else {
+        iconSvg = '<svg viewBox="0 0 24 24" width="40" height="40" stroke="var(--color-primary)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto;"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>';
+      }
+      emptyEl.innerHTML = '<div class="empty-icon">' + iconSvg + '</div><div style="margin-top:8px">' + msg + '</div>';
+      listEl.appendChild(emptyEl);
+    }
+  } else {
+    if (emptyEl) {
+      emptyEl.remove();
+    }
+  }
+}
+
 function approveOrder(id, btn){
   var card = document.getElementById(id);
-  btn.textContent = '✓ אושר';
-  btn.style.background = 'var(--green-400)';
-  btn.style.color = 'var(--green-900)';
-  btn.disabled = true;
-  card.style.opacity = '0.6';
-  showToast('ההזמנה אושרה ✓', 'success');
+  if (!card) return;
+  
+  card.style.transition = 'all 0.4s var(--spring)';
+  card.style.transform = 'translateX(100%)';
+  card.style.opacity = '0';
+  
+  showToast('ההזמנה הועברה לטיפול', 'success');
+  
   setTimeout(function(){
-    card.style.transition = 'all 0.4s var(--spring)';
-    card.style.transform = 'translateX(100%)';
+    var actionsEl = card.querySelector('.order-actions');
+    if (actionsEl) {
+      actionsEl.innerHTML = '<button class="btn-approve btn-complete shimmer" onclick="completeOrder(\'' + id + '\', this)"><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round"><path d="M20 6L9 17l-5-5"/></svg> סיים טיפול</button>';
+    }
+    
+    card.remove();
+    
+    var processingList = document.querySelector('#otab-processing .orders-list');
+    if (processingList) {
+      var emptyState = processingList.querySelector('.empty-orders');
+      if (emptyState) emptyState.remove();
+      processingList.insertBefore(card, processingList.firstChild);
+    }
+    
+    card.style.transform = 'translateX(-100%)';
     card.style.opacity = '0';
-    setTimeout(function(){
-      card.remove();
-      // update badge
-      var pending = document.querySelectorAll('#otab-pending .order-card').length;
-      var badge = document.querySelector('#nav-orders .nav-badge');
-      if(badge) badge.textContent = pending || '';
-      if(!pending) badge && (badge.style.display='none');
-    }, 400);
-  }, 800);
+    void card.offsetWidth;
+    card.style.transform = 'none';
+    card.style.opacity = '1';
+    
+    updateOrderCounts();
+  }, 400);
+}
+
+function completeOrder(id, btn){
+  var card = document.getElementById(id);
+  if (!card) return;
+  
+  card.style.transition = 'all 0.4s var(--spring)';
+  card.style.transform = 'translateX(100%)';
+  card.style.opacity = '0';
+  
+  showToast('ההזמנה הושלמה בהצלחה!', 'success');
+  
+  setTimeout(function(){
+    var actionsEl = card.querySelector('.order-actions');
+    if (actionsEl) {
+      actionsEl.outerHTML = '<div><span class="order-status done">הושלמה</span></div>';
+    }
+    
+    card.remove();
+    var doneList = document.querySelector('#otab-done .orders-list');
+    if (doneList) {
+      var emptyState = doneList.querySelector('.empty-orders');
+      if (emptyState) emptyState.remove();
+      doneList.insertBefore(card, doneList.firstChild);
+    }
+    
+    card.style.transform = 'translateX(-100%)';
+    card.style.opacity = '0';
+    void card.offsetWidth;
+    card.style.transform = 'none';
+    card.style.opacity = '1';
+    
+    updateOrderCounts();
+  }, 400);
 }
 
 function declineOrder(id){
   var card = document.getElementById(id);
+  if (!card) return;
   card.style.transition = 'all 0.35s var(--spring)';
   card.style.transform = 'translateX(100%)';
   card.style.opacity = '0';
   showToast('ההזמנה נדחתה', 'error');
-  setTimeout(function(){ card.remove(); }, 350);
+  setTimeout(function(){ 
+    card.remove(); 
+    updateOrderCounts();
+  }, 350);
 }
 
 // ══════════════════════════════════
@@ -1086,7 +1718,7 @@ function toggleProduct(input){
     statusEl.textContent = 'פעיל';
     statusEl.className = 'product-status active';
     card.style.opacity = '1';
-    showToast('המוצר פעיל ✓', 'success');
+    showToast('המוצר פעיל', 'success');
   } else {
     statusEl.textContent = 'מושהה';
     statusEl.className = 'product-status inactive';
@@ -1096,7 +1728,7 @@ function toggleProduct(input){
 }
 
 // ══════════════════════════════════
-//  MODAL
+//  MODALS
 // ══════════════════════════════════
 function openAddModal(){
   document.getElementById('add-modal').classList.add('open');
@@ -1108,7 +1740,60 @@ function closeAddModal(e){
 }
 function submitNewProduct(){
   document.getElementById('add-modal').classList.remove('open');
-  showToast('המוצר נוסף בהצלחה! 🌱', 'success');
+  showToast('המוצר נוסף בהצלחה!', 'success');
+}
+
+function openEditProfileModal(){
+  // Seed current values from DOM
+  var nameEl = document.querySelector('.profile-name');
+  var statusNameEl = document.querySelector('.status-name');
+  var locEl = document.querySelector('.profile-loc');
+  
+  if (nameEl) document.getElementById('edit-profile-name').value = nameEl.textContent.trim();
+  if (statusNameEl) document.getElementById('edit-profile-farm').value = statusNameEl.textContent.trim();
+  if (locEl) document.getElementById('edit-profile-loc').value = locEl.textContent.trim();
+  
+  document.getElementById('edit-profile-modal').classList.add('open');
+}
+function closeEditProfileModal(e){
+  if(e.target === document.getElementById('edit-profile-modal')){
+    document.getElementById('edit-profile-modal').classList.remove('open');
+  }
+}
+function submitEditProfile(){
+  var name = document.getElementById('edit-profile-name').value.trim();
+  var farm = document.getElementById('edit-profile-farm').value.trim();
+  var loc = document.getElementById('edit-profile-loc').value.trim();
+  var crops = document.getElementById('edit-profile-crops').value.trim();
+  
+  if(!name || !farm || !loc){
+    showToast('נא למלא את כל השדות', 'error');
+    return;
+  }
+  
+  var greetingEl = document.querySelector('.status-greeting');
+  if (greetingEl) {
+    var firstName = name.split(' ')[0];
+    greetingEl.innerHTML = '<svg viewBox="0 0 24 24" class="crop-svg" style="color:var(--green-400);margin-left:4px;width:16px;height:16px;"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>שלום חזרה, ' + firstName;
+  }
+  
+  var statusNameEl = document.querySelector('.status-name');
+  if (statusNameEl) statusNameEl.textContent = farm;
+  
+  var statusMetaEl = document.querySelector('.status-meta');
+  if (statusMetaEl) statusMetaEl.textContent = loc + ' • נרשם לפיילוט בדצמבר 2024';
+  
+  var profNameEl = document.querySelector('.profile-name');
+  if (profNameEl) profNameEl.textContent = name;
+  
+  var profLocEl = document.querySelector('.profile-loc');
+  if (profLocEl) profLocEl.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-left:3px;color:rgba(255,255,255,0.6);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' + loc;
+  
+  var avatarEl = document.querySelector('.profile-avatar');
+  if (avatarEl) avatarEl.textContent = name.charAt(0);
+  
+  document.getElementById('edit-profile-modal').classList.remove('open');
+  showToast('הפרופיל עודכן בהצלחה!', 'success');
 }
 
 // ══════════════════════════════════
@@ -1144,51 +1829,43 @@ function animateCounter(el, from, to, prefix, suffix, duration){
 
 setTimeout(function(){
   animateCounter(document.getElementById('stat-views'), 0, 124, '', '', 900);
-  animateCounter(document.getElementById('stat-revenue'), 0, 847, '', '', 1100);
-  animateCounter(document.getElementById('stat-orders'), 0, 3, '', '', 700);
+  animateCounter(document.getElementById('stat-clicks'), 0, 31, '', '', 800);
+  animateCounter(document.getElementById('stat-inquiries'), 0, 9, '', '', 700);
+  updateOrderCounts();
 }, 300);
-
-// ══════════════════════════════════
-//  REVENUE CHART
-// ══════════════════════════════════
-(function(){
-  var days = ['א', 'ב', 'ג', 'ד', 'ה', 'ש', 'א'];
-  var vals = [180, 220, 95, 310, 140, 180, 105];
-  var max = Math.max.apply(null, vals);
-  var container = document.getElementById('chart-bars');
-  days.forEach(function(d, i){
-    var pct = Math.round((vals[i] / max) * 64);
-    var isPeak = vals[i] === max;
-    var wrap = document.createElement('div');
-    wrap.className = 'chart-bar-wrap';
-    var bar = document.createElement('div');
-    bar.className = 'chart-bar' + (isPeak ? ' peak' : '');
-    bar.style.height = '4px';
-    var lbl = document.createElement('div');
-    lbl.className = 'chart-day';
-    lbl.textContent = d;
-    wrap.appendChild(bar);
-    wrap.appendChild(lbl);
-    container.appendChild(wrap);
-    setTimeout(function(){ bar.style.height = pct + 'px'; }, 400 + i * 60);
-  });
-})();
 
 // ══════════════════════════════════
 //  LIVE TICKER
 // ══════════════════════════════════
 var TICKER_EVENTS = [
-  { text: 'דנה כהן הזמינה עגבניות שרי 2 ק"ג', sub: 'לפני 3 דקות • כפר סבא', badge: '₪46', icon: 'order' },
-  { text: 'יוסי לוי נתן לך 5 ⭐ על השירות', sub: 'ביקורת חדשה • לפני 12 דקות', badge: '5', icon: 'star' },
-  { text: 'מוצר חדש — עשבי תיבול זמין', sub: 'הוספת לרשימה • עכשיו', badge: '🌿', icon: 'product' },
-  { text: 'הזמנה הושלמה — שירה מזרחי', sub: 'ירקות מעורבים • ₪91', badge: '✓', icon: 'done' },
-  { text: '124 צפיות בפרופיל השבוע', sub: 'עלייה של 18% לעומת שבוע שעבר', badge: '↑', icon: 'stats' }
+  { text: 'צרכן מעמק חפר חיפש את המשק שלך', sub: 'לפני 4 דקות • כפר ויתקין', badge: 'חיפוש', icon: 'stats' },
+  { text: 'לחיצה על כפתור וואטסאפ ממשק הקונה', sub: 'ליצירת קשר ישיר • לפני 11 דקות', badge: 'קשר', icon: 'star' },
+  { text: 'פנייה על זמינות עגבניות שרי', sub: 'שאלה על יבול • לפני 18 דקות', badge: 'שאלה', icon: 'product' },
+  { text: 'לקוח ניווט למשק דרך האפליקציה', sub: 'ניווט ישיר לחווה • לפני 25 דקות', badge: 'ניווט', icon: 'done' },
+  { text: '124 צפיות בפרופיל המשק השבוע', sub: 'עלייה של 18% לעומת שבוע שעבר', badge: 'צפיות', icon: 'stats' }
 ];
 var tickerIdx = 0;
 var tickerText = document.getElementById('ticker-text');
 var tickerSub = document.getElementById('ticker-sub');
 var tickerBadge = document.getElementById('ticker-badge');
 var tickerCard = document.getElementById('ticker-card');
+
+function getTickerIcon(iconType) {
+  switch(iconType) {
+    case 'order':
+      return '<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="M9 12h6M9 16h4"/></svg>';
+    case 'star':
+      return '<svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+    case 'product':
+      return '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>';
+    case 'done':
+      return '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+    case 'stats':
+      return '<svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>';
+    default:
+      return '<svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>';
+  }
+}
 
 function updateTicker(){
   var ev = TICKER_EVENTS[tickerIdx];
@@ -1197,7 +1874,11 @@ function updateTicker(){
   setTimeout(function(){
     tickerText.textContent = ev.text;
     tickerSub.textContent = ev.sub;
-    tickerBadge.textContent = ev.badge;
+    tickerBadge.innerHTML = ev.badge;
+    var tickerIconEl = tickerCard.querySelector('.ticker-icon');
+    if (tickerIconEl) {
+      tickerIconEl.innerHTML = getTickerIcon(ev.icon);
+    }
     tickerCard.style.transition = 'all 0.35s cubic-bezier(0.16,1,0.3,1)';
     tickerCard.style.opacity = '1';
     tickerCard.style.transform = 'translateY(0)';
