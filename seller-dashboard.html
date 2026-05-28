@@ -49,6 +49,7 @@
 
   --nav-h: 68px;
   --header-h: 60px;
+  --page-nav-h: 46px;
 }
 
 /* ── RESET ── */
@@ -58,6 +59,71 @@ body{background:var(--bg);direction:rtl;min-height:100dvh;overflow-x:hidden;colo
 button{cursor:pointer;border:none;background:none;font-family:'Rubik',sans-serif}
 input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible{
+  outline:3px solid var(--orange);
+  outline-offset:3px;
+}
+
+.skip-link{
+  position:fixed;top:10px;right:10px;z-index:1000;
+  transform:translateY(-160%);
+  background:#fff;color:var(--green-900);
+  border:2px solid var(--green-800);
+  border-radius:var(--r-pill);
+  padding:10px 14px;font-weight:900;text-decoration:none;
+  box-shadow:0 12px 28px rgba(15,23,42,0.18);
+  transition:transform 0.18s var(--spring);
+}
+.skip-link:focus{transform:translateY(0)}
+body.a11y-large-text{font-size:112%}
+body.a11y-contrast{
+  --bg:#fff;--surface:#fff;--text-1:#000;--text-2:#1f2937;--text-3:#374151;
+  --green-800:#164b0b;--green-100:#e8f3de;--dark-card:#10220c;
+}
+body.a11y-contrast .card,
+body.a11y-contrast .top-header,
+body.a11y-contrast .global-page-nav,
+body.a11y-contrast .bottom-nav{border-color:#111827}
+body.a11y-underline a{text-decoration:underline;text-underline-offset:3px}
+body.a11y-reduced-motion *,
+body.a11y-reduced-motion *::before,
+body.a11y-reduced-motion *::after{
+  animation-duration:0.001ms!important;
+  animation-iteration-count:1!important;
+  transition-duration:0.001ms!important;
+  scroll-behavior:auto!important;
+}
+
+.accessibility-widget{position:fixed;left:16px;bottom:calc(var(--nav-h) + 16px);z-index:120;direction:rtl}
+.accessibility-toggle{
+  width:48px;height:48px;display:grid;place-items:center;border:2px solid rgba(255,255,255,0.88);
+  border-radius:50%;background:var(--green-800);color:#fff;box-shadow:0 12px 28px rgba(15,23,42,0.22);
+}
+.accessibility-toggle svg{width:24px;height:24px}
+.accessibility-panel{
+  position:absolute;left:0;bottom:58px;width:min(320px, calc(100vw - 32px));padding:14px;
+  border-radius:18px;background:#fff;border:1px solid rgba(15,23,42,0.14);
+  box-shadow:0 18px 46px rgba(15,23,42,0.22);display:none;color:#111827;
+}
+.accessibility-panel.open{display:block}
+.accessibility-title{font-size:15px;font-weight:900;margin-bottom:4px}
+.accessibility-note{font-size:12px;color:#475569;line-height:1.45;margin-bottom:10px}
+.accessibility-actions{display:grid;gap:8px}
+.accessibility-action{
+  min-height:40px;border-radius:12px;border:1px solid rgba(15,23,42,0.12);
+  background:#f8fafc;color:#111827;font-weight:800;font-size:12px;text-align:right;padding:9px 10px;
+}
+.accessibility-action.active{background:var(--green-800);color:#fff;border-color:var(--green-800)}
+
+:root{
+  --farm-silhouette:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1400 260'%3E%3Cg fill='%23143006'%3E%3Cpath d='M0 206h1400v54H0z'/%3E%3Cpath d='M70 204c48-31 91-48 140-50 30-1 61 4 93 15 37-39 95-56 151-44 37 8 69 28 91 55 54-34 118-48 186-40 50 6 98 25 140 56 42-42 103-68 170-68 74 0 141 32 184 82h175v50H0v-39c22-7 45-13 70-17z' opacity='.34'/%3E%3Cpath d='M210 190h132v-68l-66-42-66 42z'/%3E%3Cpath d='M236 190v-42h32v42zm48 0v-42h32v42z' fill='%231a3a08'/%3E%3Cpath d='M192 126l84-54 84 54-12 19-72-45-72 45z'/%3E%3Cpath d='M458 196h22V62h-22z'/%3E%3Cpath d='M469 40l13 74h-26zm0 0l-66 38 13 23zm0 0l66 38-13 23z'/%3E%3Cpath d='M620 194c0-36 29-65 65-65s65 29 65 65zM805 195c0-29 23-52 52-52s52 23 52 52z'/%3E%3Cpath d='M1026 194h168v-80l-84-48-84 48z'/%3E%3Cpath d='M1057 194v-48h35v48zm55 0v-48h35v48z' fill='%231a3a08'/%3E%3Cpath d='M1004 117l106-61 106 61-13 22-93-52-93 52z'/%3E%3Cpath d='M1227 199c16-23 35-34 58-34 19 0 34 8 46 22 16-10 34-13 53-8 5 2 11 4 16 6v75h-190c2-24 8-44 17-61z' opacity='.45'/%3E%3C/g%3E%3C/svg%3E");
+}
+
 /* ══════════════════════════
    KEYFRAMES  (Deepstash set)
 ══════════════════════════ */
@@ -66,8 +132,8 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
   100%{background-position:-200% center}
 }
 @keyframes loop-scroll{
-  0%{transform:translateX(0)}
-  100%{transform:translateX(-50%)}
+  0%{transform:translate3d(0,0,0)}
+  100%{transform:translate3d(-50%,0,0)}
 }
 @keyframes floatUp{
   from{opacity:0;transform:translateY(18px)}
@@ -128,7 +194,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
   display:flex;align-items:center;justify-content:space-between;
   padding:0 1.25rem;z-index:50;
 }
-.header-logo{display:flex;align-items:center;gap:9px}
+.header-logo{display:flex;align-items:center;gap:9px;text-decoration:none;color:inherit}
 .header-logo-mark{
   width:34px;height:34px;background:var(--green-800);
   border-radius:10px;display:flex;align-items:center;justify-content:center;
@@ -151,10 +217,28 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
   border-radius:50%;border:2px solid #fff;
   animation:pulseGlow 2s infinite;
 }
+.global-page-nav{
+  position:fixed;top:var(--header-h);left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;height:var(--page-nav-h);
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(0,0,0,0.06);
+  display:flex;align-items:center;gap:4px;
+  padding:6px 1.25rem;z-index:49;
+}
+.global-page-nav a{
+  flex:1;text-align:center;text-decoration:none;
+  color:var(--text-2);font-size:11px;font-weight:800;
+  border-radius:var(--r-pill);padding:7px 6px;
+  white-space:nowrap;transition:all 0.18s var(--spring);
+}
+.global-page-nav a:hover{background:var(--green-100);color:var(--green-800)}
+.global-page-nav a.active{background:var(--green-800);color:#fff}
 
 /* ── SCREEN CONTAINER ── */
 .screen-wrap{
-  padding-top:calc(var(--header-h) + 12px);
+  padding-top:calc(var(--header-h) + var(--page-nav-h) + 12px);
   padding-bottom:calc(var(--nav-h) + 16px);
   min-height:100dvh;
 }
@@ -247,11 +331,20 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
   pointer-events:none;
 }
 .status-card::after{
-  content:'';position:absolute;bottom:-40px;right:-20px;
-  width:150px;height:150px;
-  background:radial-gradient(circle,rgba(45,90,27,0.3) 0%,transparent 70%);
+  content:'';
+  position:absolute;
+  left:18px;
+  bottom:-20px;
+  width:min(58%, 360px);
+  height:150px;
+  background:var(--green-400);
+  -webkit-mask:var(--farm-silhouette) center bottom / contain no-repeat;
+  mask:var(--farm-silhouette) center bottom / contain no-repeat;
+  opacity:.14;
   pointer-events:none;
+  z-index:0;
 }
+.status-card > *{position:relative;z-index:1}
 .status-greeting{font-size:12px;color:rgba(255,255,255,0.5);font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:4px}
 .status-name{
   font-size:26px;font-weight:900;color:#fff;letter-spacing:-0.5px;line-height:1.1;
@@ -314,16 +407,33 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
    ACTIVITY MARQUEE  (Deepstash loop-scroll)
 ══════════════════════════ */
 .marquee-wrap{
-  overflow:hidden;padding:2px 0;
+  position:relative;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  overflow:hidden;
+  padding:2px 0;
+  direction:ltr;
+  contain:inline-size;
   mask:linear-gradient(90deg,transparent,black 12%,black 88%,transparent);
   -webkit-mask:linear-gradient(90deg,transparent,black 12%,black 88%,transparent);
 }
 .marquee-track{
-  display:flex;gap:10px;width:max-content;
+  display:flex;
+  gap:0;
+  width:max-content;
   animation:loop-scroll 22s linear infinite;
+  will-change:transform;
 }
 .marquee-wrap:hover .marquee-track{animation-play-state:paused}
+.marquee-group{
+  display:flex;
+  gap:10px;
+  flex:0 0 auto;
+  padding-inline-end:10px;
+}
 .marquee-chip{
+  direction:rtl;
   display:flex;align-items:center;gap:7px;
   background:var(--surface);border:1px solid rgba(0,0,0,0.07);
   border-radius:var(--r-pill);padding:8px 14px;
@@ -374,7 +484,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
 .qa-pill.primary .qa-sub{color:rgba(255,255,255,0.6)}
 
 /* ══════════════════════════
-   LIVE TICKER (new orders)
+   LIVE TICKER (listing activity)
 ══════════════════════════ */
 .live-ticker{
   background:var(--green-900);border-radius:var(--r-xl);
@@ -702,19 +812,376 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
 /* ══════════════════════════
    RESPONSIVE
 ══════════════════════════ */
+@media(min-width:900px){
+  :root{
+    --header-h:72px;
+    --page-nav-h:50px;
+    --nav-h:72px;
+  }
+
+  body{
+    position:relative;
+    background:
+      radial-gradient(circle at 12% 0%, rgba(165,217,106,0.18), transparent 28%),
+      linear-gradient(180deg, #183f10 0 280px, var(--bg) 280px 100%);
+  }
+
+  body::before{
+    content:'';
+    position:absolute;
+    inset:0 0 auto;
+    height:280px;
+    pointer-events:none;
+    background-image:
+      var(--farm-silhouette),
+      linear-gradient(110deg, rgba(26,58,8,0.95), rgba(45,90,27,0.78)),
+      repeating-linear-gradient(135deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 26px);
+    background-repeat:no-repeat,no-repeat,repeat;
+    background-position:center bottom,center,center;
+    background-size:1500px 280px,cover,auto;
+    z-index:0;
+  }
+
+  .app{
+    max-width:none;
+    width:100%;
+    min-height:100dvh;
+    background:transparent;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding-top:18px;
+    z-index:1;
+  }
+
+  .top-header,
+  .global-page-nav,
+  .bottom-nav{
+    width:min(1180px, calc(100% - 64px));
+    max-width:1180px;
+  }
+
+  .top-header{
+    position:relative;
+    top:auto;
+    left:auto;
+    transform:none;
+    height:var(--header-h);
+    border-radius:28px 28px 0 0;
+    padding:0 28px;
+    box-shadow:0 18px 44px rgba(15,23,42,0.14);
+    order:0;
+  }
+
+  .header-logo-mark{
+    width:42px;
+    height:42px;
+    border-radius:14px;
+  }
+
+  .header-logo-text{
+    font-size:18px;
+  }
+
+  .header-logo-sub{
+    font-size:12px;
+  }
+
+  .global-page-nav{
+    position:relative;
+    top:auto;
+    left:auto;
+    transform:none;
+    height:var(--page-nav-h);
+    border-radius:0 0 24px 24px;
+    padding:7px 28px;
+    box-shadow:0 14px 34px rgba(15,23,42,0.09);
+    order:1;
+  }
+
+  .global-page-nav a{
+    flex:0 0 auto;
+    min-width:160px;
+    padding:10px 18px;
+    font-size:13px;
+  }
+
+  .screen-wrap{
+    width:min(1180px, calc(100% - 64px));
+    margin:0 auto;
+    padding-top:30px;
+    padding-bottom:64px;
+    order:3;
+  }
+
+  .pad,
+  .pad-lg{
+    padding:0;
+  }
+
+  .bottom-nav{
+    position:relative;
+    top:auto;
+    bottom:auto;
+    left:auto;
+    transform:none;
+    margin-top:12px;
+    height:var(--nav-h);
+    border-radius:28px;
+    border:1px solid rgba(45,90,27,0.12);
+    box-shadow:0 18px 45px rgba(15,23,42,0.16);
+    justify-content:center;
+    padding:0 12px;
+    order:2;
+  }
+
+  .nav-item{
+    flex:0 1 180px;
+    height:100%;
+    justify-content:center;
+    border-radius:20px;
+  }
+
+  .nav-item:hover{
+    background:var(--green-100);
+  }
+
+  .nav-label{
+    font-size:12px;
+  }
+
+  #screen-home .pad-lg{
+    display:grid;
+    grid-template-columns:minmax(0, 1.42fr) minmax(330px, 0.78fr);
+    gap:18px 22px;
+    align-items:start;
+  }
+
+  #screen-home .pad-lg > *{
+    min-width:0;
+  }
+
+  #screen-home .sec-header{
+    margin:0 0 10px;
+  }
+
+  #screen-home .status-card{
+    grid-column:1;
+    grid-row:1 / span 2;
+    min-height:236px;
+    padding:34px 38px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+
+  #screen-home .status-card::after{
+    left:34px;
+    bottom:-30px;
+    width:min(52%, 440px);
+    height:190px;
+    opacity:.18;
+  }
+
+  #screen-home .status-name{
+    font-size:44px;
+    max-width:720px;
+  }
+
+  #screen-home .status-meta{
+    font-size:16px;
+  }
+
+  #screen-home .status-row{
+    margin-top:20px;
+  }
+
+  #screen-home .status-card + .sec-header{
+    grid-column:2;
+    grid-row:1;
+    align-self:end;
+    margin-top:8px;
+  }
+
+  #screen-home .live-ticker{
+    grid-column:2;
+    grid-row:2;
+    min-height:96px;
+  }
+
+  #screen-home .live-ticker + .sec-header{
+    grid-column:1;
+    grid-row:3;
+    margin-top:6px;
+  }
+
+  #screen-home .stats-row{
+    grid-column:1;
+    grid-row:4;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:14px;
+  }
+
+  #screen-home .stat-card{
+    min-height:124px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+
+  #screen-home .stat-val{
+    font-size:38px;
+  }
+
+  #screen-home .stats-row + .card{
+    grid-column:1;
+    grid-row:5;
+    margin-top:0!important;
+    min-height:160px;
+  }
+
+  #screen-home .chart-bars{
+    height:76px;
+  }
+
+  #screen-home .card + .sec-header{
+    grid-column:2;
+    grid-row:3;
+    margin-top:6px;
+  }
+
+  #screen-home .quick-actions{
+    grid-column:2;
+    grid-row:4 / span 2;
+    flex-direction:column;
+  }
+
+  #screen-home .qa-pill{
+    min-height:88px;
+    border-radius:var(--r-xl);
+  }
+
+  #screen-home .quick-actions + .sec-header{
+    grid-column:1 / -1;
+    grid-row:6;
+    margin-top:6px;
+  }
+
+  #screen-home .marquee-wrap{
+    grid-column:1 / -1;
+    grid-row:7;
+  }
+
+  #screen-home .marquee-wrap + .sec-header{
+    grid-column:1 / -1;
+    grid-row:8;
+    margin-top:6px;
+  }
+
+  #screen-home #home-order-1{
+    grid-column:1;
+    grid-row:9;
+  }
+
+  #screen-home #home-order-2{
+    grid-column:2;
+    grid-row:9;
+  }
+
+  #screen-home #home-order-2 + .sec-header{
+    grid-column:1 / -1;
+    grid-row:10;
+    margin-top:6px;
+  }
+
+  #screen-home .tip-card{
+    grid-column:1 / -1;
+    grid-row:11;
+  }
+
+  #products-list{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:14px;
+  }
+
+  #products-list .product-card{
+    margin-top:0;
+  }
+
+  #screen-products .sec-header,
+  #screen-orders .pad-lg > div:first-child{
+    margin-top:0!important;
+  }
+
+  #screen-orders .pad-lg{
+    max-width:820px;
+    margin:0 auto;
+  }
+
+  #screen-profile .profile-hero{
+    width:min(1180px, calc(100% - 64px));
+    margin:0 auto 24px;
+    border-radius:var(--r-xl);
+    padding:42px 28px 34px;
+    box-shadow:0 12px 34px rgba(28,43,21,0.22);
+  }
+
+  #screen-profile .pad-lg{
+    max-width:920px;
+    margin:0 auto;
+  }
+
+  .modal-overlay{
+    align-items:center;
+  }
+
+  .modal-sheet{
+    max-width:560px;
+    border-radius:var(--r-xl);
+    padding-bottom:0;
+    box-shadow:0 24px 70px rgba(15,23,42,0.32);
+  }
+
+  .fab{
+    right:max(44px, calc((100vw - 1180px) / 2 + 24px));
+    bottom:42px;
+  }
+
+  .toast{
+    bottom:42px;
+  }
+}
+
 @media(max-width:380px){
   .stat-val{font-size:22px}
   .status-name{font-size:21px}
   .fab{right:16px}
 }
+
+@media(max-width:520px){
+  .screen-wrap{padding-inline:10px}
+  .pad,.pad-lg{padding-inline:0}
+  .status-card{padding:20px 18px 18px;border-radius:22px}
+  .status-name{overflow-wrap:anywhere}
+  .stats-row{gap:8px}
+  .stat-card{min-width:0;padding-inline:8px}
+  .stat-label,.stat-delta{overflow-wrap:anywhere}
+  .quick-actions{display:grid;grid-template-columns:1fr}
+  .qa-pill{min-height:76px}
+  .marquee-wrap{margin-inline:-2px}
+  .order-card,.tip-card,.card{border-radius:20px}
+  .accessibility-widget{left:12px;bottom:calc(var(--nav-h) + 12px)}
+}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#screen-home">דלג לתוכן המרכזי</a>
 <div class="app">
 
 <!-- ── TOP HEADER ── -->
 <header class="top-header">
-  <div class="header-logo">
+  <a class="header-logo" href="landing v6.html">
     <div class="header-logo-mark">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A5D96A" stroke-width="2.2" stroke-linecap="round">
         <path d="M12 2a10 10 0 0 1 0 20"/><path d="M12 2C6.5 2 2 6.5 2 12"/><path d="M12 8v8M8 12h8"/>
@@ -724,7 +1191,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
       <div class="header-logo-text">מהשדה לשולחן</div>
       <div class="header-logo-sub">פאנל חקלאי</div>
     </div>
-  </div>
+  </a>
   <div style="display:flex;gap:4px">
     <div class="icon-btn" onclick="showToast('אין התראות חדשות','info')">
       <div class="notif-dot"></div>
@@ -734,6 +1201,11 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
     </div>
   </div>
 </header>
+
+<nav class="global-page-nav" aria-label="ניווט ראשי">
+  <a href="landing v6.html#farm-board-section">לוח משקים</a>
+  <a href="seller-dashboard.html" class="active" aria-current="page">ניהול משק</a>
+</nav>
 
 <div class="screen-wrap">
 
@@ -745,13 +1217,13 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
 
   <!-- Status hero card (dark — Deepstash inspired) -->
   <div class="status-card">
-    <div class="status-greeting">שלום חזרה, ישראל 👋</div>
+    <div class="status-greeting">ניהול מודעת המשק</div>
     <div class="status-name" id="status-name">משק הירקות של לוי</div>
-    <div class="status-meta">עמק חפר · נרשם לפיילוט בדצמבר 2024</div>
+    <div class="status-meta">עמק חפר · מודעת פיילוט פעילה בלוח גזרוני</div>
     <div class="status-row">
       <div class="status-live">
         <span class="live-dot"></span>
-        <span class="live-text">פרופיל פעיל</span>
+        <span class="live-text">מודעה פעילה</span>
       </div>
       <span class="status-region">השרון</span>
     </div>
@@ -772,31 +1244,31 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
       </svg>
     </div>
     <div class="ticker-content">
-      <div class="ticker-label">הזמנה חדשה</div>
-      <div class="ticker-text" id="tickerText">דנה כהן הזמינה עגבניות שרי 2 ק"ג</div>
+      <div class="ticker-label">עדכון מומלץ</div>
+      <div class="ticker-text" id="tickerText">עדכון מחירים וזמינות מגדיל פניות מהאזור</div>
     </div>
-    <div class="ticker-badge">₪46</div>
+    <div class="ticker-badge">LIVE</div>
   </div>
 
   <!-- Stats -->
   <div class="sec-header">
-    <div class="sec-title">סיכום השבוע</div>
-    <div class="sec-link" onclick="switchTab('orders')">הכל ←</div>
+    <div class="sec-title">סיכום המודעה</div>
+    <div class="sec-link" onclick="switchTab('orders')">עריכה ←</div>
   </div>
   <div class="stats-row">
-    <div class="stat-card" onclick="switchTab('orders')">
+    <div class="stat-card" onclick="switchTab('products')">
       <div class="stat-val green" id="stat-orders">0</div>
-      <div class="stat-label">הזמנות היום</div>
-      <div class="stat-delta up">↑ +2</div>
+      <div class="stat-label">פריטים בלוח</div>
+      <div class="stat-delta up">פעילים</div>
     </div>
     <div class="stat-card">
       <div class="stat-val" id="stat-revenue">₪0</div>
-      <div class="stat-label">הכנסות השבוע</div>
-      <div class="stat-delta up">↑ 18%</div>
+      <div class="stat-label">מחיר פתיחה</div>
+      <div class="stat-delta same">שקוף</div>
     </div>
     <div class="stat-card">
       <div class="stat-val" id="stat-views">0</div>
-      <div class="stat-label">צפיות</div>
+      <div class="stat-label">צפיות מודעה</div>
       <div class="stat-delta same">→ יציב</div>
     </div>
   </div>
@@ -804,8 +1276,8 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
   <!-- Revenue chart -->
   <div class="card" style="padding:16px 18px;margin-top:10px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-      <div style="font-size:14px;font-weight:800;color:var(--text-1);letter-spacing:-0.2px">הכנסות 7 ימים</div>
-      <div style="font-size:14px;font-weight:900;color:var(--green-800)">₪1,230</div>
+      <div style="font-size:14px;font-weight:800;color:var(--text-1);letter-spacing:-0.2px">צפיות בלוח 7 ימים</div>
+      <div style="font-size:14px;font-weight:900;color:var(--green-800)">124 צפיות</div>
     </div>
     <div class="chart-wrap">
       <div class="chart-bars" id="revenueChart"></div>
@@ -823,8 +1295,8 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
         </svg>
       </div>
       <div>
-        <div class="qa-title">הוסף מוצר</div>
-        <div class="qa-sub">תוצרת חדשה</div>
+        <div class="qa-title">הוסף תוצרת</div>
+        <div class="qa-sub">מחיר וזמינות</div>
       </div>
     </button>
     <button class="qa-pill" onclick="switchTab('orders')">
@@ -835,8 +1307,8 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
         </svg>
       </div>
       <div>
-        <div class="qa-title">הזמנות</div>
-        <div class="qa-sub">2 ממתינות</div>
+        <div class="qa-title">מודעת משק</div>
+        <div class="qa-sub">פרטים ויצירת קשר</div>
       </div>
     </button>
   </div>
@@ -849,35 +1321,33 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
     </div>
   </div>
 
-  <!-- Recent orders -->
-  <div class="sec-header"><div class="sec-title">הזמנות ממתינות</div><div class="sec-link" onclick="switchTab('orders')">כל ההזמנות ←</div></div>
+  <!-- Listing checklist -->
+  <div class="sec-header"><div class="sec-title">מה כדאי לעדכן</div><div class="sec-link" onclick="switchTab('orders')">ערוך מודעה ←</div></div>
 
   <div class="order-card" id="home-order-1">
     <div class="order-top">
-      <div><div class="order-buyer">דנה כהן</div><div class="order-time">לפני 23 דקות · כפר סבא</div></div>
-      <span class="badge pending">ממתינה</span>
+      <div><div class="order-buyer">מחירי השבוע</div><div class="order-time">עודכן לפני יומיים</div></div>
+      <span class="badge pending">מומלץ</span>
     </div>
-    <div class="order-items">🍅 עגבניות שרי 2 ק"ג · 🥒 מלפפונים 1 ק"ג</div>
+    <div class="order-items">ודא שכל פריט תוצרת מציג מחיר לק״ג/יחידה וזמינות עדכנית.</div>
     <div class="order-bottom">
-      <div class="order-total">₪46</div>
+      <div class="order-total">5 פריטים</div>
       <div class="order-actions">
-        <button class="btn-sm btn-cancel" onclick="cancelOrder('home-order-1')">דחה</button>
-        <button class="btn-sm btn-confirm" onclick="confirmOrder('home-order-1')">אשר ✓</button>
+        <button class="btn-sm btn-view" onclick="switchTab('products')">לתוצרת</button>
       </div>
     </div>
   </div>
 
   <div class="order-card" id="home-order-2" style="animation-delay:0.08s">
     <div class="order-top">
-      <div><div class="order-buyer">שירה מזרחי</div><div class="order-time">לפני שעה · נתניה</div></div>
-      <span class="badge pending">ממתינה</span>
+      <div><div class="order-buyer">פרטי קשר</div><div class="order-time">מופיע בכרטיס המשק</div></div>
+      <span class="badge active">פעיל</span>
     </div>
-    <div class="order-items">🥕 גזר 3 ק"ג · 🌿 עשבי תיבול × 2</div>
+    <div class="order-items">טלפון, וואטסאפ, אזור איסוף והערת זמינות יוצגו בלוח המשקים.</div>
     <div class="order-bottom">
-      <div class="order-total">₪91</div>
+      <div class="order-total">מוכן</div>
       <div class="order-actions">
-        <button class="btn-sm btn-cancel" onclick="cancelOrder('home-order-2')">דחה</button>
-        <button class="btn-sm btn-confirm" onclick="confirmOrder('home-order-2')">אשר ✓</button>
+        <button class="btn-sm btn-view" onclick="switchTab('orders')">לעריכה</button>
       </div>
     </div>
   </div>
@@ -890,7 +1360,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
     </svg>
     <div>
       <div class="tip-label">💡 לחקלאי</div>
-      <p>פרופילים עם <strong>תמונות של השדה</strong> מקבלים 3× יותר הזמנות. הוסף תמונות מהפרופיל שלך.</p>
+      <p>מודעות עם <strong>מחירים מעודכנים</strong> וזמינות ברורה מקבלות יותר פניות מתושבים קרובים.</p>
     </div>
   </div>
 
@@ -904,144 +1374,68 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
 <div class="screen" id="screen-products">
 <div class="pad-lg">
   <div class="sec-header" style="margin-top:4px">
-    <div class="sec-title">המוצרים שלי</div>
-    <div style="font-size:12px;color:var(--text-3);font-weight:600">5 פעילים</div>
+    <div class="sec-title">תוצרת ומחירים</div>
+    <div id="products-count" style="font-size:12px;color:var(--text-3);font-weight:600">נטען...</div>
   </div>
 
   <div id="products-list">
-    <div class="product-card">
-      <div class="product-emoji">🍅</div>
-      <div class="product-info">
-        <div class="product-name">עגבניות שרי</div>
-        <div class="product-meta">מינימום 500 גר'</div>
-        <div class="product-price">₪9 לק"ג</div>
-      </div>
-      <div class="product-right">
-        <span class="badge active">פעיל</span>
-        <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this,'עגבניות שרי')"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
-      </div>
-    </div>
-    <div class="product-card">
-      <div class="product-emoji">🥒</div>
-      <div class="product-info">
-        <div class="product-name">מלפפונים</div>
-        <div class="product-meta">מינימום 1 ק"ג</div>
-        <div class="product-price">₪6 לק"ג</div>
-      </div>
-      <div class="product-right">
-        <span class="badge active">פעיל</span>
-        <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this,'מלפפונים')"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
-      </div>
-    </div>
-    <div class="product-card">
-      <div class="product-emoji">🥕</div>
-      <div class="product-info">
-        <div class="product-name">גזר</div>
-        <div class="product-meta">מינימום 2 ק"ג</div>
-        <div class="product-price">₪5 לק"ג</div>
-      </div>
-      <div class="product-right">
-        <span class="badge active">פעיל</span>
-        <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this,'גזר')"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
-      </div>
-    </div>
-    <div class="product-card">
-      <div class="product-emoji">🌿</div>
-      <div class="product-info">
-        <div class="product-name">עשבי תיבול</div>
-        <div class="product-meta">אצווה שבועית</div>
-        <div class="product-price">₪12 לצרור</div>
-      </div>
-      <div class="product-right">
-        <span class="badge active">פעיל</span>
-        <label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this,'עשבי תיבול')"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
-      </div>
-    </div>
-    <div class="product-card" style="opacity:0.6">
-      <div class="product-emoji">🫑</div>
-      <div class="product-info">
-        <div class="product-name">פלפלים</div>
-        <div class="product-meta">עונה לא פעילה</div>
-        <div class="product-price">₪11 לק"ג</div>
-      </div>
-      <div class="product-right">
-        <span class="badge paused">מושהה</span>
-        <label class="toggle"><input type="checkbox" onchange="toggleProduct(this,'פלפלים')"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
-      </div>
-    </div>
+    <!-- filled from DASHBOARD_PRODUCTS for easy future API replacement -->
   </div>
   <div style="height:90px"></div>
 </div>
-<button class="fab show" onclick="openAddProduct()" aria-label="הוסף מוצר">
+<button class="fab show" onclick="openAddProduct()" aria-label="הוסף תוצרת">
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 </button>
 </div>
 
 <!-- ════════════════════════════
-     ORDERS SCREEN
+     LISTING SCREEN
 ════════════════════════════ -->
 <div class="screen" id="screen-orders">
 <div class="pad-lg">
   <div style="margin-top:4px;margin-bottom:16px">
     <div class="order-tabs">
-      <div class="otab active" onclick="switchOrderTab('pending',this)">ממתינות <span style="background:#ef4444;color:#fff;border-radius:99px;padding:1px 6px;font-size:10px;font-weight:800;margin-right:3px">2</span></div>
-      <div class="otab" onclick="switchOrderTab('processing',this)">בטיפול</div>
-      <div class="otab" onclick="switchOrderTab('done',this)">הושלמו</div>
+      <div class="otab active" onclick="switchOrderTab('pending',this)">פרטי משק</div>
+      <div class="otab" onclick="switchOrderTab('processing',this)">זמינות</div>
+      <div class="otab" onclick="switchOrderTab('done',this)">תצוגה</div>
     </div>
   </div>
 
   <div class="order-section active" id="otab-pending">
-    <div class="order-card" id="ord-p1">
-      <div class="order-top">
-        <div><div class="order-buyer">דנה כהן</div><div class="order-time">היום, 14:32 · כפר סבא</div></div>
-        <span class="badge pending">ממתינה</span>
+    <div class="card" style="padding:16px 18px">
+      <div class="field"><label for="listing-farm-name">שם המשק</label><input type="text" id="listing-farm-name" placeholder="משק הירקות של לוי"></div>
+      <div class="field"><label for="listing-farmer-name">שם החקלאי/ת</label><input type="text" id="listing-farmer-name" placeholder="ישראל לוי"></div>
+      <div class="field-row">
+        <div class="field"><label for="listing-region">אזור</label><select id="listing-region"><option>עמק חפר</option><option>דרום השרון</option><option>צפון השרון</option><option>אחר</option></select></div>
+        <div class="field"><label for="listing-city">יישוב</label><input type="text" id="listing-city" placeholder="כפר ויתקין"></div>
       </div>
-      <div class="order-items">🍅 עגבניות שרי 2 ק"ג<br>🥒 מלפפונים 1 ק"ג</div>
-      <div style="height:1px;background:rgba(0,0,0,0.05);margin:12px 0"></div>
-      <div class="order-bottom">
-        <div class="order-total">₪46</div>
-        <div class="order-actions">
-          <button class="btn-sm btn-cancel" onclick="cancelOrder('ord-p1')">דחה</button>
-          <button class="btn-sm btn-confirm" onclick="confirmOrder('ord-p1')">אשר ✓</button>
-        </div>
-      </div>
-    </div>
-    <div class="order-card" id="ord-p2" style="animation-delay:0.08s">
-      <div class="order-top">
-        <div><div class="order-buyer">שירה מזרחי</div><div class="order-time">היום, 13:10 · נתניה</div></div>
-        <span class="badge pending">ממתינה</span>
-      </div>
-      <div class="order-items">🥕 גזר 3 ק"ג<br>🌿 עשבי תיבול × 2<br>🧅 בצל 1 ק"ג</div>
-      <div style="height:1px;background:rgba(0,0,0,0.05);margin:12px 0"></div>
-      <div class="order-bottom">
-        <div class="order-total">₪91</div>
-        <div class="order-actions">
-          <button class="btn-sm btn-cancel" onclick="cancelOrder('ord-p2')">דחה</button>
-          <button class="btn-sm btn-confirm" onclick="confirmOrder('ord-p2')">אשר ✓</button>
-        </div>
-      </div>
+      <div class="field"><label for="listing-phone">טלפון</label><input type="tel" id="listing-phone" placeholder="050-0000000"></div>
+      <button class="btn-shine" onclick="saveFarmListingDraft()">שמור טיוטת מודעה ←</button>
     </div>
   </div>
 
   <div class="order-section" id="otab-processing">
-    <div class="order-card">
-      <div class="order-top">
-        <div><div class="order-buyer">משה אברהם</div><div class="order-time">אתמול, 16:45 · חדרה</div></div>
-        <span class="badge processing">בטיפול</span>
-      </div>
-      <div class="order-items">🍅 עגבניות 4 ק"ג · 🫑 פלפלים 2 ק"ג</div>
-      <div style="height:1px;background:rgba(0,0,0,0.05);margin:12px 0"></div>
-      <div class="order-bottom">
-        <div class="order-total">₪118</div>
-        <button class="btn-sm btn-confirm" onclick="showToast('ההזמנה הושלמה ✓','success')">הושלם ✓</button>
-      </div>
+    <div class="card" style="padding:16px 18px">
+      <div class="field"><label for="listing-availability">זמינות כללית</label><input type="text" id="listing-availability" placeholder="זמין השבוע לאיסוף בתיאום"></div>
+      <div class="field"><label for="listing-pickup">אזור/הוראות איסוף</label><textarea id="listing-pickup" rows="3" placeholder="איסוף מהמשק בבוקר או נקודת חלוקה בערב"></textarea></div>
+      <div class="field"><label for="listing-note">הערה לתושבים</label><textarea id="listing-note" rows="3" placeholder="אין רכישה באתר. פונים אליי ישירות לתיאום."></textarea></div>
+      <button class="btn-shine" onclick="saveFarmListingDraft()">שמור זמינות ←</button>
     </div>
   </div>
 
   <div class="order-section" id="otab-done">
-    <div class="order-card"><div class="order-top"><div><div class="order-buyer">יוסי לוי</div><div class="order-time">אתמול, 10:00</div></div><span class="badge done">הושלמה</span></div><div class="order-items">🥕 גזר 3 ק"ג · 🧅 בצל 2 ק"ג · 🌿 פטרוזיליה</div><div class="order-bottom" style="margin-top:12px"><div class="order-total">₪78</div><button class="btn-sm btn-view">פרטים</button></div></div>
-    <div class="order-card"><div class="order-top"><div><div class="order-buyer">רחל גורן</div><div class="order-time">שלשום, 09:15</div></div><span class="badge done">הושלמה</span></div><div class="order-items">🍅 עגבניות שרי 1 ק"ג · 🌿 בזיליקום</div><div class="order-bottom" style="margin-top:12px"><div class="order-total">₪33</div><button class="btn-sm btn-view">פרטים</button></div></div>
-    <div class="order-card"><div class="order-top"><div><div class="order-buyer">אלון שפירא</div><div class="order-time">לפני 4 ימים</div></div><span class="badge done">הושלמה</span></div><div class="order-items">🥒 מלפפונים 2 ק"ג · 🥕 גזר 1 ק"ג</div><div class="order-bottom" style="margin-top:12px"><div class="order-total">₪51</div><button class="btn-sm btn-view">פרטים</button></div></div>
+    <div class="order-card">
+      <div class="order-top">
+        <div><div class="order-buyer" id="listing-preview-name">משק הירקות של לוי</div><div class="order-time" id="listing-preview-region">עמק חפר · כפר ויתקין</div></div>
+        <span class="badge active">תצוגה בלוח</span>
+      </div>
+      <div class="order-items" id="listing-preview-note">אין רכישה באתר. תושבים רואים תוצרת, מחירים, מיקום ופרטי קשר.</div>
+      <div style="height:1px;background:rgba(0,0,0,0.05);margin:12px 0"></div>
+      <div class="order-bottom">
+        <div class="order-total" id="listing-preview-phone">050-0000000</div>
+        <button class="btn-sm btn-view" onclick="switchTab('products')">ערוך תוצרת</button>
+      </div>
+    </div>
   </div>
 </div>
 </div>
@@ -1064,7 +1458,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
   <div class="pad-lg">
     <div class="stats-row" style="margin-bottom:22px">
       <div class="stat-card"><div class="stat-val green">4.9</div><div class="stat-label">דירוג ⭐</div></div>
-      <div class="stat-card"><div class="stat-val">23</div><div class="stat-label">הזמנות כולל</div></div>
+      <div class="stat-card"><div class="stat-val">23</div><div class="stat-label">פניות החודש</div></div>
       <div class="stat-card"><div class="stat-val">94%</div><div class="stat-label">שביעות רצון</div></div>
     </div>
 
@@ -1082,7 +1476,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
       </div>
       <div class="settings-item" onclick="showToast('התראות — בקרוב','info')">
         <div class="si-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
-        <div style="flex:1"><div class="si-label">התראות</div><div class="si-sub">הזמנות חדשות, תזכורות</div></div>
+        <div style="flex:1"><div class="si-label">התראות</div><div class="si-sub">פניות חדשות, תזכורות עדכון</div></div>
         <svg class="si-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
       </div>
       <div class="settings-item" onclick="showToast('שיתוף — בקרוב','info')">
@@ -1125,9 +1519,9 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
     <div class="nav-indicator"></div>
     <div style="position:relative;width:24px;height:24px">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
-      <span class="nav-badge" id="orders-badge">2</span>
+      <span class="nav-badge" id="orders-badge">!</span>
     </div>
-    <span class="nav-label">הזמנות</span>
+    <span class="nav-label">מודעה</span>
   </div>
   <div class="nav-item" id="nav-profile" onclick="switchTab('profile')">
     <div class="nav-indicator"></div>
@@ -1142,21 +1536,43 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
 
 <!-- ── ADD PRODUCT MODAL ── -->
 <div class="modal-overlay" id="addProductModal" onclick="closeIfOverlay(event)">
-  <div class="modal-sheet">
+  <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="add-product-title">
     <div class="modal-handle"></div>
-    <div class="modal-title">➕ הוסף מוצר חדש</div>
+    <div class="modal-title" id="add-product-title">הוסף תוצרת חדשה</div>
     <div class="modal-body">
-      <div class="field"><label>שם המוצר *</label><input type="text" id="new-name" placeholder="למשל: עגבניות שרי"></div>
+      <div class="field"><label for="new-name">שם המוצר *</label><input type="text" id="new-name" placeholder="למשל: עגבניות שרי"></div>
       <div class="field-row">
-        <div class="field"><label>מחיר *</label><input type="number" id="new-price" placeholder="₪"></div>
-        <div class="field"><label>יחידה</label><select id="new-unit"><option>לק"ג</option><option>ליחידה</option><option>לצרור</option><option>לתא</option></select></div>
+        <div class="field"><label for="new-price">מחיר *</label><input type="number" id="new-price" placeholder="₪"></div>
+        <div class="field"><label for="new-unit">יחידה</label><select id="new-unit"><option>לק"ג</option><option>ליחידה</option><option>לצרור</option><option>לתא</option></select></div>
       </div>
-      <div class="field"><label>כמות זמינה</label><input type="text" id="new-qty" placeholder='50 ק"ג השבוע'></div>
-      <div class="field"><label>הערות (לא חובה)</label><textarea id="new-note" rows="2" placeholder="אורגני, נקטף אתמול..."></textarea></div>
-      <button class="btn-shine" onclick="addProduct()">הוסף מוצר ←</button>
+      <div class="field"><label for="new-qty">כמות זמינה</label><input type="text" id="new-qty" placeholder='50 ק"ג השבוע'></div>
+      <div class="field"><label for="new-note">הערות (לא חובה)</label><textarea id="new-note" rows="2" placeholder="אורגני, נקטף אתמול..."></textarea></div>
+      <button class="btn-shine" onclick="addProduct()">הוסף ללוח ←</button>
       <button style="width:100%;padding:13px;margin-top:10px;font-size:14px;color:var(--text-3);font-weight:600;border-radius:var(--r-pill);transition:background 0.2s" onclick="closeAddProduct()" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='none'">ביטול</button>
     </div>
   </div>
+</div>
+
+<div class="accessibility-widget" id="accessibility-widget">
+  <button class="accessibility-toggle" id="accessibility-toggle" type="button" aria-label="פתח כלי נגישות" aria-expanded="false" aria-controls="accessibility-panel">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="4" r="2.4"></circle>
+      <path d="M4 9h16"></path>
+      <path d="M12 9v12"></path>
+      <path d="M8 21l4-8 4 8"></path>
+    </svg>
+  </button>
+  <section class="accessibility-panel" id="accessibility-panel" aria-label="אפשרויות נגישות">
+    <div class="accessibility-title">כלי נגישות</div>
+    <p class="accessibility-note">התאמות תצוגה מקומיות לפי עקרונות WCAG AA: פוקוס גלוי, קונטרסט, מקלדת והפחתת תנועה.</p>
+    <div class="accessibility-actions">
+      <button class="accessibility-action" type="button" data-a11y-toggle="largeText">הגדלת טקסט</button>
+      <button class="accessibility-action" type="button" data-a11y-toggle="contrast">ניגודיות גבוהה</button>
+      <button class="accessibility-action" type="button" data-a11y-toggle="reduceMotion">עצירת אנימציות</button>
+      <button class="accessibility-action" type="button" data-a11y-toggle="underlineLinks">הדגשת קישורים</button>
+      <button class="accessibility-action" type="button" data-a11y-reset>איפוס התאמות</button>
+    </div>
+  </section>
 </div>
 
 <!-- ── TOAST ── -->
@@ -1166,6 +1582,51 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
 </div>
 
 <script>
+const FARM_DRAFT_KEY = 'gezroni:farm-listing-draft:v1';
+const PRODUCTS_KEY = 'gezroni:farm-products-draft:v1';
+
+const DEFAULT_FARM_DRAFT = {
+  farmName: 'משק הירקות של לוי',
+  farmerName: 'ישראל לוי',
+  region: 'עמק חפר',
+  city: 'כפר ויתקין',
+  phone: '050-0000000',
+  availability: 'זמין השבוע לאיסוף בתיאום',
+  pickup: 'איסוף מהמשק בבוקר או נקודת חלוקה בערב.',
+  note: 'אין רכישה באתר. תושבים רואים תוצרת, מחירים, מיקום ופרטי קשר ופונים ישירות לחקלאי.'
+};
+
+const DEFAULT_PRODUCTS = [
+  { id: 'tomatoes', name: 'עגבניות שרי', price: '9', unit: 'לק"ג', qty: "מינימום 500 גר'", active: true },
+  { id: 'cucumbers', name: 'מלפפונים', price: '6', unit: 'לק"ג', qty: 'מינימום 1 ק"ג', active: true },
+  { id: 'carrots', name: 'גזר', price: '5', unit: 'לק"ג', qty: 'מינימום 2 ק"ג', active: true },
+  { id: 'herbs', name: 'עשבי תיבול', price: '12', unit: 'לצרור', qty: 'אצווה שבועית', active: true },
+  { id: 'peppers', name: 'פלפלים', price: '11', unit: 'לק"ג', qty: 'עונה לא פעילה', active: false }
+];
+
+function readJson(key, fallback) {
+  try {
+    var raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (err) {
+    return fallback;
+  }
+}
+
+function writeJson(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+var farmDraft = readJson(FARM_DRAFT_KEY, DEFAULT_FARM_DRAFT);
+var dashboardProducts = readJson(PRODUCTS_KEY, DEFAULT_PRODUCTS);
+
+function createTextEl(tag, className, text) {
+  var el = document.createElement(tag);
+  if (className) el.className = className;
+  el.textContent = text;
+  return el;
+}
+
 // ══════════════════════════════
 //  REVENUE CHART
 // ══════════════════════════════
@@ -1179,7 +1640,7 @@ input,select,textarea{font-family:'Rubik',sans-serif;direction:rtl}
     var bar = document.createElement('div');
     bar.className = 'bar' + (i===data.length-1?' highlight':'');
     bar.style.height='0';bar.style.flex='1';
-    bar.title = '₪' + v;
+    bar.title = v + ' צפיות';
     barsEl.appendChild(bar);
     setTimeout(function(){ bar.style.height = Math.round((v/max)*52)+'px'; }, 200 + i*60);
 
@@ -1205,8 +1666,7 @@ function animateCounter(el, from, to, prefix, suffix, duration){
   requestAnimationFrame(step);
 }
 setTimeout(function(){
-  animateCounter(document.getElementById('stat-orders'),0,3,'','',700);
-  animateCounter(document.getElementById('stat-revenue'),0,847,'₪','',900);
+  updateDashboardStats(true);
   animateCounter(document.getElementById('stat-views'),0,124,'','',1100);
 },300);
 
@@ -1214,35 +1674,46 @@ setTimeout(function(){
 //  MARQUEE (Deepstash loop-scroll)
 // ══════════════════════════════
 var MARQUEE_ITEMS = [
-  {dot:'green', text:'דנה כהן הזמינה עגבניות שרי'},
-  {dot:'blue',  text:'124 אנשים צפו בפרופיל שלך היום'},
-  {dot:'green', text:'שירה מזרחי הזמינה גזר ועשבים'},
+  {dot:'green', text:'עגבניות שרי עודכנו ל-₪9 לק״ג'},
+  {dot:'blue',  text:'124 אנשים צפו במודעת המשק היום'},
+  {dot:'green', text:'גזר ועשבי תיבול מסומנים כזמינים'},
   {dot:'orange',text:'עמק חפר — 15 משקים פעילים'},
-  {dot:'green', text:'יוסי לוי השלים הזמנה — ₪78'},
+  {dot:'green', text:'טלפון ווואטסאפ מוכנים להצגה בלוח'},
   {dot:'blue',  text:'הפרופיל שלך דורג ⭐4.9 השבוע'},
-  {dot:'green', text:'רחל גורן הזמינה עגבניות שרי'},
-  {dot:'orange',text:'3 הזמנות חדשות הגיעו הבוקר'},
+  {dot:'green', text:'מחירי השבוע נשמרו כטיוטה מקומית'},
+  {dot:'orange',text:'תזכורת: עדכן זמינות לפני סוף השבוע'},
 ];
 (function(){
   var track = document.getElementById('marqueeTrack');
-  var doubled = MARQUEE_ITEMS.concat(MARQUEE_ITEMS); // loop
-  doubled.forEach(function(item){
-    var chip = document.createElement('div');
-    chip.className = 'marquee-chip';
-    chip.innerHTML = '<span class="chip-dot ' + item.dot + '"></span>' + item.text;
-    track.appendChild(chip);
-  });
+  if (!track) return;
+  function buildGroup(isDuplicate) {
+    var group = document.createElement('div');
+    group.className = 'marquee-group';
+    if (isDuplicate) group.setAttribute('aria-hidden', 'true');
+    MARQUEE_ITEMS.forEach(function(item){
+      var chip = document.createElement('div');
+      chip.className = 'marquee-chip';
+      var dot = document.createElement('span');
+      dot.className = 'chip-dot ' + item.dot;
+      chip.appendChild(dot);
+      chip.appendChild(document.createTextNode(item.text));
+      group.appendChild(chip);
+    });
+    return group;
+  }
+  track.appendChild(buildGroup(false));
+  track.appendChild(buildGroup(true));
 })();
 
 // ══════════════════════════════
-//  LIVE TICKER  (fake real-time)
+//  LIVE TICKER  (static demo)
 // ══════════════════════════════
 var TICKER_EVENTS = [
-  {label:'הזמנה חדשה', text:'דנה כהן הזמינה עגבניות שרי 2 ק"ג', badge:'₪46'},
-  {label:'צפייה בפרופיל', text:'12 אנשים צפו בפרופיל שלך', badge:'+12'},
-  {label:'הזמנה חדשה', text:'שירה מזרחי הזמינה גזר ועשבי תיבול', badge:'₪91'},
-  {label:'ביקורת חדשה', text:'יוסי לוי נתן לך ⭐5 על השירות', badge:'⭐5'},
-  {label:'הזמנה חדשה', text:'אלון שפירא הזמין מלפפונים וגזר', badge:'₪51'},
+  {label:'עדכון מחירים', text:'תושבים רואים קודם כל תוצרת ומחיר ברור', badge:'שקוף'},
+  {label:'צפייה בפרופיל', text:'12 אנשים צפו במודעת המשק בשעה האחרונה', badge:'+12'},
+  {label:'זמינות', text:'גזר ועשבי תיבול מסומנים כזמינים השבוע', badge:'זמין'},
+  {label:'אמון', text:'פרטי קשר מלאים מעלים את הסיכוי לפנייה', badge:'מוכן'},
+  {label:'מיקום', text:'סינון מיקום חכם יוכל להשתמש בעתיד באזור וביישוב', badge:'DB'},
 ];
 var tickerIdx = 0;
 setInterval(function(){
@@ -1277,7 +1748,7 @@ function switchTab(tab){
 }
 
 // ══════════════════════════════
-//  ORDER TABS
+//  LISTING TABS
 // ══════════════════════════════
 function switchOrderTab(tab,el){
   document.querySelectorAll('.otab').forEach(function(t){t.classList.remove('active');});
@@ -1287,47 +1758,140 @@ function switchOrderTab(tab,el){
 }
 
 // ══════════════════════════════
-//  ORDER ACTIONS
+//  FARM LISTING DRAFT
 // ══════════════════════════════
-var pendingCount = 2;
-function confirmOrder(id){
-  var card = document.getElementById(id);
-  if(!card) return;
-  var badge = card.querySelector('.badge');
-  badge.className='badge done';badge.textContent='אושרה ✓';
-  var acts = card.querySelector('.order-actions');
-  if(acts) acts.innerHTML='<button class="btn-sm btn-view">פרטים</button>';
-  showToast('ההזמנה אושרה ✓','success');
-  updateBadge(-1);
+function applyFarmDraft() {
+  var fields = {
+    farmName: document.getElementById('listing-farm-name'),
+    farmerName: document.getElementById('listing-farmer-name'),
+    region: document.getElementById('listing-region'),
+    city: document.getElementById('listing-city'),
+    phone: document.getElementById('listing-phone'),
+    availability: document.getElementById('listing-availability'),
+    pickup: document.getElementById('listing-pickup'),
+    note: document.getElementById('listing-note')
+  };
+
+  Object.keys(fields).forEach(function(key) {
+    if (fields[key]) fields[key].value = farmDraft[key] || '';
+  });
+
+  document.getElementById('status-name').textContent = farmDraft.farmName || DEFAULT_FARM_DRAFT.farmName;
+  document.querySelector('.profile-name').textContent = farmDraft.farmName || DEFAULT_FARM_DRAFT.farmName;
+  document.querySelector('.profile-sub').textContent = (farmDraft.farmerName || DEFAULT_FARM_DRAFT.farmerName) + ' · ' + (farmDraft.region || DEFAULT_FARM_DRAFT.region);
+  renderListingPreview();
 }
-function cancelOrder(id){
-  var card = document.getElementById(id);
-  if(!card) return;
-  card.style.transition='opacity 0.3s, transform 0.35s var(--spring)';
-  card.style.opacity='0';card.style.transform='translateX(-16px) scale(0.95)';
-  setTimeout(function(){card.remove();},350);
-  showToast('ההזמנה בוטלה','warning');
-  updateBadge(-1);
+
+function collectFarmDraft() {
+  return {
+    farmName: document.getElementById('listing-farm-name').value.trim(),
+    farmerName: document.getElementById('listing-farmer-name').value.trim(),
+    region: document.getElementById('listing-region').value,
+    city: document.getElementById('listing-city').value.trim(),
+    phone: document.getElementById('listing-phone').value.trim(),
+    availability: document.getElementById('listing-availability').value.trim(),
+    pickup: document.getElementById('listing-pickup').value.trim(),
+    note: document.getElementById('listing-note').value.trim()
+  };
 }
-function updateBadge(d){
-  pendingCount=Math.max(0,pendingCount+d);
-  var b=document.getElementById('orders-badge');
-  if(b){ if(pendingCount===0) b.remove(); else b.textContent=pendingCount; }
+
+function saveFarmListingDraft() {
+  var nextDraft = collectFarmDraft();
+  if (!nextDraft.farmName || !nextDraft.farmerName || !nextDraft.phone) {
+    showToast('נא למלא שם משק, שם חקלאי וטלפון','warning');
+    return;
+  }
+
+  farmDraft = nextDraft;
+  writeJson(FARM_DRAFT_KEY, farmDraft);
+  applyFarmDraft();
+  showToast('טיוטת המודעה נשמרה מקומית ✓','success');
+}
+
+function renderListingPreview() {
+  var name = document.getElementById('listing-preview-name');
+  var region = document.getElementById('listing-preview-region');
+  var note = document.getElementById('listing-preview-note');
+  var phone = document.getElementById('listing-preview-phone');
+  if (!name || !region || !note || !phone) return;
+  name.textContent = farmDraft.farmName || DEFAULT_FARM_DRAFT.farmName;
+  region.textContent = (farmDraft.region || DEFAULT_FARM_DRAFT.region) + ' · ' + (farmDraft.city || DEFAULT_FARM_DRAFT.city);
+  note.textContent = farmDraft.note || DEFAULT_FARM_DRAFT.note;
+  phone.textContent = farmDraft.phone || DEFAULT_FARM_DRAFT.phone;
 }
 
 // ══════════════════════════════
-//  PRODUCT TOGGLE
+//  PRODUCT MODEL
 // ══════════════════════════════
-function toggleProduct(cb, name){
-  var card = cb.closest('.product-card');
-  var badge = card.querySelector('.badge');
-  if(cb.checked){
-    card.style.opacity='1';badge.className='badge active';badge.textContent='פעיל';
-    showToast(name+' הופעל ✓','success');
-  } else {
-    card.style.opacity='0.6';badge.className='badge paused';badge.textContent='מושהה';
-    showToast(name+' הושהה','warning');
+function saveDashboardProducts() {
+  writeJson(PRODUCTS_KEY, dashboardProducts);
+}
+
+function updateDashboardStats(skipViews) {
+  var activeProducts = dashboardProducts.filter(function(item){ return item.active; });
+  var prices = activeProducts.map(function(item){ return Number(item.price); }).filter(Boolean);
+  var minPrice = prices.length ? Math.min.apply(null, prices) : 0;
+  var statProducts = document.getElementById('stat-orders');
+  var statPrice = document.getElementById('stat-revenue');
+  var productCount = document.getElementById('products-count');
+  if (statProducts) statProducts.textContent = activeProducts.length;
+  if (statPrice) statPrice.textContent = minPrice ? '₪' + minPrice : '—';
+  if (productCount) productCount.textContent = activeProducts.length + ' פעילים מתוך ' + dashboardProducts.length;
+  if (!skipViews) {
+    var views = document.getElementById('stat-views');
+    if (views && !views.textContent) views.textContent = '124';
   }
+}
+
+function createProductCard(product) {
+  var card = document.createElement('div');
+  card.className = 'product-card';
+  if (!product.active) card.style.opacity = '0.6';
+
+  card.appendChild(createTextEl('div', 'product-emoji', getEmoji(product.name)));
+
+  var info = document.createElement('div');
+  info.className = 'product-info';
+  info.appendChild(createTextEl('div', 'product-name', product.name));
+  info.appendChild(createTextEl('div', 'product-meta', product.qty || 'זמינות תתעדכן'));
+  info.appendChild(createTextEl('div', 'product-price', '₪' + product.price + ' ' + product.unit));
+  card.appendChild(info);
+
+  var right = document.createElement('div');
+  right.className = 'product-right';
+  right.appendChild(createTextEl('span', 'badge ' + (product.active ? 'active' : 'paused'), product.active ? 'פעיל' : 'מושהה'));
+
+  var label = document.createElement('label');
+  label.className = 'toggle';
+  var input = document.createElement('input');
+  input.type = 'checkbox';
+  input.checked = product.active;
+  input.addEventListener('change', function(){ toggleProduct(product.id, input.checked); });
+  label.appendChild(input);
+  label.appendChild(createTextEl('span', 'toggle-track', ''));
+  label.appendChild(createTextEl('span', 'toggle-thumb', ''));
+  right.appendChild(label);
+  card.appendChild(right);
+
+  return card;
+}
+
+function renderDashboardProducts() {
+  var list = document.getElementById('products-list');
+  list.innerHTML = '';
+  dashboardProducts.forEach(function(product) {
+    list.appendChild(createProductCard(product));
+  });
+  updateDashboardStats(false);
+}
+
+function toggleProduct(id, isActive){
+  var product = dashboardProducts.find(function(item){ return item.id === id; });
+  if (!product) return;
+  product.active = isActive;
+  saveDashboardProducts();
+  renderDashboardProducts();
+  showToast(product.name + (isActive ? ' הופעל ✓' : ' הושהה'),'success');
 }
 
 // ══════════════════════════════
@@ -1355,24 +1919,20 @@ function addProduct(){
   var name=document.getElementById('new-name').value.trim();
   var price=document.getElementById('new-price').value.trim();
   var unit=document.getElementById('new-unit').value;
+  var qty=document.getElementById('new-qty').value.trim();
   if(!name||!price){showToast('נא למלא שם ומחיר','warning');return;}
-  var card=document.createElement('div');
-  card.className='product-card';
-  card.style.animation='screenIn 0.3s var(--spring) both';
-  card.innerHTML=
-    '<div class="product-emoji">'+getEmoji(name)+'</div>'+
-    '<div class="product-info">'+
-      '<div class="product-name">'+name+'</div>'+
-      '<div class="product-meta">נוסף עכשיו</div>'+
-      '<div class="product-price">₪'+price+' '+unit+'</div>'+
-    '</div>'+
-    '<div class="product-right">'+
-      '<span class="badge active">פעיל</span>'+
-      '<label class="toggle"><input type="checkbox" checked onchange="toggleProduct(this,\''+name+'\')"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>'+
-    '</div>';
-  document.getElementById('products-list').prepend(card);
+  dashboardProducts.unshift({
+    id: 'product-' + Date.now(),
+    name: name,
+    price: price,
+    unit: unit,
+    qty: qty || 'נוסף עכשיו',
+    active: true
+  });
+  saveDashboardProducts();
+  renderDashboardProducts();
   closeAddProduct();
-  showToast(name+' נוסף למוצרים ✓','success');
+  showToast(name+' נוסף ללוח ✓','success');
   ['new-name','new-price','new-qty','new-note'].forEach(function(id){document.getElementById(id).value='';});
   switchTab('products');
 }
@@ -1400,7 +1960,69 @@ function showToast(msg, type){
   toastTimer=setTimeout(function(){t.classList.remove('show');},3500);
 }
 
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAddProduct();});
+// ══════════════════════════════
+//  ACCESSIBILITY TOOL
+// ══════════════════════════════
+var A11Y_KEY='gezroni.accessibility.v1';
+var a11yState=readA11yState();
+function readA11yState(){
+  try{return Object.assign({largeText:false,contrast:false,reduceMotion:false,underlineLinks:false},JSON.parse(localStorage.getItem(A11Y_KEY)||'{}'));}
+  catch(e){return{largeText:false,contrast:false,reduceMotion:false,underlineLinks:false};}
+}
+function saveA11yState(){try{localStorage.setItem(A11Y_KEY,JSON.stringify(a11yState));}catch(e){}}
+function applyA11yState(){
+  document.body.classList.toggle('a11y-large-text',!!a11yState.largeText);
+  document.body.classList.toggle('a11y-contrast',!!a11yState.contrast);
+  document.body.classList.toggle('a11y-reduced-motion',!!a11yState.reduceMotion);
+  document.body.classList.toggle('a11y-underline',!!a11yState.underlineLinks);
+  document.querySelectorAll('[data-a11y-toggle]').forEach(function(btn){
+    var key=btn.getAttribute('data-a11y-toggle');
+    var active=!!a11yState[key];
+    btn.classList.toggle('active',active);
+    btn.setAttribute('aria-pressed',active?'true':'false');
+  });
+}
+function initAccessibilityWidget(){
+  var toggle=document.getElementById('accessibility-toggle');
+  var panel=document.getElementById('accessibility-panel');
+  if(!toggle||!panel)return;
+  toggle.addEventListener('click',function(){
+    var open=panel.classList.toggle('open');
+    toggle.setAttribute('aria-expanded',open?'true':'false');
+  });
+  panel.querySelectorAll('[data-a11y-toggle]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var key=btn.getAttribute('data-a11y-toggle');
+      a11yState[key]=!a11yState[key];
+      saveA11yState();
+      applyA11yState();
+    });
+  });
+  var reset=panel.querySelector('[data-a11y-reset]');
+  if(reset){
+    reset.addEventListener('click',function(){
+      a11yState={largeText:false,contrast:false,reduceMotion:false,underlineLinks:false};
+      saveA11yState();
+      applyA11yState();
+    });
+  }
+  applyA11yState();
+}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    closeAddProduct();
+    var panel=document.getElementById('accessibility-panel');
+    var toggle=document.getElementById('accessibility-toggle');
+    if(panel&&panel.classList.contains('open')){
+      panel.classList.remove('open');
+      if(toggle){toggle.setAttribute('aria-expanded','false');toggle.focus();}
+    }
+  }
+});
+applyFarmDraft();
+renderDashboardProducts();
+initAccessibilityWidget();
 </script>
 </body>
 </html>

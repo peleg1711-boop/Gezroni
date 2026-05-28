@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>גזרוני - שוק חקלאי ישיר</title>
+<title>גזרוני - לוח משקים ישראלי</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -66,10 +66,159 @@
   font-family: 'Rubik', sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
 body {
   background: var(--bg);
   direction: rtl;
   color: var(--text-1);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  transform: translateY(-160%);
+  background: #fff;
+  color: var(--green-900);
+  border: 2px solid var(--green-800);
+  border-radius: var(--r-pill);
+  padding: 10px 14px;
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: 0 12px 28px rgba(15,23,42,0.18);
+  transition: transform 0.18s var(--spring);
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body.a11y-large-text {
+  font-size: 112%;
+}
+body.a11y-contrast {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --text-1: #000000;
+  --text-2: #1f2937;
+  --text-3: #374151;
+  --green-800: #164b0b;
+  --green-100: #e8f3de;
+}
+body.a11y-contrast .farm-card,
+body.a11y-contrast .board-controls,
+body.a11y-contrast .nearby-deals,
+body.a11y-contrast .farm-modal-sheet {
+  border-color: #111827;
+}
+body.a11y-underline a,
+body.a11y-underline .contact-link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+body.a11y-reduced-motion *,
+body.a11y-reduced-motion *::before,
+body.a11y-reduced-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-duration: 0.001ms !important;
+}
+
+.accessibility-widget {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 120;
+  direction: rtl;
+}
+.accessibility-toggle {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(255,255,255,0.88);
+  border-radius: 50%;
+  background: var(--green-800);
+  color: #fff;
+  box-shadow: 0 12px 28px rgba(15,23,42,0.22);
+}
+.accessibility-toggle svg {
+  width: 24px;
+  height: 24px;
+}
+.accessibility-panel {
+  position: absolute;
+  left: 0;
+  bottom: 58px;
+  width: min(320px, calc(100vw - 32px));
+  padding: 14px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid rgba(15,23,42,0.14);
+  box-shadow: 0 18px 46px rgba(15,23,42,0.22);
+  display: none;
+  color: #111827;
+}
+.accessibility-panel.open {
+  display: block;
+}
+.accessibility-title {
+  font-size: 15px;
+  font-weight: 900;
+  margin-bottom: 4px;
+}
+.accessibility-note {
+  font-size: 12px;
+  color: #475569;
+  line-height: 1.45;
+  margin-bottom: 10px;
+}
+.accessibility-actions {
+  display: grid;
+  gap: 8px;
+}
+.accessibility-action {
+  min-height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(15,23,42,0.12);
+  background: #f8fafc;
+  color: #111827;
+  font-weight: 800;
+  font-size: 12px;
+  text-align: right;
+  padding: 9px 10px;
+}
+.accessibility-action.active {
+  background: var(--green-800);
+  color: #fff;
+  border-color: var(--green-800);
 }
 
 .app-container {
@@ -94,6 +243,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 .header-brand {
@@ -114,6 +265,19 @@ body {
   object-fit: contain;
   border-radius: 6px;
 }
+.brand-logo-fallback {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--green-800);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 900;
+  box-shadow: 0 4px 12px rgba(45,90,27,0.18);
+}
 .brand-name {
   font-size: 18px;
   font-weight: 900;
@@ -132,39 +296,94 @@ body {
   align-items: center;
   gap: 10px;
 }
-.cart-btn {
-  background: var(--surface);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
+.audience-switch {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(45,90,27,0.12);
+  box-shadow: 0 2px 8px rgba(45,90,27,0.04);
+}
+.audience-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  color: var(--text-2);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 900;
+  padding: 7px 13px;
+  border-radius: var(--r-pill);
+  white-space: nowrap;
+  transition: all 0.18s var(--spring);
+}
+.audience-btn:hover {
+  background: var(--green-100);
+  color: var(--green-800);
+}
+.audience-btn.active {
+  background: var(--green-800);
+  color: #fff;
+}
+.audience-btn.farmer {
+  background: #fff;
+  color: var(--green-800);
+  border: 1px solid rgba(45,90,27,0.16);
+}
+.audience-btn.farmer:hover {
+  background: var(--green-800);
+  color: #fff;
+}
+.page-nav {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(45,90,27,0.12);
+  box-shadow: 0 2px 8px rgba(45,90,27,0.04);
+}
+.page-nav a {
+  color: var(--text-2);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 7px 11px;
+  border-radius: var(--r-pill);
+  white-space: nowrap;
+  transition: all 0.18s var(--spring);
+}
+.page-nav a:hover {
+  background: var(--green-100);
   color: var(--green-800);
-  cursor: pointer;
-  position: relative;
+}
+.page-nav a.active {
+  background: var(--green-800);
+  color: #fff;
+}
+.add-farm-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  color: var(--green-800);
+  border: 1px solid rgba(45,90,27,0.18);
+  padding: 8px 14px;
+  border-radius: var(--r-md);
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
   transition: all 0.22s var(--spring);
 }
-.cart-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-.cart-badge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background: var(--red);
-  color: #fff;
-  font-size: 10px;
-  font-weight: 800;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--bg);
+.add-farm-link:hover {
+  background: var(--green-100);
+  transform: translateY(-1px);
 }
 
 .map-toggle-btn {
@@ -186,6 +405,39 @@ body {
   transform: scale(1.02);
 }
 
+@media (max-width: 700px) {
+  .audience-switch {
+    order: 3;
+    width: 100%;
+  }
+  .audience-btn {
+    flex: 1;
+  }
+  .page-nav {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+  }
+  .page-nav a {
+    flex: 1;
+    text-align: center;
+    padding-inline: 8px;
+  }
+}
+
+@media (max-width: 420px) {
+  .map-toggle-btn span,
+  .add-farm-link span {
+    display: none;
+  }
+  .map-toggle-btn,
+  .add-farm-link {
+    min-width: 40px;
+    justify-content: center;
+    padding-inline: 10px;
+  }
+}
+
 /* Hero */
 .market-hero {
   padding: 1.5rem 1.25rem 0.5rem;
@@ -201,8 +453,228 @@ body {
   color: var(--text-2);
   margin-top: 4px;
 }
+.hero-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 7px 12px;
+  border-radius: var(--r-pill);
+  background: rgba(45,90,27,0.08);
+  color: var(--green-800);
+  font-size: 12px;
+  font-weight: 800;
+}
 
 /* Region Filter */
+.board-controls {
+  margin: 0 1.25rem 1rem;
+  padding: 11px;
+  border-radius: var(--r-lg);
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(45,90,27,0.12);
+  box-shadow: 0 10px 30px rgba(15,23,42,0.07);
+}
+.board-controls-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.board-search-box {
+  min-width: 0;
+  flex: 1;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  border: 1px solid rgba(15,23,42,0.08);
+}
+.board-search-box svg {
+  width: 17px;
+  height: 17px;
+  color: var(--green-800);
+  flex-shrink: 0;
+}
+.board-search-box input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text-1);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+}
+.board-search-box input::placeholder {
+  color: var(--text-3);
+  font-weight: 600;
+}
+.board-result-count {
+  flex-shrink: 0;
+  border-radius: var(--r-pill);
+  background: var(--green-100);
+  color: var(--green-800);
+  padding: 9px 12px;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+.board-sort-select {
+  flex-shrink: 0;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: var(--r-pill);
+  border: 1px solid rgba(15,23,42,0.08);
+  background: var(--surface);
+  padding: 0 10px;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 900;
+}
+.board-sort-select select {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--green-800);
+  font: inherit;
+  cursor: pointer;
+}
+.user-location-field {
+  flex: 1 1 180px;
+  min-width: 160px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: var(--r-pill);
+  border: 1px solid rgba(15,23,42,0.08);
+  background: var(--surface);
+  padding: 0 11px;
+  color: var(--text-2);
+}
+.user-location-field svg {
+  width: 16px;
+  height: 16px;
+  color: var(--green-800);
+  flex-shrink: 0;
+}
+.user-location-field input {
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text-1);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+}
+.user-location-field input::placeholder {
+  color: var(--text-3);
+}
+.board-filter-grid {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+.filter-group {
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  padding: 7px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fff 0%, #faf8f5 100%);
+  border: 1px solid rgba(45,90,27,0.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 5px 16px rgba(15,23,42,0.04);
+}
+.filter-group-label {
+  flex: 0 0 68px;
+  min-height: 44px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 16px;
+  background: var(--green-800);
+  color: #fff;
+  border: 1px solid rgba(45,90,27,0.24);
+  padding: 7px 8px;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 8px 16px rgba(45,90,27,0.16);
+}
+.filter-group-icon {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.16);
+  color: #fff;
+}
+.filter-group-icon svg {
+  width: 15px;
+  height: 15px;
+}
+@media (max-width: 560px) {
+  .board-controls-top {
+    flex-wrap: wrap;
+  }
+
+  .board-search-box {
+    flex-basis: 100%;
+  }
+
+  .board-result-count,
+  .board-sort-select,
+  .user-location-field {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .filter-group {
+    align-items: stretch;
+    flex-direction: row;
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .filter-group-label {
+    flex-basis: 56px;
+    min-height: 40px;
+    padding: 6px;
+    font-size: 10px;
+  }
+
+  .filter-group-icon {
+    width: 19px;
+    height: 19px;
+  }
+
+  .board-controls .category-card {
+    min-height: 32px;
+    padding: 5px 8px;
+  }
+
+  .board-controls .category-icon-wrap {
+    width: 19px;
+    height: 19px;
+  }
+
+  .board-filter-chip,
+  .region-pill {
+    padding: 7px 9px;
+  }
+}
 .regions-row {
   display: flex;
   gap: 8px;
@@ -242,6 +714,153 @@ body {
 }
 .categories-row::-webkit-scrollbar {
   display: none;
+}
+.board-controls .regions-row,
+.board-controls .categories-row,
+.board-controls .board-filter-row {
+  padding: 0;
+  margin-top: 0;
+}
+.board-controls .categories-row {
+  gap: 8px;
+}
+.board-controls .category-card {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 5px 10px;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  border: 1px solid rgba(15,23,42,0.06);
+}
+.board-controls .category-icon-wrap {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+}
+.board-controls .category-icon-wrap svg {
+  width: 16px;
+  height: 16px;
+}
+.board-controls .category-card:hover .category-icon-wrap {
+  transform: none;
+  box-shadow: none;
+}
+.board-controls .category-card.active {
+  background: var(--green-800);
+  border-color: var(--green-800);
+}
+.board-controls .category-card.active .category-icon-wrap {
+  background: transparent;
+  color: #fff;
+  border-color: transparent;
+  box-shadow: none;
+}
+.board-controls .category-card.active .category-label {
+  color: #fff;
+}
+
+/* Board Filters */
+.board-filter-row {
+  display: flex;
+  gap: 8px;
+  padding: 0 1.25rem 1rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.board-filter-row::-webkit-scrollbar {
+  display: none;
+}
+.board-filter-chip {
+  border: 1px solid rgba(0,0,0,0.06);
+  background: var(--surface);
+  color: var(--text-2);
+  border-radius: var(--r-pill);
+  padding: 7px 11px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.22s var(--spring);
+  white-space: nowrap;
+}
+.board-filter-chip.active {
+  background: var(--green-800);
+  color: #fff;
+  border-color: var(--green-800);
+  box-shadow: 0 4px 10px rgba(45,90,27,0.15);
+}
+.board-filter-chip.clear {
+  background: var(--green-50);
+  color: var(--green-800);
+}
+.reset-filter-btn {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid rgba(196,131,74,0.35);
+  background: #fff6ec;
+  color: #8a552c;
+  box-shadow: 0 5px 12px rgba(196,131,74,0.12);
+}
+.reset-filter-btn svg {
+  width: 14px;
+  height: 14px;
+}
+.reset-filter-btn:hover {
+  background: #f4e5d5;
+  transform: translateY(-1px);
+}
+.quick-select-row {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.quick-select-row::-webkit-scrollbar {
+  display: none;
+}
+.quick-filter-field {
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  border: 1px solid rgba(15,23,42,0.08);
+  padding: 0 9px;
+  white-space: nowrap;
+  transition: border-color 0.18s var(--spring), box-shadow 0.18s var(--spring), transform 0.18s var(--spring);
+}
+.quick-filter-field:hover,
+.region-pill:hover,
+.board-controls .category-card:hover {
+  border-color: rgba(45,90,27,0.24);
+  box-shadow: 0 5px 12px rgba(45,90,27,0.08);
+  transform: translateY(-1px);
+}
+.quick-filter-field span {
+  color: var(--green-800);
+  font-size: 10.5px;
+  font-weight: 900;
+}
+.quick-filter-field select {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text-2);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 /* ── FARM MARQUEE ── */
@@ -363,11 +982,16 @@ body {
   padding: 0 1.25rem 3rem;
   display: flex;
   flex-direction: column;
+  min-width: 0;
+}
+.market-content > * {
+  min-width: 0;
 }
 .products-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
+  min-width: 0;
 }
 @media (max-width: 400px) {
   .products-grid {
@@ -384,6 +1008,261 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
+}
+.farm-card {
+  gap: 0.65rem;
+  cursor: pointer;
+}
+.farm-card.map-focused {
+  border-color: rgba(45,90,27,0.42);
+  box-shadow: 0 10px 28px rgba(45,90,27,0.14);
+}
+.farm-card.map-focused .product-visual {
+  box-shadow: inset 0 0 0 2px rgba(45,90,27,0.18);
+}
+.farm-card.map-focused .farm-thumb {
+  border-color: rgba(45,90,27,0.36);
+  box-shadow: 0 0 0 3px rgba(45,90,27,0.1), inset 0 -18px 28px rgba(45,90,27,0.18);
+}
+.farm-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.farm-profile {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.farm-thumb {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(45,90,27,0.1);
+  box-shadow: inset 0 -18px 28px rgba(45,90,27,0.14);
+}
+.farm-thumb::before {
+  content: '';
+  position: absolute;
+  left: -18%;
+  right: -18%;
+  bottom: -18%;
+  height: 58%;
+  background:
+    repeating-linear-gradient(115deg, rgba(255,255,255,0.22) 0 7px, rgba(45,90,27,0.2) 7px 12px),
+    linear-gradient(180deg, rgba(255,255,255,0.2), rgba(45,90,27,0.25));
+  transform: rotate(-5deg);
+}
+.farm-thumb::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  left: 10px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.68);
+  box-shadow: 0 0 18px rgba(255,255,255,0.75);
+}
+.farm-thumb-icon {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.82);
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(15,23,42,0.12);
+}
+.farm-thumb-melamed-family,
+.farm-thumb-meshek-melamed {
+  background: linear-gradient(145deg, #d8ead2 0%, #f6e7c8 46%, #b9462e 100%);
+}
+.farm-thumb-bustan-harutzim {
+  background: linear-gradient(145deg, #d7ecff 0%, #e5d7b8 48%, #c07b30 100%);
+}
+.farm-thumb-organic-hefer {
+  background: linear-gradient(145deg, #d9f4d1 0%, #f2f0c8 48%, #6f9f45 100%);
+}
+.farm-thumb-ginat-erez {
+  background: linear-gradient(145deg, #e2f0ff 0%, #e8dbc7 48%, #8a704d 100%);
+}
+.farm-thumb-levi-herbs {
+  background: linear-gradient(145deg, #d5f1d9 0%, #f4ead0 46%, #3f8d62 100%);
+}
+.farm-thumb-otef-tomatoes {
+  background: linear-gradient(145deg, #ffe3d7 0%, #f4d7a8 46%, #b43b2f 100%);
+}
+.farm-thumb-arava-fresh {
+  background: linear-gradient(145deg, #f7ddb2 0%, #fbf2df 45%, #6aa04b 100%);
+}
+.farm-thumb-north-orchard {
+  background: linear-gradient(145deg, #d7edff 0%, #e9f5d2 48%, #4d8f3d 100%);
+}
+.farm-name {
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--text-1);
+  line-height: 1.25;
+}
+.farm-owner {
+  font-size: 11px;
+  color: var(--text-3);
+  font-weight: 700;
+  margin-top: 2px;
+}
+.farm-distance {
+  flex-shrink: 0;
+  border-radius: var(--r-pill);
+  background: var(--green-100);
+  color: var(--green-800);
+  font-size: 10px;
+  font-weight: 900;
+  padding: 4px 8px;
+}
+.farm-status-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.freshness-badge,
+.favorite-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: var(--r-pill);
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: 900;
+  border: 1px solid transparent;
+}
+.freshness-badge.fresh {
+  background: #e8f8ee;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+.freshness-badge.soon {
+  background: #fff7ed;
+  color: #9a3412;
+  border-color: #fed7aa;
+}
+.freshness-badge.old {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+.favorite-badge {
+  background: #fff7ed;
+  color: #9a3412;
+  border-color: #fed7aa;
+}
+.farm-produce-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.produce-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: var(--r-pill);
+  background: var(--green-50);
+  color: var(--text-2);
+  border: 1px solid var(--green-100);
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.farm-price-table {
+  display: grid;
+  gap: 6px;
+  margin-top: 2px;
+}
+.farm-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 9px;
+  border-radius: var(--r-sm);
+  background: #faf8f5;
+  font-size: 12px;
+}
+.farm-price-row span:first-child {
+  color: var(--text-2);
+  font-weight: 700;
+}
+.farm-price-row strong {
+  color: var(--green-800);
+  font-size: 13px;
+}
+.farm-meta {
+  display: grid;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-2);
+  line-height: 1.45;
+}
+.farm-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.farm-tag {
+  border-radius: var(--r-pill);
+  background: rgba(196,131,74,0.12);
+  color: #8a552c;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 800;
+}
+.farm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: auto;
+}
+.farm-action-btn {
+  border: none;
+  border-radius: var(--r-md);
+  padding: 9px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.22s var(--spring);
+}
+.farm-action-btn.primary {
+  background: var(--green-800);
+  color: #fff;
+}
+.farm-action-btn.secondary {
+  background: var(--green-100);
+  color: var(--green-800);
+}
+.farm-action-btn.ghost {
+  background: #fff;
+  color: var(--text-2);
+  border: 1px solid rgba(15,23,42,0.1);
+}
+.farm-action-btn.favorite-active {
+  background: #fff7ed;
+  color: #9a3412;
+  border: 1px solid #fed7aa;
+}
+.farm-action-btn:hover {
+  transform: translateY(-1px);
+}
+.farm-actions .wide {
+  grid-column: 1 / -1;
 }
 .product-card:hover {
   transform: translateY(-3px);
@@ -438,67 +1317,204 @@ body {
   font-weight: 900;
   color: var(--green-800);
 }
-.add-to-cart-btn {
-  background: var(--green-800);
-  color: #fff;
-  border: none;
-  border-radius: var(--r-md);
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s var(--spring);
-}
-.add-to-cart-btn:hover {
-  background: var(--green-900);
-}
-
-/* Quantity Selector in Grid */
-.qty-selector {
-  display: flex;
-  align-items: center;
-  background: var(--green-50);
-  border-radius: var(--r-md);
-  border: 1px solid var(--green-100);
-  padding: 2px;
-}
-.qty-btn {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: none;
-  background: #fff;
-  color: var(--green-800);
-  font-weight: bold;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s var(--spring);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-}
-.qty-btn:active {
-  transform: scale(0.9);
-}
-.qty-val {
-  font-size: 13px;
-  font-weight: 700;
-  min-width: 22px;
-  text-align: center;
-}
-
 /* Maps Container */
+.map-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  order: 1;
+  min-width: 0;
+  max-width: 100%;
+}
 .map-view-container {
+  position: relative;
+  min-height: 420px;
   border-radius: var(--r-xl);
   overflow: hidden;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
+#map {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+}
+.nearby-deals {
+  border-radius: var(--r-xl);
+  background: rgba(255,255,255,0.96);
+  border: 1px solid rgba(45,90,27,0.12);
+  box-shadow: 0 10px 28px rgba(15,23,42,0.07);
+  padding: 12px;
+  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+}
+.deals-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.deals-title-wrap {
+  min-width: 0;
+}
+.deals-kicker {
+  color: var(--green-800);
+  font-size: 11px;
+  font-weight: 900;
+  margin-bottom: 2px;
+}
+.deals-title {
+  color: var(--text-1);
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+.deals-sub {
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+.deals-badge {
+  flex: 0 0 auto;
+  border-radius: var(--r-pill);
+  background: var(--green-800);
+  color: #fff;
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 900;
+}
+.deals-carousel {
+  direction: ltr;
+  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+  mask: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  -webkit-mask: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+}
+@keyframes deals-scroll {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+.deals-track {
+  display: flex;
+  width: max-content;
+  animation: deals-scroll 36s linear infinite;
+}
+.nearby-deals:hover .deals-track {
+  animation-play-state: paused;
+}
+.deals-group {
+  display: flex;
+  gap: 10px;
+  padding-inline-end: 10px;
+  flex-shrink: 0;
+}
+.deal-card {
+  direction: rtl;
+  width: 210px;
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 10px;
+  align-items: center;
+  border-radius: 18px;
+  border: 1px solid rgba(45,90,27,0.1);
+  background: linear-gradient(180deg, #fff 0%, #faf8f5 100%);
+  padding: 10px;
+  cursor: pointer;
+  transition: transform 0.18s var(--spring), box-shadow 0.18s var(--spring), border-color 0.18s var(--spring);
+}
+.deal-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(45,90,27,0.26);
+  box-shadow: 0 10px 22px rgba(45,90,27,0.1);
+}
+.deal-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--green-100);
+  color: var(--green-800);
+  font-size: 20px;
+}
+.deal-body {
+  min-width: 0;
+}
+.deal-label {
+  color: var(--green-800);
+  font-size: 11px;
+  font-weight: 900;
+  margin-bottom: 2px;
+}
+.deal-price {
+  color: var(--text-1);
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1.15;
+}
+.deal-farm {
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.deal-empty {
+  direction: rtl;
+  color: var(--text-3);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 10px;
+}
+.empty-state {
+  grid-column: 1 / -1;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  text-align: center;
+  padding: 2.5rem 1.25rem;
+  border-radius: var(--r-xl);
+  background: #fff;
+  border: 1px solid rgba(45,90,27,0.12);
+  box-shadow: 0 10px 28px rgba(15,23,42,0.06);
+}
+.empty-state-icon {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: var(--green-100);
+  color: var(--green-800);
+}
+.empty-state-title {
+  color: var(--text-1);
+  font-size: 18px;
+  font-weight: 900;
+}
+.empty-state-text {
+  max-width: 430px;
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.6;
+  font-weight: 700;
+}
+.empty-state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
 
-/* Cart Drawer */
-/* Cart Drawer */
-.cart-drawer-overlay {
+/* Farm Details Modal */
+.farm-modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.4);
@@ -512,12 +1528,12 @@ body {
   pointer-events: none;
   transition: opacity 0.3s ease, visibility 0.3s ease;
 }
-.cart-drawer-overlay.open {
+.farm-modal-overlay.open {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
 }
-.cart-drawer {
+.farm-modal-sheet {
   background: var(--surface);
   border-radius: var(--r-xl) var(--r-xl) 0 0;
   padding: 1.25rem;
@@ -529,7 +1545,7 @@ body {
   transform: translateY(100%);
   transition: transform 0.3s var(--spring);
 }
-.cart-drawer-overlay.open .cart-drawer {
+.farm-modal-overlay.open .farm-modal-sheet {
   transform: translateY(0);
 }
 .drawer-handle {
@@ -563,48 +1579,6 @@ body {
   font-weight: bold;
 }
 
-.cart-items-list {
-  overflow-y: auto;
-  max-height: 30vh;
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.cart-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--bg);
-  padding: 0.75rem 1rem;
-  border-radius: var(--r-md);
-}
-.cart-item-info {
-  flex: 1;
-}
-.cart-item-title {
-  font-size: 13px;
-  font-weight: 800;
-}
-.cart-item-sub {
-  font-size: 10px;
-  color: var(--text-3);
-  margin-top: 1px;
-}
-.cart-item-price {
-  font-size: 14px;
-  font-weight: 900;
-  color: var(--green-800);
-  margin-left: 1rem;
-}
-
-.cart-fields {
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-  padding-top: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
 .form-field {
   display: flex;
   flex-direction: column;
@@ -633,128 +1607,190 @@ body {
   resize: none;
 }
 
-.cart-summary {
+.farm-modal-body {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.farm-modal-title {
+  font-size: 19px;
+  font-weight: 900;
+  color: var(--text-1);
+}
+.farm-modal-sub {
+  font-size: 12px;
+  color: var(--text-3);
+  font-weight: 700;
+}
+.farm-modal-section {
+  border-top: 1px solid rgba(0,0,0,0.06);
+  padding-top: 12px;
+}
+.farm-modal-section:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+.farm-modal-section h3 {
+  font-size: 13px;
+  color: var(--green-800);
+  margin-bottom: 8px;
+}
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.contact-link {
+  text-align: center;
+  text-decoration: none;
+  border-radius: var(--r-md);
+  padding: 10px;
+  font-size: 12px;
+  font-weight: 900;
+  background: var(--green-100);
+  color: var(--green-800);
+}
+.contact-link.primary {
+  background: var(--green-800);
+  color: #fff;
+}
+.contact-link.navigation {
+  background: #1d4ed8;
+  color: #fff;
+}
+.report-box {
+  display: grid;
+  gap: 8px;
+  border-radius: var(--r-md);
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  padding: 10px;
+}
+.report-box textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+.modal-actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.map-farm-info {
+  direction: rtl;
+  text-align: right;
+  font-family: 'Rubik', sans-serif;
+  min-width: 230px;
+  max-width: 285px;
+  color: var(--text-1);
+  padding: 3px;
+}
+.map-farm-title {
+  color: var(--green-800);
+  font-size: 15px;
+  font-weight: 900;
+  margin-bottom: 2px;
+}
+.map-farm-sub {
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.map-farm-story {
+  color: var(--text-2);
+  font-size: 12px;
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+.map-farm-label {
+  color: var(--text-1);
+  font-size: 11px;
+  font-weight: 900;
+  margin-bottom: 5px;
+}
+.map-farm-prices {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 9px;
+}
+.map-farm-price {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 1rem 0;
-  font-weight: bold;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: var(--r-sm);
+  background: #faf8f5;
+  font-size: 11px;
+  font-weight: 800;
 }
-.cart-total-lbl {
-  font-size: 14px;
+.map-farm-price strong {
+  color: var(--green-800);
+  white-space: nowrap;
 }
-.cart-total-val {
-  font-size: 18px;
+.map-farm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.map-farm-actions a,
+.map-farm-actions button {
+  border: none;
+  border-radius: var(--r-sm);
+  padding: 8px 6px;
+  font-size: 11px;
+  font-weight: 900;
+  font-family: 'Rubik', sans-serif;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+.map-farm-actions .primary {
+  background: var(--green-800);
+  color: #fff;
+}
+.map-farm-actions .secondary {
+  background: var(--green-100);
   color: var(--green-800);
 }
-.checkout-btn {
-  width: 100%;
-  background: var(--color-accent);
-  color: #fff;
-  border: none;
-  padding: 12px;
-  border-radius: var(--r-md);
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.22s var(--spring);
-}
-.checkout-btn:hover {
-  background: #047857;
-  transform: translateY(-1px);
-}
-.checkout-btn:disabled {
-  background: var(--text-3);
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Empty Cart State */
-.empty-cart-state {
-  text-align: center;
-  padding: 2rem 1rem;
-  color: var(--text-3);
-  font-size: 13px;
-}
-.empty-cart-state div {
-  font-size: 36px;
-  margin-bottom: 0.5rem;
-}
-
-/* Success Overlay */
-.success-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(8px);
-  z-index: 200;
+.static-map-focus {
+  height: 100%;
+  min-height: 420px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
-  text-align: center;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  padding: 1.4rem;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(165,217,106,0.32), transparent 30%),
+    linear-gradient(135deg, #f2efe9 0%, #d8ebd3 100%);
 }
-.success-overlay.open {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-.success-card {
+.static-map-card {
+  width: min(320px, 100%);
   background: #fff;
-  border-radius: var(--r-xl);
-  padding: 2.5rem 1.5rem;
-  box-shadow: var(--shadow-xl);
-  max-width: 360px;
-  width: 100%;
-  transform: scale(0.9);
-  transition: transform 0.3s var(--spring);
+  border: 1px solid rgba(45,90,27,0.16);
+  border-radius: var(--r-lg);
+  padding: 1rem;
+  box-shadow: var(--shadow-lg);
 }
-.success-overlay.open .success-card {
-  transform: scale(1);
-}
-.success-icon {
-  width: 64px;
-  height: 64px;
-  background: var(--green-100);
-  color: var(--color-accent);
-  border-radius: 50%;
+.static-map-pin {
+  width: 44px;
+  height: 44px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--green-800);
+  margin: 0 auto 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
-  margin: 0 auto 1.25rem;
-  box-shadow: 0 4px 12px rgba(165,217,106,0.3);
 }
-.success-title {
-  font-size: 18px;
-  font-weight: 900;
-  color: var(--green-900);
-  margin-bottom: 8px;
-}
-.success-text {
-  font-size: 13px;
-  color: var(--text-2);
-  line-height: 1.4;
-  margin-bottom: 1.5rem;
-}
-.success-btn {
-  background: var(--color-accent);
+.static-map-pin span {
+  transform: rotate(45deg);
   color: #fff;
-  border: none;
-  padding: 10px 20px;
-  font-size: 13px;
-  font-weight: 700;
-  border-radius: var(--r-md);
-  cursor: pointer;
-  transition: all 0.22s var(--spring);
-}
-.success-btn:hover {
-  background: #047857;
+  font-weight: 900;
 }
 
 /* Confetti */
@@ -791,6 +1827,7 @@ body {
     height: 90px;
     padding: 0 2rem;
     box-sizing: border-box;
+    flex-wrap: nowrap;
   }
 
   .market-hero {
@@ -811,6 +1848,11 @@ body {
     padding: 0.5rem 2rem 1.5rem;
     overflow-x: visible;
     gap: 16px;
+  }
+  .board-filter-row {
+    flex-wrap: wrap;
+    padding: 0 2rem 1.5rem;
+    overflow-x: visible;
   }
 
   /* Content split grid layout */
@@ -849,10 +1891,10 @@ body {
   }
 
   /* Modal sheets should be centered on desktop */
-  .cart-drawer-overlay {
+  .farm-modal-overlay {
     align-items: center;
   }
-  .cart-drawer {
+  .farm-modal-sheet {
     border-radius: var(--r-xl);
     max-height: 80vh;
     box-shadow: var(--shadow-xl);
@@ -862,185 +1904,450 @@ body {
     display: none;
   }
 }
+
+body.embedded-board {
+  background: transparent;
+  overflow-x: hidden;
+}
+
+body.embedded-board .app-container {
+  max-width: none;
+  width: 100%;
+  min-height: auto;
+  box-shadow: none;
+  background: var(--bg);
+}
+
+body.embedded-board .market-header,
+body.embedded-board .market-hero {
+  display: none;
+}
+
+body.embedded-board .farm-marquee-bar {
+  display: none;
+}
+
+body.embedded-board .board-controls {
+  margin: 0 1rem 10px;
+  padding: 10px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(45,90,27,0.1);
+  box-shadow: 0 8px 22px rgba(15,23,42,0.06);
+}
+
+body.embedded-board .market-content {
+  display: flex !important;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 1rem 1.25rem;
+}
+
+body.embedded-board .map-column {
+  order: 1;
+}
+
+body.embedded-board .map-view-container {
+  display: block !important;
+  position: relative;
+  top: auto;
+  height: 420px;
+  min-height: 420px;
+}
+
+body.embedded-board .products-grid {
+  order: 2;
+  grid-template-columns: 1fr !important;
+  gap: 12px;
+}
+
+body.embedded-board .product-card.farm-card {
+  border-color: rgba(45,90,27,0.1);
+  box-shadow: 0 8px 22px rgba(15,23,42,0.06);
+}
+
+body.embedded-board .product-card.farm-card:hover {
+  box-shadow: 0 14px 30px rgba(45,90,27,0.1);
+}
+
+body.embedded-board .product-visual {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .board-filter-grid {
+    grid-template-columns: minmax(220px, 0.7fr) minmax(280px, 0.9fr) minmax(500px, 1.35fr);
+    align-items: center;
+  }
+
+  body.embedded-board .board-controls {
+    display: block;
+    padding: 9px 10px;
+  }
+
+  body.embedded-board .board-controls-top {
+    min-width: 300px;
+  }
+
+  body.embedded-board .regions-row,
+  body.embedded-board .categories-row,
+  body.embedded-board .board-filter-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+
+  body.embedded-board .market-content {
+    display: grid !important;
+    grid-template-columns: minmax(560px, 1.18fr) minmax(360px, 0.82fr);
+    grid-template-areas: "map cards";
+    direction: ltr;
+    gap: 18px;
+    padding: 0 1rem 1.5rem;
+  }
+
+  body.embedded-board .products-grid {
+    grid-area: cards;
+    direction: rtl;
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+    align-content: start;
+    max-height: 720px;
+    overflow: auto;
+    padding-inline-end: 4px;
+  }
+
+  body.embedded-board .map-column {
+    grid-area: map;
+    direction: rtl;
+    position: sticky;
+    top: 0;
+    align-self: start;
+  }
+
+  body.embedded-board .map-view-container {
+    top: 0;
+    height: 590px;
+    min-height: 590px;
+  }
+
+  body.embedded-board .farm-card {
+    gap: 0.55rem;
+  }
+
+  body.embedded-board .farm-name {
+    font-size: 16px;
+  }
+
+  body.embedded-board .farm-price-row {
+    padding: 6px 8px;
+  }
+
+  body.embedded-board .farm-meta {
+    font-size: 10.5px;
+  }
+
+  body.embedded-board .farm-action-btn {
+    padding: 8px 9px;
+  }
+}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#market-main">דלג לתוכן המרכזי</a>
+<script>
+  if (new URLSearchParams(window.location.search).get('embedded') === '1') {
+    document.body.classList.add('embedded-board');
+  }
+</script>
 
 <div class="app-container">
 
   <!-- Market Header -->
   <header class="market-header">
-    <a href="#" class="header-brand">
+    <a href="landing v6.html" class="header-brand">
       <div class="brand-icon">
-        <img src="logo.svg" alt="גזרוני">
+        <span class="brand-logo-fallback" aria-hidden="true">ג</span>
       </div>
       <div>
         <div class="brand-name">גזרוני</div>
-        <div class="brand-sub">תוצרת מקומית עם אופי</div>
+        <div class="brand-sub">השער לחקלאות ישראלית</div>
       </div>
     </a>
+    <div class="audience-switch" aria-label="בחירת מסלול">
+      <a class="audience-btn active" href="landing v6.html#farm-board-section" aria-current="page">אזרח</a>
+      <a class="audience-btn farmer" href="seller-dashboard.html">חקלאי</a>
+    </div>
     <div class="header-actions">
       <button class="map-toggle-btn" id="map-toggle" onclick="toggleMapView()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
         <span>הצג מפה</span>
-      </button>
-      <button class="cart-btn" onclick="openCartDrawer()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-        <span class="cart-badge" id="cart-badge-count">0</span>
       </button>
     </div>
   </header>
 
   <!-- Hero block -->
   <section class="market-hero" id="market-hero-sec">
-    <h1 class="hero-tagline">תוצרת חקלאית פראית</h1>
-    <p class="hero-sub">חיבור ישיר לחקלאים בעמק חפר ודרום השרון. קנייה ישירה בלי פערי תיווך.</p>
+    <h1 class="hero-tagline">גיזרוני - השער הישיר למשקים ישראליים</h1>
+    <p class="hero-sub">לוח משקים חי שמראה מי מגדל מה, כמה זה עולה לקילו או ליחידה, איפה המשק נמצא ואיך פונים ישירות. אין רכישה באתר.</p>
+    <div class="hero-note">בחרו משק או סננו לפי אזור ותוצרת · לחיצה על משק מתמקדת במפה</div>
   </section>
 
-  <!-- Region pills -->
-  <div class="regions-row" id="regions-sec">
-    <div class="region-pill active" onclick="selectRegion(this, 'all')">כל האזורים</div>
-    <div class="region-pill" onclick="selectRegion(this, 'עמק חפר')">עמק חפר (כפר ויתקין)</div>
-    <div class="region-pill" onclick="selectRegion(this, 'דרום השרון')">דרום השרון (חרוצים)</div>
-  </div>
-
-  <!-- Categories scrolling row -->
-  <div class="categories-row" id="categories-sec">
-    <div class="category-card active" onclick="selectCategory(this, 'all')">
-      <div class="category-icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-          <path d="M2 17l10 5 10-5"/>
-          <path d="M2 12l10 5 10-5"/>
+  <section class="board-controls" aria-label="חיפוש וסינון לוח המשקים">
+    <div class="board-controls-top">
+      <label class="board-search-box" for="farm-search-input">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="M20 20l-3.5-3.5"></path>
         </svg>
-      </div>
-      <span class="category-label">הכל</span>
-    </div>
-    
-    <div class="category-card" onclick="selectCategory(this, 'vegetables')">
-      <div class="category-icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="13" r="8"/>
-          <path d="M12 5c0-1.5 1-2 1-2s-1.5.5-2 1.5"/>
-          <path d="M9 5c1 .5 2 0 3-1"/>
-          <path d="M15 5c-1 .5-2 0-3-1"/>
+        <input id="farm-search-input" type="search" autocomplete="off" placeholder="חפשו משק, תוצרת או יישוב" oninput="setSearchTerm(this.value)">
+      </label>
+      <span class="board-result-count" id="board-result-count">8 משקים</span>
+      <label class="user-location-field" for="user-location-input">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 21s7-5.2 7-11a7 7 0 0 0-14 0c0 5.8 7 11 7 11z"></path>
+          <circle cx="12" cy="10" r="2.4"></circle>
         </svg>
-      </div>
-      <span class="category-label">ירקות</span>
+        <input id="user-location-input" type="text" autocomplete="address-level2" placeholder="היישוב שלי" oninput="setUserLocation(this.value)" aria-describedby="user-location-help">
+        <span id="user-location-help" class="sr-only">הקלדת יישוב עוזרת למיין משקים קרובים יותר בלי לבקש הרשאת מיקום.</span>
+      </label>
+      <label class="board-sort-select" for="farm-sort-select">
+        <span>מיון</span>
+        <select id="farm-sort-select" onchange="setSortMode(this.value)">
+          <option value="distance">קרובים אליי</option>
+          <option value="price">מחיר נמוך</option>
+          <option value="updated">עודכנו לאחרונה</option>
+        </select>
+      </label>
     </div>
 
-    <div class="category-card" onclick="selectCategory(this, 'greens')">
-      <div class="category-icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 22V12"/>
-          <path d="M12 12c2.5-3.5 5-3.5 7-1a5 5 0 0 1-1 7c-2 2-4.5 0-6-6z"/>
-          <path d="M12 12c-2.5-3.5-5-3.5-7-1a5 5 0 0 0 1 7c2 2 4.5 0 6-6z"/>
-        </svg>
+    <div class="board-filter-grid">
+      <div class="filter-group">
+        <span class="filter-group-label">
+          <span class="filter-group-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 21s7-5.2 7-11a7 7 0 0 0-14 0c0 5.8 7 11 7 11z"></path>
+              <circle cx="12" cy="10" r="2.4"></circle>
+            </svg>
+          </span>
+          <span>אזור</span>
+        </span>
+        <div class="regions-row" id="regions-sec">
+          <div class="region-pill active" onclick="selectRegion(this, 'all')">כל האזורים</div>
+          <div class="region-pill" onclick="selectRegion(this, 'עמק חפר')">עמק חפר</div>
+          <div class="region-pill" onclick="selectRegion(this, 'דרום השרון')">דרום השרון</div>
+          <div class="region-pill" onclick="selectRegion(this, 'עוטף עזה')">עוטף עזה</div>
+          <div class="region-pill" onclick="selectRegion(this, 'הדרום')">הדרום</div>
+          <div class="region-pill" onclick="selectRegion(this, 'הצפון')">הצפון</div>
+        </div>
       </div>
-      <span class="category-label">עלים וירוקים</span>
-    </div>
 
-    <div class="category-card" onclick="selectCategory(this, 'roots')">
-      <div class="category-icon-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18.8 5.2c-1.8-1.8-4.5-1.8-6.3 0L3.8 13.9c-.8.8-.8 2 0 2.8l3.5 3.5c.8.8 2 .8 2.8 0l8.7-8.7c1.7-1.8 1.7-4.5 0-6.3z"/>
-          <path d="M10 9l5 5"/>
-          <path d="M5.5 18.5l-2 2"/>
-        </svg>
+      <div class="filter-group">
+        <span class="filter-group-label">
+          <span class="filter-group-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22V12"></path>
+              <path d="M12 12c2.5-3.5 5-3.5 7-1a5 5 0 0 1-1 7c-2 2-4.5 0-6-6z"></path>
+              <path d="M12 12c-2.5-3.5-5-3.5-7-1a5 5 0 0 0 1 7c2 2 4.5 0 6-6z"></path>
+            </svg>
+          </span>
+          <span>תוצרת</span>
+        </span>
+        <div class="categories-row" id="categories-sec">
+          <div class="category-card active" onclick="selectCategory(this, 'all')">
+            <div class="category-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                <path d="M2 17l10 5 10-5"/>
+                <path d="M2 12l10 5 10-5"/>
+              </svg>
+            </div>
+            <span class="category-label">הכל</span>
+          </div>
+
+          <div class="category-card" onclick="selectCategory(this, 'vegetables')">
+            <div class="category-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="13" r="8"/>
+                <path d="M12 5c0-1.5 1-2 1-2s-1.5.5-2 1.5"/>
+                <path d="M9 5c1 .5 2 0 3-1"/>
+                <path d="M15 5c-1 .5-2 0-3-1"/>
+              </svg>
+            </div>
+            <span class="category-label">ירקות</span>
+          </div>
+
+          <div class="category-card" onclick="selectCategory(this, 'greens')">
+            <div class="category-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22V12"/>
+                <path d="M12 12c2.5-3.5 5-3.5 7-1a5 5 0 0 1-1 7c-2 2-4.5 0-6-6z"/>
+                <path d="M12 12c-2.5-3.5-5-3.5-7-1a5 5 0 0 0 1 7c2 2 4.5 0 6-6z"/>
+              </svg>
+            </div>
+            <span class="category-label">עלים</span>
+          </div>
+
+          <div class="category-card" onclick="selectCategory(this, 'roots')">
+            <div class="category-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18.8 5.2c-1.8-1.8-4.5-1.8-6.3 0L3.8 13.9c-.8.8-.8 2 0 2.8l3.5 3.5c.8.8 2 .8 2.8 0l8.7-8.7c1.7-1.8 1.7-4.5 0-6.3z"/>
+                <path d="M10 9l5 5"/>
+                <path d="M5.5 18.5l-2 2"/>
+              </svg>
+            </div>
+            <span class="category-label">שורשים</span>
+          </div>
+
+          <div class="category-card" onclick="selectCategory(this, 'fruit')">
+            <div class="category-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 6c0-2 1.2-3 3-3"/>
+                <circle cx="11" cy="14" r="7"/>
+                <path d="M8 7c2 0 4 0 6-2"/>
+              </svg>
+            </div>
+            <span class="category-label">פירות</span>
+          </div>
+        </div>
       </div>
-      <span class="category-label">גזרים ושורשים</span>
+
+      <div class="filter-group filter-group-wide">
+        <span class="filter-group-label">
+          <span class="filter-group-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 6h16"></path>
+              <path d="M7 12h10"></path>
+              <path d="M10 18h4"></path>
+            </svg>
+          </span>
+          <span>סינון</span>
+        </span>
+        <div class="quick-select-row" aria-label="סינון לוח המשקים">
+          <label class="quick-filter-field" for="price-filter-select">
+            <span>מחיר</span>
+            <select id="price-filter-select" onchange="selectMaxPriceValue(this.value)">
+              <option value="all">כל מחיר</option>
+              <option value="6">עד ₪6</option>
+              <option value="9">עד ₪9</option>
+              <option value="12">עד ₪12</option>
+            </select>
+          </label>
+          <label class="quick-filter-field" for="availability-filter-select">
+            <span>זמינות</span>
+            <select id="availability-filter-select" onchange="selectAvailabilityValue(this.value)">
+              <option value="all">כל זמינות</option>
+              <option value="today">זמין היום</option>
+              <option value="coordination">בתיאום</option>
+            </select>
+          </label>
+          <label class="quick-filter-field" for="tag-filter-select">
+            <span>תגית</span>
+            <select id="tag-filter-select" onchange="selectTagValue(this.value)">
+              <option value="all">כל תגית</option>
+              <option value="מחירים גלויים">מחירים גלויים</option>
+              <option value="נקודת חלוקה">נקודת חלוקה</option>
+              <option value="ללא ריסוס">ללא ריסוס</option>
+            </select>
+          </label>
+          <button class="board-filter-chip clear reset-filter-btn" onclick="clearBoardFilters()" aria-label="איפוס כל הסינונים">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 12a9 9 0 1 0 3-6.7"></path>
+              <path d="M3 4v6h6"></path>
+            </svg>
+            <span>איפוס סינונים</span>
+          </button>
+        </div>
+      </div>
     </div>
-  </div>
+  </section>
 
   <!-- Farm marquee ticker — above map/grid -->
   <div class="farm-marquee-bar" aria-label="משקים פעילים באזורך">
     <span class="farm-marquee-label">משקים פעילים:</span>
     <div class="farm-marquee-track" id="farm-marquee-track">
       <!-- doubled for seamless CSS loop -->
-      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משק מלמד (כפר ויתקין) — ירקות ישר מהשדה</div>
-      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>בוסתן חרוצים — עגבניות עם אופי</div>
-      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>החווה הירוקה — עלים ירוקים רעננים</div>
-      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משק שחל (אביחיל) — גזר ושורשים טריים</div>
-      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>אורגני עמק חפר — מגוון עונתי ללא ריסוס</div>
-      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משפחת לוי — עשבי תיבול ופלפלים</div>
-      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>גינת הכפר (חרוצים) — עלי בייבי ורוקט</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משק מלמד (כפר ויתקין) — עגבניות ₪9 לק״ג</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>בוסתן חרוצים — מלפפון ₪7 לק״ג</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>החווה הירוקה — חסה ₪8 ליחידה</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משק שחל (אביחיל) — גזר ₪5 לק״ג</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>אורגני עמק חפר — מגוון עונתי בלי תיווך</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משפחת לוי — עשבי תיבול ₪12 לצרור</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>גינת הכפר (חרוצים) — עלים ירוקים זמינים היום</div>
       <!-- duplicate for seamless loop -->
-      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משק מלמד (כפר ויתקין) — ירקות ישר מהשדה</div>
-      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>בוסתן חרוצים — עגבניות עם אופי</div>
-      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>החווה הירוקה — עלים ירוקים רעננים</div>
-      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משק שחל (אביחיל) — גזר ושורשים טריים</div>
-      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>אורגני עמק חפר — מגוון עונתי ללא ריסוס</div>
-      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משפחת לוי — עשבי תיבול ופלפלים</div>
-      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>גינת הכפר (חרוצים) — עלי בייבי ורוקט</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משק מלמד (כפר ויתקין) — עגבניות ₪9 לק״ג</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>בוסתן חרוצים — מלפפון ₪7 לק״ג</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>החווה הירוקה — חסה ₪8 ליחידה</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משק שחל (אביחיל) — גזר ₪5 לק״ג</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>אורגני עמק חפר — מגוון עונתי בלי תיווך</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>משפחת לוי — עשבי תיבול ₪12 לצרור</div>
+      <div class="farm-marquee-item"><span class="farm-marquee-dot"></span>גינת הכפר (חרוצים) — עלים ירוקים זמינים היום</div>
     </div>
   </div>
 
   <!-- Content -->
-  <main class="market-content">
+  <main class="market-content" id="market-main">
     
     <!-- Grid view -->
     <div class="products-grid" id="products-grid">
       <!-- Dynamically filled -->
     </div>
 
-    <!-- Map view -->
-    <div class="map-view-container" id="map-container" style="display:none; flex:1; min-height:480px; position:relative;">
-      <div id="map" style="width:100%; height:100%; min-height:480px; border-radius:var(--r-xl); overflow:hidden;"></div>
-    </div>
+    <section class="map-column" aria-label="מפת המשקים ומבצעים">
+      <!-- Map view -->
+      <div class="map-view-container" id="map-container" style="display:none;">
+        <div id="map"></div>
+      </div>
+
+      <section class="nearby-deals" id="nearby-deals" aria-label="מבצעים באיזורך">
+        <div class="deals-header">
+          <div class="deals-title-wrap">
+            <div class="deals-kicker">מבצעים באיזורך</div>
+            <div class="deals-title">המחירים הכי טובים לידך</div>
+            <div class="deals-sub">הכי זול לכל תוצרת מתוך המשקים שמוצגים עכשיו</div>
+          </div>
+          <div class="deals-badge" id="deals-count">0 מציאות</div>
+        </div>
+        <div class="deals-carousel">
+          <div class="deals-track" id="deals-track"></div>
+        </div>
+      </section>
+    </section>
 
   </main>
 
 </div><!-- /app-container -->
 
-<!-- Cart Drawer Modal -->
-<div class="cart-drawer-overlay" id="cart-drawer-overlay" onclick="closeCartDrawer(event)">
-  <div class="cart-drawer">
-    <div class="drawer-handle"></div>
-    <div class="drawer-header">
-      <div class="drawer-title">סל הקניות שלי</div>
-      <button class="drawer-close" onclick="closeCartDrawer(null)">×</button>
+<div class="accessibility-widget" id="accessibility-widget">
+  <button class="accessibility-toggle" id="accessibility-toggle" type="button" aria-label="פתח כלי נגישות" aria-expanded="false" aria-controls="accessibility-panel">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="4" r="2.4"></circle>
+      <path d="M4 9h16"></path>
+      <path d="M12 9v12"></path>
+      <path d="M8 21l4-8 4 8"></path>
+    </svg>
+  </button>
+  <section class="accessibility-panel" id="accessibility-panel" aria-label="אפשרויות נגישות">
+    <div class="accessibility-title">כלי נגישות</div>
+    <p class="accessibility-note">התאמות תצוגה מקומיות. האתר נבנה לכיוון WCAG AA עם ניווט מקלדת, פוקוס גלוי וקונטרסט משופר.</p>
+    <div class="accessibility-actions">
+      <button class="accessibility-action" type="button" data-a11y-toggle="largeText">הגדלת טקסט</button>
+      <button class="accessibility-action" type="button" data-a11y-toggle="contrast">ניגודיות גבוהה</button>
+      <button class="accessibility-action" type="button" data-a11y-toggle="reduceMotion">עצירת אנימציות</button>
+      <button class="accessibility-action" type="button" data-a11y-toggle="underlineLinks">הדגשת קישורים</button>
+      <button class="accessibility-action" type="button" data-a11y-reset>איפוס התאמות</button>
     </div>
-
-    <div class="cart-items-list" id="cart-items-list">
-      <!-- Dynamically filled -->
-    </div>
-
-    <div class="cart-fields" id="cart-fields-sec" style="display:none;">
-      <div class="form-field">
-        <label class="form-label">טלפון ליצירת קשר</label>
-        <input class="form-input" id="cart-phone" type="tel" placeholder="050-0000000">
-      </div>
-      <div class="form-field">
-        <label class="form-label">אופן קבלת ההזמנה</label>
-        <select class="form-select" id="cart-delivery-type">
-          <option value="pickup">איסוף עצמי מהמשק</option>
-          <option value="delivery">משלוח עד הבית (בתיאום טלפוני)</option>
-        </select>
-      </div>
-      <div class="form-field">
-        <label class="form-label">הערות להזמנה</label>
-        <textarea class="form-textarea" id="cart-notes" placeholder="למשל: תבחרו לי גזרים מתוקים במיוחד!"></textarea>
-      </div>
-    </div>
-
-    <div class="cart-summary">
-      <span class="cart-total-lbl">סה״כ לתשלום:</span>
-      <span class="cart-total-val" id="cart-total-val">₪0</span>
-    </div>
-
-    <button class="checkout-btn" id="checkout-btn" onclick="submitOrder()" disabled>סל הקניות ריק</button>
-  </div>
+  </section>
 </div>
 
-<!-- Order Success Screen -->
-<div class="success-overlay" id="success-overlay">
-  <div class="success-card">
-    <div class="success-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;color:var(--color-accent);"><polyline points="20 6 9 17 4 12"/></svg>
+<!-- Farm Details Modal -->
+<div class="farm-modal-overlay" id="farm-modal-overlay" onclick="closeFarmModal(event)">
+  <div class="farm-modal-sheet" role="dialog" aria-modal="true" aria-labelledby="farm-modal-heading" tabindex="-1">
+    <div class="drawer-handle"></div>
+    <div class="drawer-header">
+      <div class="drawer-title" id="farm-modal-heading">פרטי המשק</div>
+      <button class="drawer-close" onclick="closeFarmModal(null)" aria-label="סגור">×</button>
     </div>
-    <h2 class="success-title">ההזמנה נשלחה בהצלחה!</h2>
-    <p class="success-text">הפרטים הועברו ישירות לחקלאי. הוא ייצור איתך קשר בהקדם לתיאום משלוח/איסוף ותשלום.</p>
-    <button class="success-btn" onclick="closeSuccessOverlay()">חזרה לשוק</button>
+    <div class="farm-modal-body" id="farm-modal-body"></div>
   </div>
 </div>
 
@@ -1050,444 +2357,1199 @@ body {
 // ══════════════════════════════════
 //  DATA & STATE
 // ══════════════════════════════════
-const WEBHOOK_URL = ""; // יוגדר בעתיד ע"י המשתמש
-
-const PRODUCTS = [
+const FARMS = [
   {
-    id: 1,
-    name: "עגבנייה עם אופי",
-    farmer: "משק מלמד (עוז)",
-    town: "כפר ויתקין",
-    region: "עמק חפר",
-    category: "vegetables",
-    price: 9,
-    unit: "ק\"ג",
-    desc: "עגבנייה אמיתית בטעם של פעם, לא עגולה מושלמת של סופר אלא מפוצצת במיץ ואופי.",
-    badge: "מבוקש",
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 5c0-1.5 1-2 1-2s-1.5.5-2 1.5"/><path d="M9 5c1 .5 2 0 3-1"/><path d="M15 5c-1 .5-2 0-3-1"/></svg>`
+    id: 'meshek-melamed',
+    name: 'משק מלמד',
+    farmerName: 'עוז מלמד',
+    region: 'עמק חפר',
+    city: 'כפר ויתקין',
+    distanceKm: 5,
+    coordinates: { lat: 32.3831, lng: 34.8697 },
+    availability: 'זמין היום לאיסוף בתיאום',
+    pickup: 'איסוף מכפר ויתקין, שעות בוקר וערב',
+    story: 'משק משפחתי ותיק שמגדל ירקות עונתיים ומוכר ישירות לתושבי האזור.',
+    produce: [
+      { id: 'tomato', name: 'עגבנייה עם אופי', category: 'vegetables', price: 9, unit: 'ק״ג', availability: 'קטיף הבוקר', icon: '🍅' },
+      { id: 'cucumber', name: 'מלפפון עקום', category: 'vegetables', price: 6, unit: 'ק״ג', availability: 'זמין השבוע', icon: '🥒' },
+      { id: 'lettuce', name: 'חסה פריכה', category: 'greens', price: 8, unit: 'יחידה', availability: 'כמות מוגבלת', icon: '🥬' }
+    ],
+    contact: { phone: '050-000-1111', whatsapp: '972500001111', navigation: 'https://maps.google.com/?q=כפר+ויתקין' },
+    tags: ['קטיף טרי', 'איסוף עצמי', 'משק משפחתי'],
+    lastUpdated: '27.05.2026'
   },
   {
-    id: 2,
-    name: "מלפפון עקום",
-    farmer: "משק מלמד (עוז)",
-    town: "כפר ויתקין",
-    region: "עמק חפר",
-    category: "vegetables",
-    price: 6,
-    unit: "ק\"ג",
-    desc: "עקום, פריך וריחני. מתיקות טבעית שנעלמת כשמיישרים אותם במפעל.",
-    badge: "הכי טרי",
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-2.5-2.5-2.5-6.5 0-9s6.5-2.5 9 0l6 6c2.5 2.5 2.5 6.5 0 9s-6.5 2.5-9 0l-6-6z"/><path d="M8.5 9.5c.3-.3.7-.3 1 0"/><path d="M11.5 12.5c.3-.3.7-.3 1 0"/></svg>`
+    id: 'bustan-harutzim',
+    name: 'בוסתן חרוצים',
+    farmerName: 'נטע שדה',
+    region: 'דרום השרון',
+    city: 'חרוצים',
+    distanceKm: 12,
+    coordinates: { lat: 32.2356, lng: 34.8778 },
+    availability: 'פתוח לפניות השבוע',
+    pickup: 'תיאום איסוף מחרוצים, אפשרות נקודת חלוקה אזורית',
+    story: 'בוסתן קטן עם ירקות שורש, עלים ותוצרת עונתית שמתחלפת לפי השדה.',
+    produce: [
+      { id: 'carrot', name: 'גזר שמח', category: 'roots', price: 5, unit: 'ק״ג', availability: 'זמין היום', icon: '🥕' },
+      { id: 'spinach', name: 'תרד בלאדי', category: 'greens', price: 7, unit: 'צרור', availability: 'נקטף לפי פנייה', icon: '🌿' },
+      { id: 'beet', name: 'סלק מתוק', category: 'roots', price: 6, unit: 'ק״ג', availability: 'זמין השבוע', icon: '🟣' }
+    ],
+    contact: { phone: '050-000-2222', whatsapp: '972500002222', navigation: 'https://maps.google.com/?q=חרוצים' },
+    tags: ['עונתי', 'נקודת חלוקה', 'מחירים גלויים'],
+    lastUpdated: '26.05.2026'
   },
   {
-    id: 3,
-    name: "גזר שמח",
-    farmer: "משק שדה (נטע)",
-    town: "חרוצים",
-    region: "דרום השרון",
-    category: "roots",
-    price: 5,
-    unit: "ק\"ג",
-    desc: "מתוק במיוחד, נשלף הבוקר מהאדמה החולית של השרון. מצוין לנשנוש או למיץ.",
-    badge: "מומלץ",
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18.8 5.2c-1.8-1.8-4.5-1.8-6.3 0L3.8 13.9c-.8.8-.8 2 0 2.8l3.5 3.5c.8.8 2 .8 2.8 0l8.7-8.7c1.7-1.8 1.7-4.5 0-6.3z"/><path d="M10 9l5 5"/><path d="M5.5 18.5l-2 2"/></svg>`
+    id: 'organic-hefer',
+    name: 'אורגני עמק חפר',
+    farmerName: 'תמר לוי',
+    region: 'עמק חפר',
+    city: 'כפר ויתקין',
+    distanceKm: 7,
+    coordinates: { lat: 32.3875, lng: 34.8665 },
+    availability: 'מלאי משתנה לפי קטיף',
+    pickup: 'איסוף מהמשק בימי שני וחמישי',
+    story: 'גידול מוקפד ללא ריסוס כימי, עם דגש על ירקות צבעוניים ותוצרת לילדים.',
+    produce: [
+      { id: 'cherry-tomato', name: 'שרי תמר', category: 'vegetables', price: 10, unit: 'ק״ג', availability: 'כמות מוגבלת', icon: '🍅' },
+      { id: 'colored-carrot', name: 'גזר צבעוני', category: 'roots', price: 6, unit: 'ק״ג', availability: 'זמין השבוע', icon: '🥕' },
+      { id: 'baby-leaves', name: 'עלי בייבי', category: 'greens', price: 11, unit: 'שקית', availability: 'טרי מהבוקר', icon: '🥬' }
+    ],
+    contact: { phone: '050-000-3333', whatsapp: '972500003333', navigation: 'https://maps.google.com/?q=עמק+חפר' },
+    tags: ['ללא ריסוס', 'משפחתי', 'עדכון יומי'],
+    lastUpdated: '27.05.2026'
   },
   {
-    id: 4,
-    name: "צרור חסה פריכה",
-    farmer: "משק מלמד (עוז)",
-    town: "כפר ויתקין",
-    region: "עמק חפר",
-    category: "greens",
-    price: 8,
-    unit: "יח'",
-    desc: "חסה הידרופונית נקייה, פריכה ברמה ששומעים בכל ביס. נקטפת עם השורש.",
-    badge: "",
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 12c2.5-3.5 5-3.5 7-1a5 5 0 0 1-1 7c-2 2-4.5 0-6-6z"/><path d="M12 12c-2.5-3.5-5-3.5-7-1a5 5 0 0 0 1 7c2 2 4.5 0 6-6z"/></svg>`
+    id: 'ginat-erez',
+    name: 'הגינה של ארז',
+    farmerName: 'ארז כהן',
+    region: 'דרום השרון',
+    city: 'חרוצים',
+    distanceKm: 15,
+    coordinates: { lat: 32.2321, lng: 34.8812 },
+    availability: 'זמין לפניות מראש',
+    pickup: 'איסוף בתיאום מראש מהכניסה לחרוצים',
+    story: 'גינת שדה קטנה שמוכרת כמויות משתנות של ירקות בסיסיים במחיר שקוף.',
+    produce: [
+      { id: 'cucumber-small', name: 'מלפפון קטן', category: 'vegetables', price: 7, unit: 'ק״ג', availability: 'זמין השבוע', icon: '🥒' },
+      { id: 'red-lettuce', name: 'חסה סלנובה', category: 'greens', price: 7, unit: 'יחידה', availability: 'נקטף לפי פנייה', icon: '🥬' },
+      { id: 'beet-small', name: 'סלק אדום', category: 'roots', price: 5, unit: 'ק״ג', availability: 'זמין היום', icon: '🟣' }
+    ],
+    contact: { phone: '050-000-4444', whatsapp: '972500004444', navigation: 'https://maps.google.com/?q=חרוצים' },
+    tags: ['מחיר נמוך', 'כמות קטנה', 'שקיפות'],
+    lastUpdated: '25.05.2026'
   },
   {
-    id: 5,
-    name: "עלי תרד בלאדי",
-    farmer: "משק שדה (נטע)",
-    town: "חרוצים",
-    region: "דרום השרון",
-    category: "greens",
-    price: 7,
-    unit: "צרור",
-    desc: "עלים בשרניים בטעם עמוק ועשיר. מושלם לבישול, שייקים או סלט ירוק מרענן.",
-    badge: "אורגני",
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 8c0-3.5 2.5-6 5-6s4 3 2 6c-2.5 3-5 1.5-7 0z"/><path d="M12 8c0-3.5-2.5-6-5-6s-4 3-2 6c2.5 3 5 1.5 7 0z"/></svg>`
+    id: 'levi-herbs',
+    name: 'משפחת לוי',
+    farmerName: 'מאיה לוי',
+    region: 'עמק חפר',
+    city: 'אביחיל',
+    distanceKm: 9,
+    coordinates: { lat: 32.3507, lng: 34.8725 },
+    availability: 'עשבי תיבול זמינים כל השבוע',
+    pickup: 'איסוף מאביחיל או נקודת חלוקה בנתניה',
+    story: 'משק קטן שמתמחה בעשבי תיבול, פלפלים ותוצרת משלימה לבישול ביתי.',
+    produce: [
+      { id: 'herbs', name: 'עשבי תיבול', category: 'greens', price: 12, unit: 'צרור', availability: 'זמין היום', icon: '🌿' },
+      { id: 'pepper', name: 'פלפל מתוק', category: 'vegetables', price: 11, unit: 'ק״ג', availability: 'בכמות מוגבלת', icon: '🫑' },
+      { id: 'lemon', name: 'לימון', category: 'fruit', price: 8, unit: 'ק״ג', availability: 'עונתי', icon: '🍋' }
+    ],
+    contact: { phone: '050-000-5555', whatsapp: '972500005555', navigation: 'https://maps.google.com/?q=אביחיל' },
+    tags: ['נקודת חלוקה', 'עשבי תיבול', 'עונתי'],
+    lastUpdated: '27.05.2026'
   },
   {
-    id: 6,
-    name: "סלק מתוק מהאדמה",
-    farmer: "משק שדה (נטע)",
-    town: "חרוצים",
-    region: "דרום השרון",
-    category: "roots",
-    price: 6,
-    unit: "ק\"ג",
-    desc: "סלקים קטנים ומרוכזים, עמוסים במתיקות אדמתית ובריאות. נהדרים לצלייה בתנור.",
-    badge: "",
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18.8 5.2c-1.8-1.8-4.5-1.8-6.3 0L3.8 13.9c-.8.8-.8 2 0 2.8l3.5 3.5c.8.8 2 .8 2.8 0l8.7-8.7c1.7-1.8 1.7-4.5 0-6.3z"/><path d="M13 6l5 5"/></svg>`
+    id: 'otef-tomatoes',
+    name: 'חממות עוטף ישראל',
+    farmerName: 'דניאל בן שדה',
+    region: 'עוטף עזה',
+    city: 'נתיב העשרה',
+    distanceKm: 78,
+    coordinates: { lat: 31.5702, lng: 34.5398 },
+    availability: 'פתוח לפניות ותיאום איסוף השבוע',
+    pickup: 'איסוף מנתיב העשרה או נקודת חלוקה באשקלון בתיאום מראש',
+    story: 'חממות משפחתיות בעוטף עם ירקות חממה בסיסיים במחירים ישירים וללא פערי תיווך.',
+    produce: [
+      { id: 'tomato-south', name: 'עגבנייה חממה', category: 'vegetables', price: 6, unit: 'ק״ג', availability: 'זמין היום', icon: '🍅', dealKey: 'tomato' },
+      { id: 'cucumber-south', name: 'מלפפון חממה', category: 'vegetables', price: 5, unit: 'ק״ג', availability: 'זמין השבוע', icon: '🥒', dealKey: 'cucumber' },
+      { id: 'pepper-south', name: 'פלפל אדום', category: 'vegetables', price: 8, unit: 'ק״ג', availability: 'כמות מוגבלת', icon: '🫑', dealKey: 'pepper' }
+    ],
+    contact: { phone: '050-000-6666', whatsapp: '972500006666', navigation: 'https://maps.google.com/?q=נתיב+העשרה' },
+    tags: ['מחירים גלויים', 'עוטף עזה', 'קטיף טרי'],
+    lastUpdated: '28.05.2026'
   },
   {
-    id: 7,
-    name: "עגבנייה עם אופי",
-    farmer: "משק האורגני (תמר)",
-    town: "כפר ויתקין",
-    region: "עמק חפר",
-    category: "vegetables",
-    price: 10,
-    unit: "ק\"ג",
-    desc: "עגבניות שרי תמר בגידול אורגני מלא, מתוקות כמו סוכריות ישירות מהמשק של תמר.",
-    badge: "אורגני",
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 5c0-1.5 1-2 1-2s-1.5.5-2 1.5"/><path d="M9 5c1 .5 2 0 3-1"/><path d="M15 5c-1 .5-2 0-3-1"/></svg>`
+    id: 'arava-fresh',
+    name: 'ערבה טרייה',
+    farmerName: 'שיר אלוני',
+    region: 'הדרום',
+    city: 'חצבה',
+    distanceKm: 152,
+    coordinates: { lat: 30.7686, lng: 35.2817 },
+    availability: 'ירקות ערבה זמינים בתיאום מראש',
+    pickup: 'איסוף מחצבה או נקודת חלוקה בבאר שבע אחת לשבוע',
+    story: 'משק דמה מהערבה שמציג תוצרת מדברית במחירי לוח שקופים לתצוגת הדרום.',
+    produce: [
+      { id: 'pepper-arava', name: 'פלפל ערבה', category: 'vegetables', price: 7, unit: 'ק״ג', availability: 'זמין השבוע', icon: '🫑', dealKey: 'pepper' },
+      { id: 'eggplant-arava', name: 'חציל חממה', category: 'vegetables', price: 6, unit: 'ק״ג', availability: 'זמין בתיאום', icon: '🍆', dealKey: 'eggplant' },
+      { id: 'melon-arava', name: 'מלון עונתי', category: 'fruit', price: 8, unit: 'ק״ג', availability: 'עונתי', icon: '🍈', dealKey: 'melon' }
+    ],
+    contact: { phone: '050-000-8888', whatsapp: '972500008888', navigation: 'https://maps.google.com/?q=חצבה' },
+    tags: ['הדרום', 'מחירים גלויים', 'עונתי'],
+    lastUpdated: '28.05.2026'
   },
   {
-    id: 8,
-    name: "עלי תרד בלאדי",
-    farmer: "משק האורגני (תמר)",
-    town: "כפר ויתקין",
-    region: "עמק חפר",
-    category: "greens",
-    price: 8,
-    unit: "צרור",
-    desc: "צרור ענק של תרד בלאדי טבעי, שטוף ונקי, נקטף ידנית בשעות הבוקר המוקדמות.",
-    badge: "אורגני",
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 8c0-3.5 2.5-6 5-6s4 3 2 6c-2.5 3-5 1.5-7 0z"/><path d="M12 8c0-3.5-2.5-6-5-6s-4 3-2 6c2.5 3 5 1.5 7 0z"/></svg>`
-  },
-  {
-    id: 9,
-    name: "גזר שמח",
-    farmer: "משק האורגני (תמר)",
-    town: "כפר ויתקין",
-    region: "עמק חפר",
-    category: "roots",
-    price: 6,
-    unit: "ק\"ג",
-    desc: "גזרים צבעוניים אורגניים - כתום, סגול וצהוב. חוויה של טעמים וצבעים לילדים ולסלטים.",
-    badge: "אורגני",
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18.8 5.2c-1.8-1.8-4.5-1.8-6.3 0L3.8 13.9c-.8.8-.8 2 0 2.8l3.5 3.5c.8.8 2 .8 2.8 0l8.7-8.7c1.7-1.8 1.7-4.5 0-6.3z"/><path d="M10 9l5 5"/><path d="M5.5 18.5l-2 2"/></svg>`
-  },
-  {
-    id: 10,
-    name: "מלפפון עקום",
-    farmer: "הגינה של ארז",
-    town: "חרוצים",
-    region: "דרום השרון",
-    category: "vegetables",
-    price: 7,
-    unit: "ק\"ג",
-    desc: "מלפפונים קטנים ומוצקים במיוחד מהגינה של ארז, מושלמים גם לכבישה עצמית.",
-    badge: "טבעי לגמרי",
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-2.5-2.5-2.5-6.5 0-9s6.5-2.5 9 0l6 6c2.5 2.5 2.5 6.5 0 9s-6.5 2.5-9 0l-6-6z"/><path d="M8.5 9.5c.3-.3.7-.3 1 0"/><path d="M11.5 12.5c.3-.3.7-.3 1 0"/></svg>`
-  },
-  {
-    id: 11,
-    name: "צרור חסה פריכה",
-    farmer: "הגינה של ארז",
-    town: "חרוצים",
-    region: "דרום השרון",
-    category: "greens",
-    price: 7,
-    unit: "יח'",
-    desc: "חסה סלנובה אדומה וירוקה, מתוקה ורכה במיוחד, נקטפת על פי הזמנה בלבד.",
-    badge: "טרי מהבוקר",
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 12c2.5-3.5 5-3.5 7-1a5 5 0 0 1-1 7c-2 2-4.5 0-6-6z"/><path d="M12 12c-2.5-3.5-5-3.5-7-1a5 5 0 0 0 1 7c2 2 4.5 0 6-6z"/></svg>`
-  },
-  {
-    id: 12,
-    name: "סלק מתוק מהאדמה",
-    farmer: "הגינה של ארז",
-    town: "חרוצים",
-    region: "דרום השרון",
-    category: "roots",
-    price: 5,
-    unit: "ק\"ג",
-    desc: "סלק אדום סוכר ישיר מהאדמה, פשוט לשטוף ולבשל או לאפות. פצצת אנרגיה.",
-    badge: "",
-    svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18.8 5.2c-1.8-1.8-4.5-1.8-6.3 0L3.8 13.9c-.8.8-.8 2 0 2.8l3.5 3.5c.8.8 2 .8 2.8 0l8.7-8.7c1.7-1.8 1.7-4.5 0-6.3z"/><path d="M13 6l5 5"/></svg>`
+    id: 'north-orchard',
+    name: 'משק גליל עליון',
+    farmerName: 'יעל קדם',
+    region: 'הצפון',
+    city: 'מטולה',
+    distanceKm: 168,
+    coordinates: { lat: 33.2791, lng: 35.5775 },
+    availability: 'תוצרת צפונית זמינה בתיאום',
+    pickup: 'איסוף ממטולה או חלוקה אזורית בגליל העליון',
+    story: 'משק צפוני עם פירות עונתיים, עלים וירקות בסיסיים מהגליל.',
+    produce: [
+      { id: 'apple-north', name: 'תפוח גלילי', category: 'fruit', price: 7, unit: 'ק״ג', availability: 'עונתי', icon: '🍎', dealKey: 'apple' },
+      { id: 'lettuce-north', name: 'חסה צפונית', category: 'greens', price: 6, unit: 'יחידה', availability: 'נקטף לפי פנייה', icon: '🥬', dealKey: 'lettuce' },
+      { id: 'herbs-north', name: 'עשבי תיבול', category: 'greens', price: 10, unit: 'צרור', availability: 'זמין השבוע', icon: '🌿', dealKey: 'herbs' }
+    ],
+    contact: { phone: '050-000-7777', whatsapp: '972500007777', navigation: 'https://maps.google.com/?q=מטולה' },
+    tags: ['הצפון', 'עונתי', 'נקודת חלוקה'],
+    lastUpdated: '28.05.2026'
   }
 ];
 
 let currentRegion = 'all';
 let currentCategory = 'all';
-let selectedFarmerFilter = null;
-let cart = []; // Array of { product: Object, qty: Number }
+let currentMaxPrice = 'all';
+let currentAvailability = 'all';
+let currentTag = 'all';
+let currentSearchTerm = '';
+let currentSort = 'distance';
+let selectedFarmFilter = null;
 let isMapView = false;
+let focusedFarmId = null;
+let pendingFocusFarmId = null;
+let mapAnimationTimers = [];
+let lastModalFocus = null;
+const FAVORITES_KEY = 'gezroni.favoriteFarms.v1';
+const REPORTS_KEY = 'gezroni.priceReports.v1';
+const USER_LOCATION_KEY = 'gezroni.userLocation.v1';
+let currentUserLocation = readStoredText(USER_LOCATION_KEY);
+let favoriteFarmIds = readStoredList(FAVORITES_KEY);
+let priceReports = readStoredList(REPORTS_KEY);
+
+function readStoredText(key) {
+  try {
+    return localStorage.getItem(key) || '';
+  } catch (error) {
+    return '';
+  }
+}
+
+function readStoredList(key) {
+  try {
+    var raw = localStorage.getItem(key);
+    var parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function writeStoredList(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    // Local storage can be blocked in private contexts; the UI still works for this session.
+  }
+}
+
+function getFarms() {
+  return FARMS;
+}
+
+function getFarmById(id) {
+  return getFarms().find(function(farm) { return farm.id === id; });
+}
+
+function getVisibleProduce(farm) {
+  return farm.produce.filter(function(item) {
+    if (currentCategory !== 'all' && item.category !== currentCategory) return false;
+    if (currentMaxPrice !== 'all' && item.price > Number(currentMaxPrice)) return false;
+    return true;
+  });
+}
+
+function farmMatchesAvailability(farm) {
+  if (currentAvailability === 'all') return true;
+
+  var haystack = [farm.availability].concat(farm.produce.map(function(item) {
+    return item.availability;
+  })).join(' ');
+
+  if (currentAvailability === 'today') {
+    return /היום|הבוקר|טרי/.test(haystack);
+  }
+
+  if (currentAvailability === 'coordination') {
+    return /תיאום|פנייה|מראש/.test(haystack);
+  }
+
+  return true;
+}
+
+function normalizeSearchText(value) {
+  return String(value || '').toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+function farmMatchesSearch(farm) {
+  var query = normalizeSearchText(currentSearchTerm);
+  if (!query) return true;
+
+  var produceText = farm.produce.map(function(item) {
+    return [item.name, item.category, item.availability].join(' ');
+  }).join(' ');
+  var haystack = normalizeSearchText([
+    farm.name,
+    farm.farmerName,
+    farm.region,
+    farm.city,
+    farm.availability,
+    farm.pickup,
+    farm.story,
+    farm.tags.join(' '),
+    produceText
+  ].join(' '));
+
+  return haystack.indexOf(query) !== -1;
+}
+
+function filterFarms() {
+  var matching = getFarms().filter(function(farm) {
+    if (!farmMatchesSearch(farm)) return false;
+    if (currentRegion !== 'all' && farm.region !== currentRegion) return false;
+    if (selectedFarmFilter && farm.id !== selectedFarmFilter) return false;
+    if (currentTag !== 'all' && farm.tags.indexOf(currentTag) === -1) return false;
+    if (!farmMatchesAvailability(farm)) return false;
+    return getVisibleProduce(farm).length > 0;
+  });
+
+  return sortFarms(matching);
+}
+
+function formatFarmLocation(farm) {
+  return farm.city + ' · ' + farm.region;
+}
+
+function getLowestPrice(farm, items) {
+  var source = items || farm.produce;
+  return source.reduce(function(lowest, item) {
+    return !lowest || item.price < lowest.price ? item : lowest;
+  }, null);
+}
+
+function parseLocalDate(value) {
+  var parts = String(value || '').split('.');
+  if (parts.length !== 3) return 0;
+  return new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0])).getTime();
+}
+
+function getFreshnessInfo(farm) {
+  var updatedAt = parseLocalDate(farm.lastUpdated);
+  var days = updatedAt ? Math.floor((Date.now() - updatedAt) / 86400000) : 999;
+  if (days <= 2) return { className: 'fresh', label: 'מעודכן' };
+  if (days <= 7) return { className: 'soon', label: 'דורש בדיקה' };
+  return { className: 'old', label: 'ישן' };
+}
+
+function isFavoriteFarm(farmId) {
+  return favoriteFarmIds.indexOf(farmId) !== -1;
+}
+
+function hasPriceReport(farmId) {
+  return priceReports.some(function(report) {
+    return report.farmId === farmId;
+  });
+}
+
+function getLocationScore(farm) {
+  var query = normalizeSearchText(currentUserLocation);
+  if (!query) return farm.distanceKm;
+  var city = normalizeSearchText(farm.city);
+  var region = normalizeSearchText(farm.region);
+  if (city.indexOf(query) !== -1 || query.indexOf(city) !== -1) return -5;
+  if (region.indexOf(query) !== -1 || query.indexOf(region) !== -1) return 0;
+  return farm.distanceKm + 15;
+}
+
+function sortFarms(farms) {
+  return farms.slice().sort(function(a, b) {
+    if (currentSort === 'price') {
+      var aLowest = getLowestPrice(a, getVisibleProduce(a));
+      var bLowest = getLowestPrice(b, getVisibleProduce(b));
+      return (aLowest ? aLowest.price : 999) - (bLowest ? bLowest.price : 999);
+    }
+
+    if (currentSort === 'updated') {
+      return parseLocalDate(b.lastUpdated) - parseLocalDate(a.lastUpdated);
+    }
+
+    var locationDelta = getLocationScore(a) - getLocationScore(b);
+    if (locationDelta !== 0) return locationDelta;
+    return a.distanceKm - b.distanceKm;
+  });
+}
+
+function createFarmShareText(farm) {
+  var lowest = getLowestPrice(farm, farm.produce);
+  var priceText = lowest ? lowest.name + ' ב-₪' + lowest.price + ' / ' + lowest.unit : 'תוצרת ומחירים בלוח';
+  return 'מצאתי בגזרוני את ' + farm.name + ' ב' + formatFarmLocation(farm) + ': ' + priceText + '. ' + farm.availability;
+}
+
+function shareFarm(farmId) {
+  var farm = getFarmById(farmId);
+  if (!farm) return;
+  var text = createFarmShareText(farm);
+  if (navigator.share) {
+    navigator.share({ title: farm.name + ' בגזרוני', text: text }).catch(function(){});
+    return;
+  }
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
+}
+
+function toggleFavoriteFarm(farmId) {
+  var index = favoriteFarmIds.indexOf(farmId);
+  if (index === -1) {
+    favoriteFarmIds.push(farmId);
+  } else {
+    favoriteFarmIds.splice(index, 1);
+  }
+  writeStoredList(FAVORITES_KEY, favoriteFarmIds);
+  renderFarms();
+  updateFocusedFarmCard();
+}
+
+function submitPriceReport(farmId, note) {
+  var report = {
+    farmId: farmId,
+    note: String(note || '').trim(),
+    createdAt: new Date().toISOString()
+  };
+  priceReports = priceReports.filter(function(item) {
+    return item.farmId !== farmId;
+  });
+  priceReports.unshift(report);
+  writeStoredList(REPORTS_KEY, priceReports);
+  openFarmModal(farmId);
+}
+
+function createTextEl(tag, className, text) {
+  var el = document.createElement(tag);
+  if (className) el.className = className;
+  el.textContent = text;
+  return el;
+}
+
+function createFarmThumb(farm) {
+  var thumb = document.createElement('div');
+  thumb.className = 'farm-thumb farm-thumb-' + farm.id;
+  thumb.setAttribute('aria-hidden', 'true');
+
+  var icon = document.createElement('span');
+  icon.className = 'farm-thumb-icon';
+  icon.textContent = farm.produce[0] ? farm.produce[0].icon : '₪';
+  thumb.appendChild(icon);
+
+  return thumb;
+}
+
+function getDealKey(item) {
+  if (item.dealKey) return item.dealKey;
+  var name = item.name || '';
+  if (/עגב|שרי/.test(name)) return 'tomato';
+  if (/מלפפון/.test(name)) return 'cucumber';
+  if (/חסה|עלים|בייבי/.test(name)) return 'lettuce';
+  if (/גזר/.test(name)) return 'carrot';
+  if (/סלק/.test(name)) return 'beet';
+  if (/עשבי|תיבול/.test(name)) return 'herbs';
+  if (/פלפל/.test(name)) return 'pepper';
+  if (/חציל/.test(name)) return 'eggplant';
+  if (/מלון/.test(name)) return 'melon';
+  if (/לימון/.test(name)) return 'lemon';
+  if (/תפוח/.test(name)) return 'apple';
+  return item.id;
+}
+
+function getBestDeals(farms) {
+  var bestByProduce = {};
+
+  farms.forEach(function(farm) {
+    getVisibleProduce(farm).forEach(function(item) {
+      var key = getDealKey(item);
+      var existing = bestByProduce[key];
+      if (!existing || item.price < existing.item.price || (item.price === existing.item.price && farm.distanceKm < existing.farm.distanceKm)) {
+        bestByProduce[key] = { farm: farm, item: item, key: key };
+      }
+    });
+  });
+
+  return Object.keys(bestByProduce).map(function(key) {
+    return bestByProduce[key];
+  }).sort(function(a, b) {
+    return a.farm.distanceKm - b.farm.distanceKm || a.item.price - b.item.price;
+  }).slice(0, 8);
+}
+
+function createDealCard(deal) {
+  var card = document.createElement('button');
+  card.className = 'deal-card';
+  card.type = 'button';
+  card.setAttribute('aria-label', 'התמקד במפה על ' + deal.farm.name + ', ' + deal.item.name + ' במחיר ₪' + deal.item.price);
+  card.onclick = function() {
+    focusFarmOnMap(deal.farm.id, { fromDeal: true });
+  };
+
+  var icon = createTextEl('div', 'deal-icon', deal.item.icon || '₪');
+  var body = document.createElement('div');
+  body.className = 'deal-body';
+  body.appendChild(createTextEl('div', 'deal-label', deal.item.name));
+  body.appendChild(createTextEl('div', 'deal-price', '₪' + deal.item.price + ' / ' + deal.item.unit));
+  body.appendChild(createTextEl('div', 'deal-farm', deal.farm.name + ' · ' + deal.farm.city));
+
+  card.appendChild(icon);
+  card.appendChild(body);
+  return card;
+}
+
+function renderDeals(farms) {
+  var track = document.getElementById('deals-track');
+  var count = document.getElementById('deals-count');
+  if (!track || !count) return;
+
+  var deals = getBestDeals(farms || filterFarms());
+  count.textContent = deals.length === 1 ? 'מציאה אחת' : deals.length + ' מציאות';
+  track.innerHTML = '';
+
+  if (deals.length === 0) {
+    var empty = createTextEl('div', 'deal-empty', 'אין מבצעים שתואמים לסינון כרגע.');
+    track.appendChild(empty);
+    return;
+  }
+
+  for (var copy = 0; copy < 2; copy++) {
+    var group = document.createElement('div');
+    group.className = 'deals-group';
+    if (copy === 1) group.setAttribute('aria-hidden', 'true');
+    deals.forEach(function(deal) {
+      group.appendChild(createDealCard(deal));
+    });
+    track.appendChild(group);
+  }
+}
+
+function isDesktopLayout() {
+  return window.matchMedia && window.matchMedia('(min-width: 1024px)').matches;
+}
+
+function updateFocusedFarmCard() {
+  document.querySelectorAll('.farm-card').forEach(function(card) {
+    card.classList.toggle('map-focused', card.dataset.farmId === focusedFarmId);
+  });
+}
+
+function postEmbeddedHeight() {
+  if (window.parent === window) return;
+  requestAnimationFrame(function() {
+    window.parent.postMessage({
+      type: 'gezroni-board-height',
+      height: document.documentElement.scrollHeight
+    }, '*');
+  });
+}
+
+function updateResultCount(count) {
+  var el = document.getElementById('board-result-count');
+  if (!el) return;
+  el.textContent = count === 1 ? 'משק אחד' : count + ' משקים';
+}
 
 // ══════════════════════════════════
 //  INITIALIZATION & RENDER
 // ══════════════════════════════════
-function renderProducts() {
+function renderFarms() {
   const grid = document.getElementById('products-grid');
   grid.innerHTML = '';
 
-  const filtered = PRODUCTS.filter(p => {
-    // Region Filter
-    if (currentRegion !== 'all' && p.region !== currentRegion) return false;
-    // Category Filter
-    if (currentCategory !== 'all' && p.category !== currentCategory) return false;
-    // Farmer Map Filter
-    if (selectedFarmerFilter && p.farmer !== selectedFarmerFilter) return false;
-    return true;
-  });
+  const filtered = filterFarms();
+  updateResultCount(filtered.length);
+  renderDeals(filtered);
 
   if (filtered.length === 0) {
-    grid.innerHTML = `<div style="grid-column: span 2; text-align:center; padding:3rem 1rem; color:var(--text-3); font-weight:700;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;color:var(--text-3);margin:0 auto 1rem;display:block;"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
-      אין מוצרים תואמים לסינון שבחרתם.
-    </div>`;
+    const empty = document.createElement('section');
+    empty.className = 'empty-state';
+    empty.setAttribute('aria-live', 'polite');
+    var icon = document.createElement('div');
+    icon.className = 'empty-state-icon';
+    icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M4 21V9l8-5 8 5v12"/><path d="M9 21v-6h6v6"/></svg>';
+    empty.appendChild(icon);
+    empty.appendChild(createTextEl('h2', 'empty-state-title', 'לא מצאנו משקים בסינון הזה'));
+    empty.appendChild(createTextEl('p', 'empty-state-text', 'אפשר לאפס את הסינונים, להרחיב מחיר או לחפש לפי יישוב סמוך. הלוח כרגע דמו סטטי, ובהמשך יוכל למשוך משקים מה־DB.'));
+    var actions = document.createElement('div');
+    actions.className = 'empty-state-actions';
+    var reset = createTextEl('button', 'farm-action-btn primary', 'אפס סינונים');
+    reset.onclick = clearBoardFilters;
+    var showAll = createTextEl('button', 'farm-action-btn secondary', 'כל האזורים');
+    showAll.onclick = function() {
+      currentRegion = 'all';
+      selectedFarmFilter = null;
+      refreshBoardFilters();
+    };
+    actions.appendChild(reset);
+    actions.appendChild(showAll);
+    empty.appendChild(actions);
+    grid.appendChild(empty);
+    postEmbeddedHeight();
     return;
   }
 
-  filtered.forEach(p => {
-    const cartItem = cart.find(item => item.product.id === p.id);
-    const inCartQty = cartItem ? cartItem.qty : 0;
+  if (selectedFarmFilter) {
+    const selected = getFarmById(selectedFarmFilter);
+    const clearBanner = document.createElement('div');
+    clearBanner.style.cssText = 'grid-column:1/-1;background:var(--green-100);color:var(--green-800);padding:10px 14px;border-radius:var(--r-md);font-size:12px;font-weight:800;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:12px;';
+    clearBanner.appendChild(createTextEl('span', '', 'מציג את ' + (selected ? selected.name : 'המשק שנבחר')));
+    const clear = createTextEl('button', '', 'הצג את כל המשקים ×');
+    clear.style.cssText = 'background:none;border:none;color:var(--green-800);font-weight:900;text-decoration:underline;cursor:pointer;';
+    clear.onclick = clearFarmFilter;
+    clearBanner.appendChild(clear);
+    grid.appendChild(clearBanner);
+  }
 
-    let badgeHtml = '';
-    if (p.badge) {
-      let iconSvg = '';
-      if (p.badge === 'מבוקש') {
-        iconSvg = `<svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;display:inline-block;margin-left:3px;vertical-align:middle;"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" fill="currentColor"/></svg>`;
-      } else if (p.badge === 'הכי טרי' || p.badge === 'אורגני' || p.badge === 'טרי מהבוקר') {
-        iconSvg = `<svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;display:inline-block;margin-left:3px;vertical-align:middle;"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.58 1 9.3A7 7 0 0 1 11 20z"/><path d="M19 2c-3 3-6.13 6-9 9"/></svg>`;
-      } else if (p.badge === 'מומלץ') {
-        iconSvg = `<svg class="badge-icon" viewBox="0 0 24 24" fill="currentColor" style="width:10px;height:10px;display:inline-block;margin-left:3px;vertical-align:middle;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
-      }
-      badgeHtml = `<span class="product-badge">${iconSvg}${p.badge}</span>`;
+  filtered.forEach(function(farm) {
+    const visibleProduce = getVisibleProduce(farm);
+    const lowest = getLowestPrice(farm, visibleProduce);
+    const freshness = getFreshnessInfo(farm);
+    const isFavorite = isFavoriteFarm(farm.id);
+    const card = document.createElement('article');
+    card.className = 'product-card farm-card';
+    card.dataset.farmId = farm.id;
+    if (focusedFarmId === farm.id) {
+      card.classList.add('map-focused');
     }
+    card.onclick = function() {
+      focusFarmOnMap(farm.id, { fromCard: true });
+    };
 
-    const card = document.createElement('div');
-    card.className = 'product-card';
-    card.innerHTML = `
-      <div class="product-visual">
-        ${badgeHtml}
-        ${p.svg}
-      </div>
-      <div class="product-title">${p.name}</div>
-      <div class="product-farmer">
-        <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-left:4px;color:var(--color-primary);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        ${p.farmer} • ${p.town}
-      </div>
-      <div class="product-bottom">
-        <div class="product-price">₪${p.price} / ${p.unit}</div>
-        <div class="action-container" id="action-p-${p.id}">
-          ${inCartQty > 0 ? 
-            `<div class="qty-selector">
-              <button class="qty-btn" onclick="changeQty(${p.id}, -1)">-</button>
-              <span class="qty-val">${inCartQty}</span>
-              <button class="qty-btn" onclick="changeQty(${p.id}, 1)">+</button>
-             </div>` : 
-            `<button class="add-to-cart-btn" onclick="addToCart(${p.id})">הוסף לסל</button>`
-          }
-        </div>
-      </div>
-    `;
+    const visual = document.createElement('div');
+    visual.className = 'product-visual';
+    const badge = createTextEl('span', 'product-badge', farm.availability);
+    visual.appendChild(badge);
+    visual.innerHTML += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M4 21V9l8-5 8 5v12"/><path d="M9 21v-6h6v6"/><path d="M8 11h.01"/><path d="M16 11h.01"/></svg>';
+    card.appendChild(visual);
+
+    const header = document.createElement('div');
+    header.className = 'farm-card-header';
+    const profile = document.createElement('div');
+    profile.className = 'farm-profile';
+    profile.appendChild(createFarmThumb(farm));
+    const titleWrap = document.createElement('div');
+    titleWrap.appendChild(createTextEl('div', 'farm-name', farm.name));
+    titleWrap.appendChild(createTextEl('div', 'farm-owner', farm.farmerName + ' · ' + formatFarmLocation(farm)));
+    profile.appendChild(titleWrap);
+    header.appendChild(profile);
+    header.appendChild(createTextEl('div', 'farm-distance', '~' + farm.distanceKm + ' ק״מ'));
+    card.appendChild(header);
+
+    const statusRow = document.createElement('div');
+    statusRow.className = 'farm-status-row';
+    statusRow.appendChild(createTextEl('span', 'freshness-badge ' + freshness.className, freshness.label + ' · ' + farm.lastUpdated));
+    if (isFavorite) {
+      statusRow.appendChild(createTextEl('span', 'favorite-badge', 'שמור במועדפים'));
+    }
+    if (hasPriceReport(farm.id)) {
+      statusRow.appendChild(createTextEl('span', 'favorite-badge', 'דיווח נשלח'));
+    }
+    card.appendChild(statusRow);
+
+    const produceList = document.createElement('div');
+    produceList.className = 'farm-produce-list';
+    visibleProduce.forEach(function(item) {
+      produceList.appendChild(createTextEl('span', 'produce-chip', item.icon + ' ' + item.name));
+    });
+    card.appendChild(produceList);
+
+    const priceTable = document.createElement('div');
+    priceTable.className = 'farm-price-table';
+    visibleProduce.slice(0, 3).forEach(function(item) {
+      const row = document.createElement('div');
+      row.className = 'farm-price-row';
+      row.appendChild(createTextEl('span', '', item.name));
+      const price = document.createElement('strong');
+      price.textContent = '₪' + item.price + ' / ' + item.unit;
+      row.appendChild(price);
+      priceTable.appendChild(row);
+    });
+    card.appendChild(priceTable);
+
+    const meta = document.createElement('div');
+    meta.className = 'farm-meta';
+    meta.appendChild(createTextEl('div', '', 'זמינות: ' + farm.availability));
+    meta.appendChild(createTextEl('div', '', 'עודכן לאחרונה: ' + farm.lastUpdated));
+    if (lowest) meta.appendChild(createTextEl('div', '', 'מחיר פתיחה: ₪' + lowest.price + ' / ' + lowest.unit));
+    card.appendChild(meta);
+
+    const tagWrap = document.createElement('div');
+    tagWrap.className = 'farm-tags';
+    farm.tags.forEach(function(tag) {
+      tagWrap.appendChild(createTextEl('span', 'farm-tag', tag));
+    });
+    card.appendChild(tagWrap);
+
+    const actions = document.createElement('div');
+    actions.className = 'farm-actions';
+    const mapFocus = createTextEl('button', 'farm-action-btn primary wide', 'התמקד במפה');
+    mapFocus.onclick = function(event) {
+      event.stopPropagation();
+      focusFarmOnMap(farm.id, { fromCard: true });
+    };
+    const details = createTextEl('button', 'farm-action-btn primary', 'פרטים ומחירים');
+    details.onclick = function(event) {
+      event.stopPropagation();
+      openFarmModal(farm.id);
+    };
+    const contact = createTextEl('button', 'farm-action-btn secondary', 'יצירת קשר');
+    contact.onclick = function(event) {
+      event.stopPropagation();
+      openFarmModal(farm.id);
+    };
+    const favorite = createTextEl('button', 'farm-action-btn ghost' + (isFavorite ? ' favorite-active' : ''), isFavorite ? 'הסר ממועדפים' : 'שמור משק');
+    favorite.setAttribute('aria-pressed', isFavorite ? 'true' : 'false');
+    favorite.onclick = function(event) {
+      event.stopPropagation();
+      toggleFavoriteFarm(farm.id);
+    };
+    const share = createTextEl('button', 'farm-action-btn ghost', 'שתף משק');
+    share.onclick = function(event) {
+      event.stopPropagation();
+      shareFarm(farm.id);
+    };
+    actions.appendChild(mapFocus);
+    actions.appendChild(details);
+    actions.appendChild(contact);
+    actions.appendChild(favorite);
+    actions.appendChild(share);
+    card.appendChild(actions);
+
     grid.appendChild(card);
   });
+
+  postEmbeddedHeight();
 }
 
 function selectRegion(el, val) {
   document.querySelectorAll('.region-pill').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
+  syncPressedStates();
   currentRegion = val;
-  selectedFarmerFilter = null; // Clear farmer filter when region changes
+  selectedFarmFilter = null;
+  focusedFarmId = null;
   
-  if (isMapView && map) {
+  if (map) {
     seedMarkers();
   }
-  renderProducts();
+  renderFarms();
 }
 
 function selectCategory(el, val) {
   document.querySelectorAll('.category-card').forEach(b => b.classList.remove('active'));
   el.closest('.category-card').classList.add('active');
+  syncPressedStates();
   currentCategory = val;
-  renderProducts();
-}
-
-function filterByFarmer(farmerName) {
-  selectedFarmerFilter = farmerName;
-  toggleMapView(false); // switch back to list view
-  
-  // Highlight "all" categories and let products render
-  renderProducts();
-  
-  // Add a helper header or visual indicator to clear filter
-  const grid = document.getElementById('products-grid');
-  const clearBanner = document.createElement('div');
-  clearBanner.style.cssText = 'grid-column: span 2; background:var(--green-100); color:var(--green-800); padding:10px 14px; border-radius:var(--r-md); font-size:12px; font-weight:700; display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;';
-  clearBanner.innerHTML = `<span>מציג תוצרת של ${farmerName} בלבד</span><span style="cursor:pointer; text-decoration:underline;" onclick="clearFarmerFilter()">הצג את כל החקלאים ×</span>`;
-  grid.insertBefore(clearBanner, grid.firstChild);
-}
-
-function clearFarmerFilter() {
-  selectedFarmerFilter = null;
-  renderProducts();
-}
-
-// ══════════════════════════════════
-//  CART WORKFLOW
-// ══════════════════════════════════
-function addToCart(productId) {
-  const prod = PRODUCTS.find(p => p.id === productId);
-  if (!prod) return;
-
-  cart.push({ product: prod, qty: 1 });
-  updateCartBadge();
-  renderProducts();
-}
-
-function changeQty(productId, diff) {
-  const idx = cart.findIndex(item => item.product.id === productId);
-  if (idx === -1) return;
-
-  cart[idx].qty += diff;
-  if (cart[idx].qty <= 0) {
-    cart.splice(idx, 1);
+  selectedFarmFilter = null;
+  focusedFarmId = null;
+  if (map) {
+    seedMarkers();
   }
-
-  updateCartBadge();
-  renderProducts();
-  if (document.getElementById('cart-drawer-overlay').classList.contains('open')) {
-    renderCartItems();
-  }
+  renderFarms();
 }
 
-function updateCartBadge() {
-  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
-  const badge = document.getElementById('cart-badge-count');
-  if (totalItems > 0) {
-    badge.textContent = totalItems;
-    badge.style.display = 'flex';
-  } else {
-    badge.style.display = 'none';
-  }
-}
-
-function openCartDrawer() {
-  document.getElementById('cart-drawer-overlay').classList.add('open');
-  renderCartItems();
-}
-
-function closeCartDrawer(e) {
-  if (e === null || e.target === document.getElementById('cart-drawer-overlay')) {
-    document.getElementById('cart-drawer-overlay').classList.remove('open');
-  }
-}
-
-function renderCartItems() {
-  const list = document.getElementById('cart-items-list');
-  const fields = document.getElementById('cart-fields-sec');
-  const btn = document.getElementById('checkout-btn');
-  const totalVal = document.getElementById('cart-total-val');
-  
-  list.innerHTML = '';
-  
-  if (cart.length === 0) {
-    list.innerHTML = `
-      <div class="empty-cart-state">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;color:var(--text-3);margin:0 auto 0.5rem;display:block;"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-        <p>סל הקניות שלכם ריק כרגע.</p>
-        <p style="font-size:11px; margin-top:4px;">הוסיפו מוצרים טריים מהשוק כדי להתחיל.</p>
-      </div>
-    `;
-    fields.style.display = 'none';
-    btn.disabled = true;
-    btn.textContent = 'סל הקניות ריק';
-    totalVal.textContent = '₪0';
-    return;
-  }
-
-  fields.style.display = 'flex';
-  btn.disabled = false;
-  btn.textContent = 'בצע הזמנה לחקלאי';
-
-  let total = 0;
-  cart.forEach(item => {
-    const itemTotal = item.product.price * item.qty;
-    total += itemTotal;
-    
-    const row = document.createElement('div');
-    row.className = 'cart-item';
-    row.innerHTML = `
-      <div class="cart-item-info">
-        <div class="cart-item-title">${item.product.name}</div>
-        <div class="cart-item-sub">${item.product.farmer} • ${item.product.town}</div>
-      </div>
-      <div class="qty-selector" style="margin-left: 1rem;">
-        <button class="qty-btn" onclick="changeQty(${item.product.id}, -1)">-</button>
-        <span class="qty-val">${item.qty}</span>
-        <button class="qty-btn" onclick="changeQty(${item.product.id}, 1)">+</button>
-      </div>
-      <div class="cart-item-price">₪${itemTotal}</div>
-    `;
-    list.appendChild(row);
+function setBoardFilterActive(group, el) {
+  document.querySelectorAll('[data-filter-group="' + group + '"]').forEach(function(button) {
+    button.classList.remove('active');
   });
-
-  totalVal.textContent = `₪${total}`;
+  el.classList.add('active');
+  syncPressedStates();
 }
 
-async function submitOrder() {
-  const phone = document.getElementById('cart-phone').value.trim();
-  const deliveryType = document.getElementById('cart-delivery-type').value;
-  const notes = document.getElementById('cart-notes').value.trim();
-
-  if (!phone || phone.length < 9) {
-    alert('נא להזין מספר טלפון תקין ליצירת קשר.');
-    return;
+function refreshBoardFilters() {
+  selectedFarmFilter = null;
+  focusedFarmId = null;
+  if (map) {
+    seedMarkers();
   }
+  renderFarms();
+}
 
-  const total = cart.reduce((sum, item) => sum + (item.product.price * item.qty), 0);
-  
-  const data = {
-    type: 'buyer_order',
-    phone: phone,
-    deliveryType: deliveryType === 'pickup' ? 'איסוף עצמי' : 'משלוח עד הבית',
-    notes: notes,
-    items: cart.map(item => ({
-      id: item.product.id,
-      name: item.product.name,
-      price: item.product.price,
-      qty: item.qty,
-      unit: item.product.unit,
-      farmer: item.product.farmer,
-      town: item.product.town
-    })),
-    total: total,
-    timestamp: new Date().toISOString()
+function setSearchTerm(value) {
+  currentSearchTerm = value;
+  refreshBoardFilters();
+}
+
+function setUserLocation(value) {
+  currentUserLocation = value;
+  try {
+    localStorage.setItem(USER_LOCATION_KEY, value);
+  } catch (error) {}
+  renderFarms();
+}
+
+function setSortMode(value) {
+  currentSort = value || 'distance';
+  if (map) {
+    seedMarkers();
+  }
+  renderFarms();
+}
+
+function selectMaxPrice(el, val) {
+  setBoardFilterActive('price', el);
+  currentMaxPrice = val;
+  refreshBoardFilters();
+}
+
+function selectMaxPriceValue(value) {
+  currentMaxPrice = value === 'all' ? 'all' : Number(value);
+  refreshBoardFilters();
+}
+
+function selectAvailability(el, val) {
+  setBoardFilterActive('availability', el);
+  currentAvailability = val;
+  refreshBoardFilters();
+}
+
+function selectAvailabilityValue(value) {
+  currentAvailability = value || 'all';
+  refreshBoardFilters();
+}
+
+function selectTag(el, val) {
+  setBoardFilterActive('tag', el);
+  currentTag = val;
+  refreshBoardFilters();
+}
+
+function selectTagValue(value) {
+  currentTag = value || 'all';
+  refreshBoardFilters();
+}
+
+function clearBoardFilters() {
+  currentRegion = 'all';
+  currentCategory = 'all';
+  currentMaxPrice = 'all';
+  currentAvailability = 'all';
+  currentTag = 'all';
+  currentSearchTerm = '';
+  currentSort = 'distance';
+  selectedFarmFilter = null;
+  focusedFarmId = null;
+  var searchInput = document.getElementById('farm-search-input');
+  if (searchInput) searchInput.value = '';
+  var userLocationInput = document.getElementById('user-location-input');
+  if (userLocationInput) userLocationInput.value = '';
+  currentUserLocation = '';
+  try {
+    localStorage.removeItem(USER_LOCATION_KEY);
+  } catch (error) {}
+  var sortSelect = document.getElementById('farm-sort-select');
+  if (sortSelect) sortSelect.value = 'distance';
+  var priceSelect = document.getElementById('price-filter-select');
+  if (priceSelect) priceSelect.value = 'all';
+  var availabilitySelect = document.getElementById('availability-filter-select');
+  if (availabilitySelect) availabilitySelect.value = 'all';
+  var tagSelect = document.getElementById('tag-filter-select');
+  if (tagSelect) tagSelect.value = 'all';
+  document.querySelectorAll('.region-pill').forEach(function(button) {
+    button.classList.remove('active');
+  });
+  var defaultRegion = document.querySelector('.region-pill[onclick*="all"]');
+  if (defaultRegion) defaultRegion.classList.add('active');
+  document.querySelectorAll('.category-card').forEach(function(button) {
+    button.classList.remove('active');
+  });
+  var defaultCategory = document.querySelector('.category-card[onclick*="all"]');
+  if (defaultCategory) defaultCategory.classList.add('active');
+  document.querySelectorAll('.board-filter-chip').forEach(function(button) {
+    button.classList.remove('active');
+  });
+  ['price', 'availability', 'tag'].forEach(function(group) {
+    var defaultButton = document.querySelector('[data-filter-group="' + group + '"][onclick*="all"]');
+    if (defaultButton) defaultButton.classList.add('active');
+  });
+  syncPressedStates();
+  refreshBoardFilters();
+}
+
+function filterByFarm(farmId) {
+  selectedFarmFilter = farmId;
+  if (!document.body.classList.contains('embedded-board')) {
+    toggleMapView(false); // switch back to list view
+  }
+  renderFarms();
+}
+
+function clearFarmFilter() {
+  selectedFarmFilter = null;
+  focusedFarmId = null;
+  if (map) {
+    seedMarkers();
+  }
+  renderFarms();
+}
+
+function openFarmModal(farmId) {
+  var farm = getFarmById(farmId);
+  if (!farm) return;
+
+  var body = document.getElementById('farm-modal-body');
+  body.innerHTML = '';
+
+  var intro = document.createElement('section');
+  intro.className = 'farm-modal-section';
+  intro.appendChild(createTextEl('div', 'farm-modal-title', farm.name));
+  intro.appendChild(createTextEl('div', 'farm-modal-sub', farm.farmerName + ' · ' + formatFarmLocation(farm) + ' · עודכן ' + farm.lastUpdated));
+  intro.appendChild(createTextEl('p', '', farm.story));
+  body.appendChild(intro);
+
+  var prices = document.createElement('section');
+  prices.className = 'farm-modal-section';
+  prices.appendChild(createTextEl('h3', '', 'תוצרת ומחירים'));
+  var table = document.createElement('div');
+  table.className = 'farm-price-table';
+  farm.produce.forEach(function(item) {
+    var row = document.createElement('div');
+    row.className = 'farm-price-row';
+    row.appendChild(createTextEl('span', '', item.icon + ' ' + item.name + ' · ' + item.availability));
+    var price = document.createElement('strong');
+    price.textContent = '₪' + item.price + ' / ' + item.unit;
+    row.appendChild(price);
+    table.appendChild(row);
+  });
+  prices.appendChild(table);
+  body.appendChild(prices);
+
+  var logistics = document.createElement('section');
+  logistics.className = 'farm-modal-section';
+  logistics.appendChild(createTextEl('h3', '', 'מיקום וזמינות'));
+  logistics.appendChild(createTextEl('p', '', farm.pickup));
+  logistics.appendChild(createTextEl('p', '', 'זמינות: ' + farm.availability));
+  body.appendChild(logistics);
+
+  var contact = document.createElement('section');
+  contact.className = 'farm-modal-section';
+  contact.appendChild(createTextEl('h3', '', 'יצירת קשר ישירה'));
+  var contactGrid = document.createElement('div');
+  contactGrid.className = 'contact-grid';
+  var whatsapp = document.createElement('a');
+  whatsapp.className = 'contact-link primary';
+  whatsapp.href = 'https://wa.me/' + farm.contact.whatsapp;
+  whatsapp.target = '_blank';
+  whatsapp.rel = 'noopener';
+  whatsapp.textContent = 'וואטסאפ';
+  var phone = document.createElement('a');
+  phone.className = 'contact-link';
+  phone.href = 'tel:' + farm.contact.phone.replace(/-/g, '');
+  phone.textContent = farm.contact.phone;
+  var nav = document.createElement('a');
+  nav.className = 'contact-link navigation';
+  nav.href = farm.contact.navigation;
+  nav.target = '_blank';
+  nav.rel = 'noopener';
+  nav.textContent = 'נווט למשק';
+  contactGrid.appendChild(whatsapp);
+  contactGrid.appendChild(phone);
+  contactGrid.appendChild(nav);
+  contact.appendChild(contactGrid);
+  body.appendChild(contact);
+
+  var actions = document.createElement('section');
+  actions.className = 'farm-modal-section';
+  actions.appendChild(createTextEl('h3', '', 'פעולות'));
+  var actionRow = document.createElement('div');
+  actionRow.className = 'modal-actions-row';
+  var favorite = createTextEl('button', 'farm-action-btn ghost' + (isFavoriteFarm(farm.id) ? ' favorite-active' : ''), isFavoriteFarm(farm.id) ? 'הסר ממועדפים' : 'שמור משק');
+  favorite.setAttribute('aria-pressed', isFavoriteFarm(farm.id) ? 'true' : 'false');
+  favorite.onclick = function() {
+    toggleFavoriteFarm(farm.id);
+    openFarmModal(farm.id);
   };
+  var share = createTextEl('button', 'farm-action-btn secondary', 'שתף משק');
+  share.onclick = function() {
+    shareFarm(farm.id);
+  };
+  actionRow.appendChild(favorite);
+  actionRow.appendChild(share);
+  actions.appendChild(actionRow);
+  body.appendChild(actions);
 
-  console.log("%c[גזרוני MOCK Sheets Webhook] הזמנת קונה חדשה:", "color: #1a3f8f; font-weight: bold; font-size: 14px;", data);
+  var report = document.createElement('section');
+  report.className = 'farm-modal-section';
+  report.appendChild(createTextEl('h3', '', 'דווח מחיר לא נכון'));
+  var reportBox = document.createElement('div');
+  reportBox.className = 'report-box';
+  reportBox.appendChild(createTextEl('p', '', hasPriceReport(farm.id) ? 'קיבלנו דיווח מקומי על המשק הזה. בשלב הסטטי זה נשמר רק בדפדפן.' : 'בשלב הזה הדיווח נשמר מקומית בלבד, כדי להכין את ה־UI לחיבור עתידי ל־DB.'));
+  var reportLabel = createTextEl('label', 'form-label', 'מה לא מדויק?');
+  reportLabel.setAttribute('for', 'price-report-note');
+  var reportInput = document.createElement('textarea');
+  reportInput.id = 'price-report-note';
+  reportInput.className = 'form-textarea';
+  reportInput.placeholder = 'לדוגמה: המחיר לעגבנייה היה ₪8 ולא ₪6';
+  var reportButton = createTextEl('button', 'farm-action-btn ghost', hasPriceReport(farm.id) ? 'עדכן דיווח' : 'שלח דיווח');
+  reportButton.onclick = function() {
+    submitPriceReport(farm.id, reportInput.value);
+  };
+  reportBox.appendChild(reportLabel);
+  reportBox.appendChild(reportInput);
+  reportBox.appendChild(reportButton);
+  report.appendChild(reportBox);
+  body.appendChild(report);
 
-  if (WEBHOOK_URL) {
-    try {
-      await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-    } catch (err) {
-      console.error("Webhook error:", err);
+  lastModalFocus = document.activeElement;
+  var overlay = document.getElementById('farm-modal-overlay');
+  overlay.classList.add('open');
+  var sheet = overlay.querySelector('.farm-modal-sheet');
+  if (sheet) setTimeout(function(){ sheet.focus(); }, 30);
+}
+
+function closeFarmModal(e) {
+  var overlay = document.getElementById('farm-modal-overlay');
+  if (e === null || e.target === overlay) {
+    var wasOpen = overlay.classList.contains('open');
+    overlay.classList.remove('open');
+    if (!wasOpen) return;
+    if (lastModalFocus && lastModalFocus.focus) {
+      lastModalFocus.focus();
     }
   }
-
-  // Clear state
-  cart = [];
-  updateCartBadge();
-  document.getElementById('cart-drawer-overlay').classList.remove('open');
-  renderProducts();
-
-  // Show Success Screen & Confetti
-  document.getElementById('success-overlay').classList.add('open');
-  launchConfetti();
 }
 
-function closeSuccessOverlay() {
-  document.getElementById('success-overlay').classList.remove('open');
+function getMarkerIcon(isActive) {
+  if (typeof google === 'undefined' || !google.maps) return null;
+
+  var stroke = isActive ? '#C4834A' : '#2D5A1B';
+  var fill = isActive ? '#F59E0B' : '#A5D96A';
+  var size = isActive ? 48 : 38;
+
+  return {
+    url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="' + stroke + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="white"></path><circle cx="12" cy="10" r="3.4" fill="' + fill + '"></circle></svg>'
+    ),
+    scaledSize: new google.maps.Size(size, size)
+  };
+}
+
+function setFocusedMarkerStyle(farmId) {
+  Object.keys(markerByFarmId).forEach(function(id) {
+    markerByFarmId[id].setIcon(getMarkerIcon(id === farmId));
+  });
+}
+
+function createFarmInfoContent(farm) {
+  var visibleProduce = getVisibleProduce(farm);
+  var wrap = document.createElement('div');
+  wrap.className = 'map-farm-info';
+
+  wrap.appendChild(createTextEl('div', 'map-farm-title', farm.name));
+  wrap.appendChild(createTextEl('div', 'map-farm-sub', farm.farmerName + ' · ' + formatFarmLocation(farm) + ' · עודכן ' + farm.lastUpdated));
+  wrap.appendChild(createTextEl('div', 'map-farm-story', farm.availability + ' · ' + farm.pickup));
+  wrap.appendChild(createTextEl('div', 'map-farm-label', 'תוצרת ומחירים'));
+
+  var prices = document.createElement('div');
+  prices.className = 'map-farm-prices';
+  visibleProduce.slice(0, 3).forEach(function(item) {
+    var row = document.createElement('div');
+    row.className = 'map-farm-price';
+    row.appendChild(createTextEl('span', '', item.icon + ' ' + item.name));
+    row.appendChild(createTextEl('strong', '', '₪' + item.price + ' / ' + item.unit));
+    prices.appendChild(row);
+  });
+  wrap.appendChild(prices);
+
+  var actions = document.createElement('div');
+  actions.className = 'map-farm-actions';
+  var details = createTextEl('button', 'primary', 'פרטים מלאים');
+  details.onclick = function() { openFarmModal(farm.id); };
+  var nav = document.createElement('a');
+  nav.className = 'secondary';
+  nav.href = farm.contact.navigation;
+  nav.target = '_blank';
+  nav.rel = 'noopener';
+  nav.textContent = 'נווט למשק';
+  actions.appendChild(details);
+  actions.appendChild(nav);
+  wrap.appendChild(actions);
+
+  return wrap;
+}
+
+function openFarmInfoWindow(farmId) {
+  var farm = getFarmById(farmId);
+  var marker = markerByFarmId[farmId];
+  if (!farm || !marker || typeof google === 'undefined' || !google.maps) return;
+
+  if (activeInfoWindow) {
+    activeInfoWindow.close();
+  }
+
+  activeInfoWindow = new google.maps.InfoWindow({
+    content: createFarmInfoContent(farm),
+    maxWidth: 310
+  });
+  activeInfoWindow.open(map, marker);
+}
+
+function clearMapAnimationTimers() {
+  mapAnimationTimers.forEach(function(timer) {
+    clearTimeout(timer);
+  });
+  mapAnimationTimers = [];
+  markers.forEach(function(marker) {
+    if (marker && marker.setAnimation) {
+      marker.setAnimation(null);
+    }
+  });
+}
+
+function queueMapAnimation(fn, delay) {
+  var timer = setTimeout(function() {
+    fn();
+    mapAnimationTimers = mapAnimationTimers.filter(function(item) {
+      return item !== timer;
+    });
+  }, delay);
+  mapAnimationTimers.push(timer);
+}
+
+function animateMapToFarm(farmId) {
+  var farm = getFarmById(farmId);
+  var marker = markerByFarmId[farmId];
+  if (!farm || !map || typeof google === 'undefined' || !google.maps) return;
+
+  clearMapAnimationTimers();
+
+  if (activeInfoWindow) {
+    activeInfoWindow.close();
+    activeInfoWindow = null;
+  }
+
+  if (marker && marker.setAnimation) {
+    marker.setAnimation(null);
+  }
+
+  var currentZoom = map.getZoom() || 7;
+  var overviewZoom = currentZoom > 9 ? 9 : currentZoom;
+  var targetZoom = farm.mapZoom || 14;
+  var needsOverviewStep = currentZoom > overviewZoom;
+
+  if (needsOverviewStep) {
+    map.setZoom(overviewZoom);
+  }
+
+  queueMapAnimation(function() {
+    map.panTo(farm.coordinates);
+  }, needsOverviewStep ? 180 : 0);
+
+  queueMapAnimation(function() {
+    map.setZoom(Math.max(overviewZoom, targetZoom - 3));
+  }, 420);
+
+  queueMapAnimation(function() {
+    map.setZoom(Math.max(overviewZoom, targetZoom - 1));
+  }, 640);
+
+  queueMapAnimation(function() {
+    map.panTo(farm.coordinates);
+    map.setZoom(targetZoom);
+  }, 840);
+
+  queueMapAnimation(function() {
+    if (marker && marker.setAnimation && google.maps.Animation) {
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+      queueMapAnimation(function() {
+        marker.setAnimation(null);
+      }, 850);
+    }
+    openFarmInfoWindow(farmId);
+  }, 1060);
+}
+
+function showStaticMapFocus(farm) {
+  var mapEl = document.getElementById('map');
+  if (!mapEl || !farm) return;
+
+  var visibleProduce = getVisibleProduce(farm);
+  mapEl.innerHTML = '';
+  var shell = document.createElement('div');
+  shell.className = 'static-map-focus';
+  var card = document.createElement('div');
+  card.className = 'static-map-card';
+  var pin = document.createElement('div');
+  pin.className = 'static-map-pin';
+  pin.appendChild(createTextEl('span', '', 'ג'));
+  card.appendChild(pin);
+  card.appendChild(createTextEl('div', 'map-farm-title', farm.name));
+  card.appendChild(createTextEl('div', 'map-farm-sub', farm.farmerName + ' · ' + formatFarmLocation(farm)));
+  card.appendChild(createTextEl('div', 'map-farm-story', farm.availability + ' · ' + farm.pickup));
+  card.appendChild(createTextEl('div', 'map-farm-label', 'תוצרת ומחירים'));
+  var prices = document.createElement('div');
+  prices.className = 'map-farm-prices';
+  visibleProduce.slice(0, 3).forEach(function(item) {
+    var row = document.createElement('div');
+    row.className = 'map-farm-price';
+    row.appendChild(createTextEl('span', '', item.icon + ' ' + item.name));
+    row.appendChild(createTextEl('strong', '', '₪' + item.price + ' / ' + item.unit));
+    prices.appendChild(row);
+  });
+  card.appendChild(prices);
+  shell.appendChild(card);
+  mapEl.appendChild(shell);
+}
+
+function focusFarmOnMap(farmId, options) {
+  var farm = getFarmById(farmId);
+  if (!farm) return;
+
+  focusedFarmId = farmId;
+  pendingFocusFarmId = farmId;
+  updateFocusedFarmCard();
+
+  if (!document.body.classList.contains('embedded-board') && !isDesktopLayout() && !isMapView) {
+    toggleMapView(true);
+  }
+
+  var mapCont = document.getElementById('map-container');
+  if (mapCont && !isDesktopLayout()) {
+    setTimeout(function() {
+      mapCont.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+  }
+
+  if (!map || typeof google === 'undefined' || !google.maps) {
+    showStaticMapFocus(farm);
+    return;
+  }
+
+  if (!markerByFarmId[farmId]) {
+    seedMarkers();
+  }
+
+  setFocusedMarkerStyle(farmId);
+  clearMapAnimationTimers();
+  queueMapAnimation(function() {
+    animateMapToFarm(farmId);
+  }, options && options.fromCard ? 180 : 0);
 }
 
 // ══════════════════════════════════
@@ -1515,8 +3577,6 @@ function toggleMapView(forceState) {
     if (map) {
       setTimeout(() => {
         google.maps.event.trigger(map, 'resize');
-        var centerCoords = { lat: 32.31, lng: 34.87 };
-        map.setCenter(centerCoords);
         seedMarkers();
       }, 50);
     }
@@ -1529,6 +3589,8 @@ function toggleMapView(forceState) {
       <span>הצג מפה</span>
     `;
   }
+
+  postEmbeddedHeight();
 }
 
 // ══════════════════════════════════
@@ -1536,12 +3598,32 @@ function toggleMapView(forceState) {
 // ══════════════════════════════════
 var map;
 var markers = [];
+var markerByFarmId = {};
+var activeInfoWindow = null;
+var ISRAEL_MAP_BOUNDS = {
+  north: 34.15,
+  south: 28.75,
+  west: 33.45,
+  east: 36.55
+};
 
 function initMap() {
-  var centerCoords = { lat: 32.31, lng: 34.87 };
+  var centerCoords = { lat: 31.95, lng: 35.08 };
   map = new google.maps.Map(document.getElementById('map'), {
     center: centerCoords,
-    zoom: 11,
+    zoom: 8,
+    minZoom: 8,
+    maxZoom: 17,
+    mapTypeId: google.maps.MapTypeId.SATELLITE,
+    restriction: {
+      latLngBounds: ISRAEL_MAP_BOUNDS,
+      strictBounds: true
+    },
+    tilt: 0,
+    streetViewControl: false,
+    fullscreenControl: true,
+    mapTypeControl: true,
+    gestureHandling: 'greedy',
     styles: [
       { "featureType": "landscape", "elementType": "all", "stylers": [{ "color": "#f2efe9" }] },
       { "featureType": "poi.park", "elementType": "all", "stylers": [{ "color": "#d8ebd3" }] },
@@ -1551,52 +3633,174 @@ function initMap() {
   });
 
   seedMarkers();
+
+  if (pendingFocusFarmId) {
+    focusFarmOnMap(pendingFocusFarmId, { fromCard: false });
+  }
+
+  postEmbeddedHeight();
+}
+
+function fitMapToVisibleFarms() {
+  if (!map || typeof google === 'undefined' || !google.maps || markers.length === 0) return;
+  if (focusedFarmId && markerByFarmId[focusedFarmId]) return;
+
+  var bounds = new google.maps.LatLngBounds();
+  markers.forEach(function(marker) {
+    bounds.extend(marker.getPosition());
+  });
+  map.fitBounds(bounds, 58);
+  var zoomRelaxed = false;
+  function relaxOverviewZoom() {
+    if (zoomRelaxed || focusedFarmId) return;
+    zoomRelaxed = true;
+    var fittedZoom = map.getZoom() || 8;
+    if (fittedZoom < 8) {
+      map.setZoom(8);
+      return;
+    }
+    if (fittedZoom > 8) {
+      map.setZoom(Math.min(8, fittedZoom - 1));
+    }
+  }
+  google.maps.event.addListenerOnce(map, 'idle', relaxOverviewZoom);
+  setTimeout(relaxOverviewZoom, 450);
 }
 
 function seedMarkers() {
   markers.forEach(function(m){ m.setMap(null); });
   markers = [];
+  markerByFarmId = {};
+  if (activeInfoWindow) {
+    activeInfoWindow.close();
+    activeInfoWindow = null;
+  }
 
-  var farmers = [
-    { name: "משק מלמד (עוז)", town: "כפר ויתקין", region: "עמק חפר", lat: 32.3831, lng: 34.8697, crops: ["עגבנייה עם אופי", "מלפפון עקום", "צרור חסה פריכה"] },
-    { name: "משק שדה (נטע)", town: "חרוצים", region: "דרום השרון", lat: 32.2356, lng: 34.8778, crops: ["גזר שמח", "עלי תרד בלאדי", "סלק מתוק מהאדמה"] },
-    { name: "משק האורגני (תמר)", town: "כפר ויתקין", region: "עמק חפר", lat: 32.3875, lng: 34.8665, crops: ["עגבנייה עם אופי", "עלי תרד בלאדי", "גזר שמח"] },
-    { name: "הגינה של ארז", town: "חרוצים", region: "דרום השרון", lat: 32.2321, lng: 34.8812, crops: ["מלפפון עקום", "צרור חסה פריכה", "סלק מתוק מהאדמה"] }
-  ];
-
-  farmers.forEach(function(f) {
-    if (currentRegion !== 'all' && f.region !== currentRegion) return;
-
+  filterFarms().forEach(function(farm) {
     var marker = new google.maps.Marker({
-      position: { lat: f.lat, lng: f.lng },
+      position: farm.coordinates,
       map: map,
-      title: f.name,
-      icon: {
-        url: "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(
-          '<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="%232D5A1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3" fill="%23A5D96A"></circle></svg>'
-        ),
-        scaledSize: new google.maps.Size(38, 38)
-      }
-    });
-
-    var content = '<div style="direction:rtl; text-align:right; font-family:\'Rubik\',sans-serif; padding:4px">' +
-      '<h4 style="color:var(--green-800); margin:0 0 4px 0; font-weight:800;">' + f.name + '</h4>' +
-      '<p style="font-size:12px; color:#555; margin:0 0 8px 0">מיקום: ' + f.town + ' (' + f.region + ')</p>' +
-      '<p style="font-size:11px; margin:0 0 8px 0"><b>גידולים:</b> ' + f.crops.join(', ') + '</p>' +
-      '<button onclick="filterByFarmer(\'' + f.name + '\')" style="background:var(--green-800); color:#fff; border:none; padding:5px 10px; font-size:11px; font-weight:700; border-radius:4px; cursor:pointer;">הצג תוצרת</button>' +
-      '</div>';
-
-    var infowindow = new google.maps.InfoWindow({
-      content: content
+      title: farm.name,
+      icon: getMarkerIcon(farm.id === focusedFarmId)
     });
 
     marker.addListener('click', function() {
-      infowindow.open(map, marker);
+      focusFarmOnMap(farm.id, { fromMarker: true });
     });
 
     markers.push(marker);
+    markerByFarmId[farm.id] = marker;
+  });
+
+  if (focusedFarmId && markerByFarmId[focusedFarmId]) {
+    setFocusedMarkerStyle(focusedFarmId);
+  } else {
+    fitMapToVisibleFarms();
+  }
+}
+
+// ══════════════════════════════════
+//  ACCESSIBILITY & KEYBOARD SUPPORT
+// ══════════════════════════════════
+const A11Y_KEY = 'gezroni.accessibility.v1';
+var a11yState = readA11yState();
+
+function readA11yState() {
+  try {
+    return Object.assign({
+      largeText: false,
+      contrast: false,
+      reduceMotion: false,
+      underlineLinks: false
+    }, JSON.parse(localStorage.getItem(A11Y_KEY) || '{}'));
+  } catch (error) {
+    return { largeText: false, contrast: false, reduceMotion: false, underlineLinks: false };
+  }
+}
+
+function saveA11yState() {
+  try {
+    localStorage.setItem(A11Y_KEY, JSON.stringify(a11yState));
+  } catch (error) {}
+}
+
+function applyA11yState() {
+  document.body.classList.toggle('a11y-large-text', !!a11yState.largeText);
+  document.body.classList.toggle('a11y-contrast', !!a11yState.contrast);
+  document.body.classList.toggle('a11y-reduced-motion', !!a11yState.reduceMotion);
+  document.body.classList.toggle('a11y-underline', !!a11yState.underlineLinks);
+  document.querySelectorAll('[data-a11y-toggle]').forEach(function(button) {
+    var key = button.getAttribute('data-a11y-toggle');
+    var active = !!a11yState[key];
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', active ? 'true' : 'false');
   });
 }
+
+function initAccessibilityWidget() {
+  var toggle = document.getElementById('accessibility-toggle');
+  var panel = document.getElementById('accessibility-panel');
+  if (!toggle || !panel) return;
+
+  toggle.addEventListener('click', function() {
+    var isOpen = panel.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  panel.querySelectorAll('[data-a11y-toggle]').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var key = button.getAttribute('data-a11y-toggle');
+      a11yState[key] = !a11yState[key];
+      saveA11yState();
+      applyA11yState();
+    });
+  });
+
+  var reset = panel.querySelector('[data-a11y-reset]');
+  if (reset) {
+    reset.addEventListener('click', function() {
+      a11yState = { largeText: false, contrast: false, reduceMotion: false, underlineLinks: false };
+      saveA11yState();
+      applyA11yState();
+    });
+  }
+
+  applyA11yState();
+}
+
+function initKeyboardControls() {
+  document.querySelectorAll('.region-pill, .category-card').forEach(function(el) {
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+    el.setAttribute('role', 'button');
+    el.setAttribute('aria-pressed', el.classList.contains('active') ? 'true' : 'false');
+    el.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        el.click();
+      }
+    });
+  });
+}
+
+function syncPressedStates() {
+  document.querySelectorAll('.region-pill, .category-card, .board-filter-chip').forEach(function(el) {
+    if (el.matches('button,[role="button"]')) {
+      el.setAttribute('aria-pressed', el.classList.contains('active') ? 'true' : 'false');
+    }
+  });
+}
+
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    closeFarmModal(null);
+    var panel = document.getElementById('accessibility-panel');
+    var toggle = document.getElementById('accessibility-toggle');
+    if (panel && panel.classList.contains('open')) {
+      panel.classList.remove('open');
+      if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    }
+  }
+});
 
 // ══════════════════════════════════
 //  CONFETTI
@@ -1628,10 +3832,20 @@ function launchConfetti(){
 }
 
 // ══════════════════════════════════
-//  LOAD HANDLER
+//  PAGE INITIALIZATION
 // ══════════════════════════════════
-window.onload = function() {
-  renderProducts();
+let pageUiInitialized = false;
+
+function initPageUi() {
+  if (pageUiInitialized) return;
+  pageUiInitialized = true;
+
+  initAccessibilityWidget();
+  initKeyboardControls();
+  syncPressedStates();
+  var userLocationInput = document.getElementById('user-location-input');
+  if (userLocationInput) userLocationInput.value = currentUserLocation;
+  renderFarms();
 
   // If maps fail to load within 3 seconds, show fallback
   setTimeout(function() {
@@ -1641,12 +3855,24 @@ window.onload = function() {
         mapEl.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:2rem;text-align:center;background:#fff;color:var(--text-2);">' +
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;color:var(--color-primary);margin:0 auto 1rem;display:block;"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>' +
           '<h3 style="margin-bottom:0.5rem;color:var(--green-800)">מפת החקלאים אינה זמינה כרגע</h3>' +
-          '<p style="font-size:13px;color:var(--text-3);max-width:300px">לא ניתן היה לטעון את שירות המפות של גוגל. תוכל להמשיך להזמין כרגיל דרך רשימת המוצרים.</p>' +
+          '<p style="font-size:13px;color:var(--text-3);max-width:300px">לא ניתן היה לטעון את שירות המפות של גוגל. אפשר להמשיך להשתמש בלוח המשקים וברשימת המחירים.</p>' +
           '</div>';
       }
     }
   }, 3000);
-};
+
+  postEmbeddedHeight();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initPageUi, { once: true });
+} else {
+  initPageUi();
+}
+
+window.addEventListener('load', postEmbeddedHeight);
+
+window.addEventListener('resize', postEmbeddedHeight);
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXsYBu5bML-Egery9Qa4KJNkOuSJiC2fA&callback=initMap" async defer></script>
