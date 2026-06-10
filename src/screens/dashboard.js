@@ -72,9 +72,9 @@ export function mountDashboard(root) {
 
   bindNavTabs();
   bindListingTabs();
-  initChart();
-  initMarquee();
-  initTicker();
+  // initChart();
+  // initMarquee();
+  // initTicker();
   bindAddProductModal();
   renderProducts();
   applyFarmDraft();
@@ -154,26 +154,6 @@ function buildShell() {
       </div>
 
       <div class="sec-header">
-        <div class="sec-title">פעילות בזמן אמת</div>
-        <div style="display:flex;align-items:center;gap:5px">
-          <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;animation:pulseGlow 1.5s infinite"></span>
-          <span style="font-size:11px;color:#22c55e;font-weight:700">LIVE</span>
-        </div>
-      </div>
-      <div class="live-ticker" id="liveTicker">
-        <div class="ticker-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green-400)" stroke-width="2" stroke-linecap="round">
-            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-          </svg>
-        </div>
-        <div class="ticker-content">
-          <div class="ticker-label">עדכון מומלץ</div>
-          <div class="ticker-text" id="tickerText">עדכון מחירים וזמינות מגדיל פניות מהאזור</div>
-        </div>
-        <div class="ticker-badge" id="tickerBadge">LIVE</div>
-      </div>
-
-      <div class="sec-header">
         <div class="sec-title">סיכום המודעה</div>
         <div class="sec-link" id="go-listing">עריכה ←</div>
       </div>
@@ -195,15 +175,10 @@ function buildShell() {
         </div>
       </div>
 
-      <div class="card" style="padding:16px 18px;margin-top:10px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-          <div style="font-size:14px;font-weight:800;color:var(--text-1);letter-spacing:-0.2px">צפיות בלוח 7 ימים</div>
-          <div style="font-size:14px;font-weight:900;color:var(--green-800)">124 צפיות</div>
-        </div>
-        <div class="chart-wrap">
-          <div class="chart-bars" id="revenueChart"></div>
-          <div class="chart-labels" id="chartLabels"></div>
-        </div>
+      <div class="card" style="padding:16px 18px;margin-top:12px;text-align:center">
+        <div style="font-size:15px;font-weight:800;color:var(--text-1)">צפיות במודעה השבוע</div>
+        <div style="font-size:32px;font-weight:900;color:var(--green-800);margin:8px 0">124 צפיות</div>
+        <div style="font-size:12px;color:var(--text-3)">הנתונים מעודכנים ל-7 הימים האחרונים</div>
       </div>
 
       <div class="sec-header"><div class="sec-title">פעולות מהירות</div></div>
@@ -227,46 +202,7 @@ function buildShell() {
         </button>
       </div>
 
-      <div class="sec-header" style="margin-top:22px"><div class="sec-title">פעילות אחרונה</div></div>
-      <div class="marquee-wrap">
-        <div class="marquee-track" id="marqueeTrack"></div>
-      </div>
-
-      <div class="sec-header"><div class="sec-title">מה כדאי לעדכן</div><div class="sec-link" id="go-listing-2">ערוך מודעה ←</div></div>
-      <div class="order-card">
-        <div class="order-top">
-          <div><div class="order-buyer">מחירי השבוע</div><div class="order-time">עודכן לפני יומיים</div></div>
-          <span class="badge pending">מומלץ</span>
-        </div>
-        <div class="order-items">ודא שכל פריט תוצרת מציג מחיר לק״ג/יחידה וזמינות עדכנית.</div>
-        <div class="order-bottom">
-          <div class="order-total">5 פריטים</div>
-          <div class="order-actions"><button class="btn-sm btn-view" id="go-products" type="button">לתוצרת</button></div>
-        </div>
-      </div>
-      <div class="order-card" style="animation-delay:0.08s">
-        <div class="order-top">
-          <div><div class="order-buyer">פרטי קשר</div><div class="order-time">מופיע בכרטיס המשק</div></div>
-          <span class="badge active">פעיל</span>
-        </div>
-        <div class="order-items">טלפון, וואטסאפ, אזור איסוף והערת זמינות יוצגו בלוח המשקים.</div>
-        <div class="order-bottom">
-          <div class="order-total">מוכן</div>
-          <div class="order-actions"><button class="btn-sm btn-view" id="go-listing-3" type="button">לעריכה</button></div>
-        </div>
-      </div>
-
-      <div class="sec-header"><div class="sec-title">טיפ השבוע</div></div>
-      <div class="tip-card">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green-800)" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-top:2px">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-        <div>
-          <div class="tip-label">💡 לחקלאי</div>
-          <p>מודעות עם <strong>מחירים מעודכנים</strong> וזמינות ברורה מקבלות יותר פניות מתושבים קרובים.</p>
-        </div>
-      </div>
-      <div style="height:10px"></div>
+      <div style="height:20px"></div>
     </div>
     </div>
 
