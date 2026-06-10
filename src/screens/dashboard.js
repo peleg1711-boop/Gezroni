@@ -310,9 +310,17 @@ function buildShell() {
       </div>
       <div class="pad-lg">
         <div class="stats-row" style="margin-bottom:22px">
-          <div class="stat-card"><div class="stat-val green">4.9</div><div class="stat-label">דירוג ⭐</div></div>
-          <div class="stat-card"><div class="stat-val">23</div><div class="stat-label">פניות החודש</div></div>
-          <div class="stat-card"><div class="stat-val">94%</div><div class="stat-label">שביעות רצון</div></div>
+          <div class="stat-card" id="pc-rating" style="cursor:pointer"><div class="stat-val green">4.9</div><div class="stat-label">דירוג ⭐</div></div>
+          <div class="stat-card" id="pc-inquiries" style="cursor:pointer"><div class="stat-val">23</div><div class="stat-label">פניות החודש</div></div>
+          <div class="stat-card" id="pc-satisfaction" style="cursor:pointer"><div class="stat-val">94%</div><div class="stat-label">שביעות רצון</div></div>
+        </div>
+        <div style="margin-top:16px;margin-bottom:24px">
+          <button class="btn-shine" id="btn-share-farm" type="button" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:700;padding:12px;background:var(--green-900);color:#fff;border-radius:12px;border:none;cursor:pointer;min-height:48px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/>
+            </svg>
+            <span>שתף את מודעת המשק שלי בוואטסאפ</span>
+          </button>
         </div>
         <div style="font-size:11px;font-weight:800;color:var(--text-3);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:10px">הגדרות המשק</div>
         <div class="settings-list">
@@ -435,6 +443,91 @@ function buildShell() {
     <a class="auth-home-link" href="#home">← חזרה לדף הבית</a>
   </div>
 </div>
+
+<!-- REVIEWS MODAL -->
+<div class="modal-overlay" id="reviewsModal">
+  <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="reviews-title">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="reviews-title">חוות דעת של תושבים מהאזור</div>
+    <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+      <div style="border-bottom:1px solid rgba(0,0,0,0.08);padding:12px 0">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-weight:700">גילה כהן (כפר ויתקין)</span>
+          <span style="color:#f59e0b">⭐⭐⭐⭐⭐</span>
+        </div>
+        <p style="margin:0;font-size:14px;color:var(--text-2)">העגבניות שרי שלכם פשוט מתוקות כמו סוכריות, הילדים שלי לא מפסיקים לאכול אותן!</p>
+      </div>
+      <div style="border-bottom:1px solid rgba(0,0,0,0.08);padding:12px 0">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-weight:700">אהרון (בת חפר)</span>
+          <span style="color:#f59e0b">⭐⭐⭐⭐⭐</span>
+        </div>
+        <p style="margin:0;font-size:14px;color:var(--text-2)">השום טרי ומצוין, סוף סוף שום ישראלי אמיתי באיכות מנצחת.</p>
+      </div>
+      <div style="padding:12px 0">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-weight:700">רעות שדה (עולש)</span>
+          <span style="color:#f59e0b">⭐⭐⭐⭐⭐</span>
+        </div>
+        <p style="margin:0;font-size:14px;color:var(--text-2)">שירות אדיב, כיף לבוא למשק שלכם ולאסוף ישירות מהשדה.</p>
+      </div>
+      <button class="btn-cancel-modal" id="close-reviews-btn" type="button" style="margin-top:16px">סגור</button>
+    </div>
+  </div>
+</div>
+
+<!-- INQUIRIES MODAL -->
+<div class="modal-overlay" id="inquiriesModal">
+  <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="inquiries-title">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="inquiries-title">פניות מתושבי האזור החודש</div>
+    <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,0,0,0.08);padding-bottom:10px">
+          <div>
+            <div style="font-weight:700;font-size:14px">פנייה מוואטסאפ: מיכל (מכמורת)</div>
+            <div style="font-size:12px;color:var(--text-3)">התעניינה ב-3 ק״ג מלפפון וגזר</div>
+          </div>
+          <span style="font-size:12px;color:var(--text-3)">לפני שעתיים</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,0,0,0.08);padding-bottom:10px">
+          <div>
+            <div style="font-weight:700;font-size:14px">שיחה נכנסת: דניאל (בת חפר)</div>
+            <div style="font-size:12px;color:var(--text-3)">ביקש שעות פתיחה לאיסוף בשישי</div>
+          </div>
+          <span style="font-size:12px;color:var(--text-3)">אתמול</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px">
+          <div>
+            <div style="font-weight:700;font-size:14px">פנייה מוואטסאפ: יוסי (חופית)</div>
+            <div style="font-size:12px;color:var(--text-3)">הזמנה גדולה של ירקות ועלים ירוקים</div>
+          </div>
+          <span style="font-size:12px;color:var(--text-3)">לפני 3 ימים</span>
+        </div>
+      </div>
+      <button class="btn-cancel-modal" id="close-inquiries-btn" type="button" style="margin-top:16px">סגור</button>
+    </div>
+  </div>
+</div>
+
+<!-- SATISFACTION MODAL -->
+<div class="modal-overlay" id="satisfactionModal">
+  <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="satisfaction-title">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="satisfaction-title">איך מחושבת שביעות הרצון?</div>
+    <div class="modal-body" style="text-align:center">
+      <div style="font-size:48px;margin-bottom:12px">❤️</div>
+      <p style="font-size:15px;line-height:1.6;color:var(--text-2);margin-bottom:20px">
+        שביעות הרצון מבוססת על משוב חוזר של תושבים שקנו ישירות מהמשק שלכם.
+        <br><strong style="color:var(--green-900)">94% מהקונים דיווחו על חוויה מעולה!</strong>
+      </p>
+      <p style="font-size:13px;color:var(--text-3)">
+        טיפ: מענה מהיר בוואטסאפ ועדכון זמינות התוצרת בלוח שומרים על ציון שביעות רצון גבוה.
+      </p>
+      <button class="btn-cancel-modal" id="close-satisfaction-btn" type="button" style="margin-top:16px">סגור</button>
+    </div>
+  </div>
+</div>
   `;
 }
 
@@ -465,6 +558,27 @@ function bindNavTabs() {
   document.getElementById('si-edit')?.addEventListener('click', () => switchTab('orders'));
   document.getElementById('si-notif')?.addEventListener('click', () => showToast('התראות — בקרוב', 'info'));
   document.getElementById('si-signout')?.addEventListener('click', signOut);
+
+  // Profile page interactive stats & modals
+  document.getElementById('pc-rating')?.addEventListener('click', () => openProfileModal('reviewsModal'));
+  document.getElementById('pc-inquiries')?.addEventListener('click', () => openProfileModal('inquiriesModal'));
+  document.getElementById('pc-satisfaction')?.addEventListener('click', () => openProfileModal('satisfactionModal'));
+  document.getElementById('btn-share-farm')?.addEventListener('click', shareFarmListing);
+
+  // Close modals listeners
+  document.getElementById('close-reviews-btn')?.addEventListener('click', () => closeProfileModal('reviewsModal'));
+  document.getElementById('close-inquiries-btn')?.addEventListener('click', () => closeProfileModal('inquiriesModal'));
+  document.getElementById('close-satisfaction-btn')?.addEventListener('click', () => closeProfileModal('satisfactionModal'));
+
+  document.getElementById('reviewsModal')?.addEventListener('click', e => {
+    if (e.target === document.getElementById('reviewsModal')) closeProfileModal('reviewsModal');
+  });
+  document.getElementById('inquiriesModal')?.addEventListener('click', e => {
+    if (e.target === document.getElementById('inquiriesModal')) closeProfileModal('inquiriesModal');
+  });
+  document.getElementById('satisfactionModal')?.addEventListener('click', e => {
+    if (e.target === document.getElementById('satisfactionModal')) closeProfileModal('satisfactionModal');
+  });
 }
 
 function bindListingTabs() {
@@ -1051,6 +1165,37 @@ function openAddProductModal() {
 
 function closeAddProductModal() {
   document.getElementById('addProductModal')?.classList.remove('open');
+}
+
+function openProfileModal(modalId) {
+  document.getElementById(modalId)?.classList.add('open');
+}
+
+function closeProfileModal(modalId) {
+  document.getElementById(modalId)?.classList.remove('open');
+}
+
+function shareFarmListing() {
+  const farmName = farmDraft.farmName || 'משק ישראלי';
+  const farmId = currentUser ? 'farm-' + currentUser.id.slice(0, 8) : '';
+  const shareUrl = `${window.location.origin}/#market?farm=${farmId}`;
+  const shareText = `שלום! מוזמנים לבקר בעמוד של ${farmName} בלוח המשקים גזרוני, לעקוב אחר זמינות התוצרת ולקנות ישירות מאיתנו: ${shareUrl}`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: farmName,
+      text: shareText,
+      url: shareUrl
+    }).catch(e => console.log('Share failed', e));
+  } else {
+    const waUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      showToast('הקישור הועתק! פותח וואטסאפ לשיתוף...', 'success');
+      setTimeout(() => window.open(waUrl, '_blank'), 800);
+    }).catch(() => {
+      window.open(waUrl, '_blank');
+    });
+  }
 }
 
 function bindAddProductModal() {
