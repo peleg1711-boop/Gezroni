@@ -1393,6 +1393,12 @@ body.a11y-reduced-motion .advanced-filters-panel { animation: none; }
   flex: 1 1 auto;
   border-radius: 0;
   border: 0;
+  box-shadow: none;
+}
+/* The "field rows" stripes and sun dot suit the tiny 58px thumb; at card size they're just noise */
+.product-card.farm-card .farm-thumb::before,
+.product-card.farm-card .farm-thumb::after {
+  display: none;
 }
 .farm-thumb-melamed-family,
 .farm-thumb-meshek-melamed {
