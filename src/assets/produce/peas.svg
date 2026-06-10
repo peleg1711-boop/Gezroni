@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="peas">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#67b64d"/>
+      <stop offset="1" stop-color="#2c812f"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)">
+    <path d="M31 70c20-26 52-28 72-2-9 14-58 18-72 2z" fill="url(#main)"/>
+    <circle cx="49" cy="68" r="6" fill="#c7ed8e"/><circle cx="64" cy="65" r="6" fill="#c7ed8e"/><circle cx="79" cy="66" r="6" fill="#c7ed8e"/>
+    <path d="M35 69c22 10 49 9 67-1" stroke="#dff6bc" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/></g>
+</svg>

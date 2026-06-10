@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="potato">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#c59b64"/>
+      <stop offset="1" stop-color="#8c653e"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)">
+    <path d="M39 55c6-18 33-24 48-10 17 16 5 46-18 51-24 6-48-6-47-26 0-9 5-15 17-15z" fill="url(#main)"/>
+    <circle cx="51" cy="65" r="3" fill="rgba(80,45,23,.32)"/><circle cx="72" cy="55" r="2.6" fill="rgba(80,45,23,.28)"/><circle cx="77" cy="82" r="3" fill="rgba(80,45,23,.3)"/>
+    <path d="M43 53c11-11 31-14 44-1" stroke="#fff" stroke-width="4" opacity=".35" fill="none" stroke-linecap="round"/></g>
+</svg>

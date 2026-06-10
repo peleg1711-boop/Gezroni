@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="garlic">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#f0eadc"/>
+      <stop offset="1" stop-color="#b5a98c"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)">
+    <path d="M64 35c19 11 29 33 21 51-7 17-31 19-38 2-13-4-18-17-11-31 5-10 14-17 28-22z" fill="url(#main)"/>
+    <path d="M52 52c-5 16-5 31 2 44M65 45c4 19 4 36-1 52M76 54c6 13 5 25-1 35" stroke="#ac9d7e" stroke-width="2.5" opacity=".5" fill="none" stroke-linecap="round"/>
+    <path d="M65 34c-4-7 1-13 8-17" stroke="#6a7d45" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+</svg>

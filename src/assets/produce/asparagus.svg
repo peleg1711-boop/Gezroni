@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="asparagus">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#4a9d45"/>
+      <stop offset="1" stop-color="#276b2b"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)"><rect x="47" y="38" width="9" height="58" rx="4.5" fill="#276b2b" transform="rotate(-8 47 96)"/><path d="M51 30l8 14h-16z" fill="#4a9d45"/><rect x="58" y="38" width="9" height="58" rx="4.5" fill="#4a9d45" transform="rotate(-3 58 96)"/><path d="M62 30l8 14h-16z" fill="#276b2b"/><rect x="69" y="38" width="9" height="58" rx="4.5" fill="#276b2b" transform="rotate(2 69 96)"/><path d="M73 30l8 14h-16z" fill="#4a9d45"/><rect x="80" y="38" width="9" height="58" rx="4.5" fill="#4a9d45" transform="rotate(7 80 96)"/><path d="M84 30l8 14h-16z" fill="#276b2b"/><path d="M43 91h43" stroke="#e8f4d1" stroke-width="5" stroke-linecap="round" opacity=".55"/></g>
+</svg>

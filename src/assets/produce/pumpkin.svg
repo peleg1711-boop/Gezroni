@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="pumpkin">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#ed8a2d"/>
+      <stop offset="1" stop-color="#b95b19"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)"><ellipse cx="64" cy="69" rx="34" ry="29" fill="url(#main)"/><path d="M64 40c-11 18-11 41 0 60M48 47c-10 15-9 34 2 48M80 47c10 15 9 34-2 48" stroke="#f0ba68" stroke-width="3" fill="none" opacity=".65" stroke-linecap="round"/><path d="M65 39c-1-8 4-14 12-18" stroke="#4f7434" stroke-width="5" fill="none" stroke-linecap="round"/></g>
+</svg>

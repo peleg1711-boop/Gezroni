@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="pomegranate">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#c72f32"/>
+      <stop offset="1" stop-color="#7f1e25"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)">
+    <path d="M55 39l8-13 8 13 11-5-3 15H49l-3-15z" fill="#a92225"/>
+    <circle cx="64" cy="71" r="31" fill="url(#main)"/>
+    <path d="M49 60c9-9 25-11 36-2" stroke="#fff" stroke-width="4" fill="none" opacity=".38" stroke-linecap="round"/>
+    <circle cx="55" cy="76" r="3" fill="#f2c17a"/><circle cx="65" cy="80" r="3" fill="#f2c17a"/><circle cx="75" cy="74" r="3" fill="#f2c17a"/></g>
+</svg>

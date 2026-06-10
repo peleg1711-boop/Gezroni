@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="rosemary">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#4f8f53"/>
+      <stop offset="1" stop-color="#2e5e36"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)"><path d="M50 91C62 70 72 52 82 32" fill="none" stroke="#365f34" stroke-width="4" stroke-linecap="round"/><path d="M54 82l-14 -5M56 78l15 -7" stroke="url(#main)" stroke-width="3" stroke-linecap="round"/><path d="M58 74l-14 -5M60 70l15 -7" stroke="url(#main)" stroke-width="3" stroke-linecap="round"/><path d="M62 66l-14 -5M64 62l15 -7" stroke="url(#main)" stroke-width="3" stroke-linecap="round"/><path d="M66 58l-14 -5M68 54l15 -7" stroke="url(#main)" stroke-width="3" stroke-linecap="round"/><path d="M70 50l-14 -5M72 46l15 -7" stroke="url(#main)" stroke-width="3" stroke-linecap="round"/><path d="M74 42l-14 -5M76 38l15 -7" stroke="url(#main)" stroke-width="3" stroke-linecap="round"/><path d="M78 34l-14 -5M80 30l15 -7" stroke="url(#main)" stroke-width="3" stroke-linecap="round"/></g>
+</svg>

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="kale">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#4d8f3d"/>
+      <stop offset="1" stop-color="#214f22"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)">
+    <path d="M38 87c-2-23 12-47 35-52 17 10 22 24 17 44-12-7-20-6-28 8-10-9-18-9-24 0z" fill="url(#main)"/>
+    <path d="M51 82c5-20 12-37 22-49M52 62c10 5 20 5 30 0M45 76c10 3 21 2 33-4" stroke="#d8f1bd" stroke-width="3" fill="none" opacity=".68" stroke-linecap="round"/></g>
+</svg>

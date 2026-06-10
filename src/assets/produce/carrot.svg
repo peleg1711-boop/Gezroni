@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="carrot">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#f08a25"/>
+      <stop offset="1" stop-color="#c96118"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)">
+    <path d="M0-18C15-14 22-2 15 11 3 12-12 5-15-9-11-16-5-18 0-18Z" transform="translate(55 34) rotate(-35) scale(0.48)" fill="#579d41"/><path d="M54 21C58 31 58 40 54 46" fill="none" stroke="#e8f8d1" stroke-width="2" stroke-linecap="round" opacity=".74"/><path d="M0-18C15-14 22-2 15 11 3 12-12 5-15-9-11-16-5-18 0-18Z" transform="translate(66 31) rotate(3) scale(0.52)" fill="#66ae48"/><path d="M65 18C69 28 69 37 65 43" fill="none" stroke="#e8f8d1" stroke-width="2" stroke-linecap="round" opacity=".74"/><path d="M0-18C15-14 22-2 15 11 3 12-12 5-15-9-11-16-5-18 0-18Z" transform="translate(76 35) rotate(34) scale(0.46)" fill="#4c9138"/><path d="M75 22C79 32 79 41 75 47" fill="none" stroke="#e8f8d1" stroke-width="2" stroke-linecap="round" opacity=".74"/>
+    <path d="M48 47c13-7 28-5 35 1L62 103c-2 6-8 6-10 0L39 54c-1-4 2-6 9-7z" fill="url(#main)"/>
+    <path d="M51 61h20M54 76h15M57 90h9" stroke="#ffd39a" stroke-width="3" stroke-linecap="round" opacity=".78"/></g>
+</svg>

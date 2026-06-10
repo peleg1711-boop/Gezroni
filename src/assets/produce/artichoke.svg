@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="artichoke">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#6ea45d"/>
+      <stop offset="1" stop-color="#355f31"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)">
+    <path d="M0-18C15-14 22-2 15 11 3 12-12 5-15-9-11-16-5-18 0-18Z" transform="translate(50 72) rotate(-38) scale(0.62)" fill="#355f31"/><path d="M49 59C53 69 53 78 49 84" fill="none" stroke="#e8f8d1" stroke-width="2" stroke-linecap="round" opacity=".74"/><path d="M0-18C15-14 22-2 15 11 3 12-12 5-15-9-11-16-5-18 0-18Z" transform="translate(64 58) rotate(0) scale(0.7)" fill="#6ea45d"/><path d="M63 45C67 55 67 64 63 70" fill="none" stroke="#e8f8d1" stroke-width="2" stroke-linecap="round" opacity=".74"/><path d="M0-18C15-14 22-2 15 11 3 12-12 5-15-9-11-16-5-18 0-18Z" transform="translate(78 72) rotate(38) scale(0.62)" fill="#355f31"/><path d="M77 59C81 69 81 78 77 84" fill="none" stroke="#e8f8d1" stroke-width="2" stroke-linecap="round" opacity=".74"/>
+    <path d="M0-18C15-14 22-2 15 11 3 12-12 5-15-9-11-16-5-18 0-18Z" transform="translate(49 87) rotate(-61) scale(0.58)" fill="#5d8e4b"/><path d="M48 74C52 84 52 93 48 99" fill="none" stroke="#e8f8d1" stroke-width="2" stroke-linecap="round" opacity=".74"/><path d="M0-18C15-14 22-2 15 11 3 12-12 5-15-9-11-16-5-18 0-18Z" transform="translate(64 78) rotate(0) scale(0.72)" fill="#709f5a"/><path d="M63 65C67 75 67 84 63 90" fill="none" stroke="#e8f8d1" stroke-width="2" stroke-linecap="round" opacity=".74"/><path d="M0-18C15-14 22-2 15 11 3 12-12 5-15-9-11-16-5-18 0-18Z" transform="translate(80 87) rotate(61) scale(0.58)" fill="#5d8e4b"/><path d="M79 74C83 84 83 93 79 99" fill="none" stroke="#e8f8d1" stroke-width="2" stroke-linecap="round" opacity=".74"/>
+    <path d="M52 96h24" stroke="#517d3e" stroke-width="8" stroke-linecap="round"/></g>
+</svg>

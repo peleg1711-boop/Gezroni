@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="avocado">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#4e8f36"/>
+      <stop offset="1" stop-color="#dac974"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)">
+    <path d="M64 35c18 12 30 40 18 58-11 17-43 18-54-2-9-17 5-47 36-56z" fill="#4e8f36"/>
+    <path d="M64 46c13 10 21 29 13 42-8 12-30 13-38-2-6-12 4-34 25-40z" fill="#dfe5a7"/>
+    <circle cx="62" cy="77" r="12" fill="#8b5a2f"/>
+    <path d="M50 51c10-10 26-9 34 1" stroke="#fff" stroke-width="4" fill="none" opacity=".42" stroke-linecap="round"/></g>
+</svg>

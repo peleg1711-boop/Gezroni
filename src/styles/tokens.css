@@ -1,0 +1,51 @@
+:root {
+  --color-primary: #2D5A1B;
+  --color-on-primary: #FFFFFF;
+  --color-secondary: #8BC34A;
+  --color-accent: #C4834A;
+  --color-background: #f4f1eb;
+  --color-foreground: #0F172A;
+  --color-muted: #e8e4d9;
+  --color-border: #ded8cb;
+  --color-destructive: #DC2626;
+  --color-ring: #2D5A1B;
+
+  /* Map old variables to new ones for backwards compatibility */
+  --green-900: #1B3B10;
+  --green-800: var(--color-primary);
+  --green-600: var(--color-secondary);
+  --green-400: var(--color-accent);
+  --green-100: var(--color-muted);
+  --green-50: #faf8f5;
+
+  --bg: var(--color-background);
+  --surface: #ffffff;
+  --dark: var(--color-foreground);
+  --dark-card: var(--color-primary);
+  --text-1: var(--color-foreground);
+  --text-2: #475569;
+  --text-3: #94a3b8;
+
+  --orange: #f59e0b;
+  --orange-pale: #fef3c7;
+  --red: var(--color-destructive);
+  --red-pale: #fee2e2;
+  --blue: #1d4ed8;
+  --blue-pale: #eff6ff;
+
+  --spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --r-pill: 999px;
+  --r-xl: 24px;
+  --r-lg: 20px;
+  --r-md: 16px;
+  --r-sm: 10px;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+  --shadow-xl: 0 20px 25px rgba(0,0,0,0.15);
+
+  --transition-smooth: 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}

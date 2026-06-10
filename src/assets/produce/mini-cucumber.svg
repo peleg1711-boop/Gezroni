@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="mini cucumber">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#4aa848"/>
+      <stop offset="1" stop-color="#246f29"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)">
+    <g transform="translate(55 60) rotate(-23)"><rect x="-31" y="-12" width="62" height="24" rx="12" fill="url(#main)"/><path d="M-22-3C-8-9 13-8 25-1" stroke="#daf4b2" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="-12" cy="5" r="2.2" fill="#e1f7bd"/><circle cx="13" cy="-5" r="2" fill="#e1f7bd"/></g>
+    <g transform="translate(73 78) rotate(18)"><rect x="-29" y="-11" width="58" height="22" rx="11" fill="#4aa848"/><path d="M-20 3C-5 9 12 8 22 2" stroke="#d9f6bd" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="-9" cy="-4" r="2" fill="#e1f7bd"/><circle cx="15" cy="4" r="2" fill="#e1f7bd"/></g></g>
+</svg>

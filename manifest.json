@@ -1,0 +1,42 @@
+{
+  "name": "גזרוני — השוואת מחירים",
+  "short_name": "גזרוני",
+  "description": "לוח משקים ישראלי — השוואת מחירים ישירה מהחקלאי לתושב",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f2318",
+  "theme_color": "#2d6a4f",
+  "lang": "he",
+  "dir": "rtl",
+  "orientation": "portrait-primary",
+  "categories": ["food", "shopping", "lifestyle"],
+  "icons": [
+    { "src": "/icons/android/48.png",  "sizes": "48x48",   "type": "image/png" },
+    { "src": "/icons/android/72.png",  "sizes": "72x72",   "type": "image/png" },
+    { "src": "/icons/android/96.png",  "sizes": "96x96",   "type": "image/png" },
+    { "src": "/icons/android/144.png", "sizes": "144x144", "type": "image/png" },
+    { "src": "/icons/android/192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/android/512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/web/64.png",      "sizes": "64x64",   "type": "image/png" },
+    { "src": "/icons/web/128.png",     "sizes": "128x128", "type": "image/png" },
+    { "src": "/icons/web/256.png",     "sizes": "256x256", "type": "image/png" }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "לוח המשקים",
+      "short_name": "לוח",
+      "description": "צפה בכל המשקים הזמינים",
+      "url": "/#market",
+      "icons": [{ "src": "/icons/android/96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "דשבורד חקלאי",
+      "short_name": "דשבורד",
+      "description": "נהל את פרופיל המשק שלך",
+      "url": "/#dashboard",
+      "icons": [{ "src": "/icons/android/96.png", "sizes": "96x96" }]
+    }
+  ]
+}

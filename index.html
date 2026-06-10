@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>גזרוני — השוואת מחירים</title>
+
+  <!-- ── PWA / theme ───────────────────────────────────────────────────── -->
+  <meta name="theme-color" content="#2d6a4f" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="גזרוני" />
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- ── Favicon ───────────────────────────────────────────────────────── -->
+  <link rel="icon"       type="image/png" sizes="32x32" href="/icons/web/32_favicon.png" />
+  <link rel="icon"       type="image/png" sizes="64x64"  href="/icons/web/64.png" />
+  <link rel="icon"       type="image/png" sizes="128x128" href="/icons/web/128.png" />
+
+  <!-- ── Apple touch icons ─────────────────────────────────────────────── -->
+  <link rel="apple-touch-icon" sizes="60x60"   href="/icons/ios/60.png" />
+  <link rel="apple-touch-icon" sizes="76x76"   href="/icons/ios/60.png" />
+  <link rel="apple-touch-icon" sizes="120x120" href="/icons/ios/120.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="/icons/ios/120.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/ios/180.png" />
+  <link rel="apple-touch-icon"                 href="/icons/ios/180.png" />
+
+  <!-- ── Fonts ─────────────────────────────────────────────────────────── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- ── Styles ────────────────────────────────────────────────────────── -->
+  <link rel="stylesheet" href="/src/styles/tokens.css" />
+  <link rel="stylesheet" href="/src/styles/screens.css" />
+
+  <style>
+    html[data-app="0"] [data-app-root] { opacity: 0; }
+    html[data-app="1"] [data-app-root] { opacity: 1; transition: opacity .2s ease; }
+  </style>
+</head>
+<body>
+  <div data-app-root id="app-root"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="/src/app/main.js?v=20260606-generated-produce-v1"></script>
+  <script>try { document.documentElement.setAttribute('data-app','1'); } catch (e) {}</script>
+
+  <!-- ── Service Worker registration ───────────────────────────────────── -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="grapes">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#7e3a9b"/>
+      <stop offset="1" stop-color="#4f276e"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)"><path d="M65 45c-3-8 2-15 10-19" stroke="#4b6c2e" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M0-18C15-14 22-2 15 11 3 12-12 5-15-9-11-16-5-18 0-18Z" transform="translate(82 34) rotate(42) scale(0.5)" fill="#5aa84a"/><path d="M81 21C85 31 85 40 81 46" fill="none" stroke="#e8f8d1" stroke-width="2" stroke-linecap="round" opacity=".74"/><circle cx="61" cy="45" r="12" fill="url(#main)"/><circle cx="57" cy="40" r="3" fill="#fff" opacity=".5"/><circle cx="49" cy="59" r="12" fill="#7e3a9b"/><circle cx="45" cy="54" r="3" fill="#fff" opacity=".5"/><circle cx="67" cy="60" r="12" fill="url(#main)"/><circle cx="63" cy="55" r="3" fill="#fff" opacity=".5"/><circle cx="83" cy="60" r="12" fill="#7e3a9b"/><circle cx="79" cy="55" r="3" fill="#fff" opacity=".5"/><circle cx="56" cy="75" r="12" fill="url(#main)"/><circle cx="52" cy="70" r="3" fill="#fff" opacity=".5"/><circle cx="73" cy="76" r="12" fill="#7e3a9b"/><circle cx="69" cy="71" r="3" fill="#fff" opacity=".5"/><circle cx="65" cy="91" r="12" fill="url(#main)"/><circle cx="61" cy="86" r="3" fill="#fff" opacity=".5"/></g>
+</svg>

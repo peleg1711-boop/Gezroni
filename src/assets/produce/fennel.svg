@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="fennel">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#dfe9cf"/>
+      <stop offset="1" stop-color="#6c9d50"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)">
+    <path d="M52 68c-12 17-4 34 13 34s25-17 13-34c-8-11-20-11-26 0z" fill="url(#main)"/>
+    <path d="M55 68c-7-19-3-31 4-45M66 68c-3-21 3-34 10-48M75 68c7-19 10-32 3-46" fill="none" stroke="#6c9d50" stroke-width="4" stroke-linecap="round"/>
+    <path d="M47 82c12 6 35 6 47 0" stroke="#fff" stroke-width="4" fill="none" opacity=".45" stroke-linecap="round"/></g>
+</svg>

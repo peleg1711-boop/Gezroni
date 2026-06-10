@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="kiwi">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#7a8f3a"/>
+      <stop offset="1" stop-color="#4f622a"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)">
+    <circle cx="64" cy="69" r="32" fill="#7b5b32"/>
+    <circle cx="64" cy="69" r="25" fill="#8bc447"/>
+    <circle cx="64" cy="69" r="8" fill="#f3ead2"/>
+    <ellipse cx="80.0" cy="69.0" rx="1.7" ry="3" fill="#2b2a20" transform="rotate(0 80.0 69.0)"/><ellipse cx="76.9" cy="78.4" rx="1.7" ry="3" fill="#2b2a20" transform="rotate(36 76.9 78.4)"/><ellipse cx="68.9" cy="84.2" rx="1.7" ry="3" fill="#2b2a20" transform="rotate(72 68.9 84.2)"/><ellipse cx="59.1" cy="84.2" rx="1.7" ry="3" fill="#2b2a20" transform="rotate(108 59.1 84.2)"/><ellipse cx="51.1" cy="78.4" rx="1.7" ry="3" fill="#2b2a20" transform="rotate(144 51.1 78.4)"/><ellipse cx="48.0" cy="69.0" rx="1.7" ry="3" fill="#2b2a20" transform="rotate(180 48.0 69.0)"/><ellipse cx="51.1" cy="59.6" rx="1.7" ry="3" fill="#2b2a20" transform="rotate(216 51.1 59.6)"/><ellipse cx="59.1" cy="53.8" rx="1.7" ry="3" fill="#2b2a20" transform="rotate(252 59.1 53.8)"/><ellipse cx="68.9" cy="53.8" rx="1.7" ry="3" fill="#2b2a20" transform="rotate(288 68.9 53.8)"/><ellipse cx="76.9" cy="59.6" rx="1.7" ry="3" fill="#2b2a20" transform="rotate(324 76.9 59.6)"/></g>
+</svg>

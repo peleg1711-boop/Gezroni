@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="chard">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#4e9b47"/>
+      <stop offset="1" stop-color="#c73d3f"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)">
+    <path d="M64 42v55" stroke="#c73d3f" stroke-width="6" stroke-linecap="round"/>
+    <path d="M0-18C15-14 22-2 15 11 3 12-12 5-15-9-11-16-5-18 0-18Z" transform="translate(55 69) rotate(-19) scale(0.78)" fill="#4e9b47"/><path d="M54 56C58 66 58 75 54 81" fill="none" stroke="#e8f8d1" stroke-width="2" stroke-linecap="round" opacity=".74"/><path d="M0-18C15-14 22-2 15 11 3 12-12 5-15-9-11-16-5-18 0-18Z" transform="translate(73 69) rotate(19) scale(0.78)" fill="#4a8f42"/><path d="M72 56C76 66 76 75 72 81" fill="none" stroke="#e8f8d1" stroke-width="2" stroke-linecap="round" opacity=".74"/>
+    <path d="M64 51c-8 13-8 25 0 39M64 51c8 13 8 25 0 39" stroke="#eab7b8" stroke-width="2.3" fill="none" opacity=".6"/></g>
+</svg>

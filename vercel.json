@@ -1,0 +1,7 @@
+{
+  "cleanUrls": true,
+  "redirects": [
+    { "source": "/marketplace",       "destination": "/#market",    "permanent": false },
+    { "source": "/seller-dashboard",  "destination": "/#dashboard", "permanent": false }
+  ]
+}

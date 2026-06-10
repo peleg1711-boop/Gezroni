@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="cauliflower">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#f3f0df"/>
+      <stop offset="1" stop-color="#b8c28d"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)">
+    <path d="M0-18C15-14 22-2 15 11 3 12-12 5-15-9-11-16-5-18 0-18Z" transform="translate(46 83) rotate(-62) scale(0.55)" fill="#5c8f43"/><path d="M45 70C49 80 49 89 45 95" fill="none" stroke="#e8f8d1" stroke-width="2" stroke-linecap="round" opacity=".74"/><path d="M0-18C15-14 22-2 15 11 3 12-12 5-15-9-11-16-5-18 0-18Z" transform="translate(84 83) rotate(62) scale(0.55)" fill="#5c8f43"/><path d="M83 70C87 80 87 89 83 95" fill="none" stroke="#e8f8d1" stroke-width="2" stroke-linecap="round" opacity=".74"/>
+    <circle cx="47" cy="62" r="17" fill="#f4f0df"/><circle cx="64" cy="52" r="20" fill="#fff7e8"/><circle cx="83" cy="63" r="17" fill="#efe7d3"/><circle cx="64" cy="74" r="21" fill="#f7f0dc"/>
+    <path d="M49 58c8-7 20-10 32-3" stroke="#c7be9f" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round"/></g>
+</svg>

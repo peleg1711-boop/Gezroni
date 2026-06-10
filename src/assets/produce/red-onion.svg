@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="red onion">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#fffefa"/>
+      <stop offset=".42" stop-color="#e8f4d8"/>
+      <stop offset="1" stop-color="#f2ece1"/>
+    </radialGradient>
+    <linearGradient id="main" x1="25%" y1="15%" x2="78%" y2="88%">
+      <stop offset="0" stop-color="#9d4a83"/>
+      <stop offset="1" stop-color="#5e315b"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="170%" height="180%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#15320b" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="32" fill="url(#bg)"/>
+  <circle cx="41" cy="37" r="18" fill="#fff" opacity=".72"/>
+  <g filter="url(#shadow)">
+    <path d="M64 34c18 12 31 31 25 51-4 13-17 21-29 18-17-3-29-15-27-31 2-18 15-31 31-38z" fill="url(#main)"/>
+    <path d="M64 33c-4-8 1-14 9-18" fill="none" stroke="#507236" stroke-width="4" stroke-linecap="round"/>
+    <path d="M54 50c-6 18-6 34 0 48M66 45c6 20 6 38 0 54M78 54c5 15 4 28-1 39" stroke="#fff" stroke-width="2.8" opacity=".42" fill="none" stroke-linecap="round"/></g>
+</svg>
