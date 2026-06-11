@@ -1,13 +1,13 @@
 import { getDb } from '../lib/supabase.js';
 import { showToast } from '../lib/toast.js';
-import { geocodeFarmCity } from '../lib/maps.js?v=20260611-image-upload-fix';
+import { geocodeFarmCity } from '../lib/maps.js?v=20260611-map-hero';
 import {
   getProduceAlt,
   getProduceById,
   getProduceCatalog,
   getProduceCategoryLabel,
   getProduceImageSrc,
-} from '../data/produce-art.js?v=20260611-image-upload-fix';
+} from '../data/produce-art.js?v=20260611-map-hero';
 
 // ─── module-level state (survives screen mounts) ────────────────────────────
 const FARM_DRAFT_KEY = 'gezroni:farm-listing-draft:v2';

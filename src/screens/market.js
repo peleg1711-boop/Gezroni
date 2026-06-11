@@ -1,15 +1,15 @@
 import { getDb } from '../lib/supabase.js';
 import { escapeHtml } from '../lib/escape.js';
-import { createFarmCard } from '../components/farm-card.js?v=20260611-image-upload-fix';
+import { createFarmCard } from '../components/farm-card.js?v=20260611-map-hero';
 import { state as filterState, clearBoardFilters } from '../lib/board-filters.js';
-import { initMapInstance, focusFarmOnMap, destroyMap, resizeMap, syncMapMarkers } from '../lib/maps.js?v=20260611-image-upload-fix';
-import { STATIC_FARMS } from '../data/farms.js?v=20260611-image-upload-fix';
+import { initMapInstance, focusFarmOnMap, destroyMap, resizeMap, syncMapMarkers } from '../lib/maps.js?v=20260611-map-hero';
+import { STATIC_FARMS } from '../data/farms.js?v=20260611-map-hero';
 import {
   getProduceAlt,
   getProduceById,
   getProduceCategoryLabel,
   getProduceImageSrc,
-} from '../data/produce-art.js?v=20260611-image-upload-fix';
+} from '../data/produce-art.js?v=20260611-map-hero';
 
 let allFarms = [];
 let abortController = null;

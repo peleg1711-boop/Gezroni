@@ -1,4 +1,4 @@
-import { getProduceAlt, getProduceImageSrc } from '../data/produce-art.js?v=20260611-image-upload-fix';
+import { getProduceAlt, getProduceImageSrc } from '../data/produce-art.js?v=20260611-map-hero';
 
 const API_KEY = 'AIzaSyAOFEXS7JaIPnKPOLL-5H0TxXIT2AegEeM';
 
@@ -196,7 +196,24 @@ function createFarmInfoContent(farm) {
   const wrap = document.createElement('div');
   wrap.className = 'map-farm-info';
 
-  wrap.appendChild(createTextEl('div', 'map-farm-title', farm?.name || 'משק'));
+  const heroUrl = farm?.hero_image_url || farm?.heroImageUrl || '';
+  if (heroUrl) {
+    const hero = document.createElement('div');
+    hero.className = 'map-farm-hero';
+    const heroImg = document.createElement('img');
+    heroImg.src = heroUrl;
+    heroImg.alt = farm?.name || 'תמונת משק';
+    heroImg.loading = 'lazy';
+    heroImg.onerror = () => {
+      hero.remove();
+      wrap.prepend(createTextEl('div', 'map-farm-title', farm?.name || 'משק'));
+    };
+    hero.appendChild(heroImg);
+    hero.appendChild(createTextEl('div', 'map-farm-hero-title', farm?.name || 'משק'));
+    wrap.appendChild(hero);
+  } else {
+    wrap.appendChild(createTextEl('div', 'map-farm-title', farm?.name || 'משק'));
+  }
 
   const sub = [
     farm?.farmer_name || farm?.farmerName,

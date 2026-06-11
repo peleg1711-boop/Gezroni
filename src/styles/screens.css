@@ -2169,6 +2169,29 @@ body.a11y-reduced-motion .advanced-filters-panel { animation: none; }
   font-weight: 900;
   margin-bottom: 2px;
 }
+.map-farm-hero {
+  position: relative;
+  height: 86px;
+  margin: -3px -3px 8px;
+  border-radius: var(--r-md) var(--r-md) 0 0;
+  overflow: hidden;
+  background: var(--green-100);
+}
+.map-farm-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.map-farm-hero-title {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 18px 10px 6px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 900;
+  background: linear-gradient(to top, rgba(20, 38, 10, 0.72), rgba(20, 38, 10, 0));
+}
 .map-farm-sub {
   color: var(--text-3);
   font-size: 11px;
@@ -2259,6 +2282,11 @@ body.a11y-reduced-motion .advanced-filters-panel { animation: none; }
   }
   .map-farm-title {
     font-size: 14px;
+  }
+  .map-farm-hero {
+    margin: 0 0 8px;
+    height: 74px;
+    border-radius: var(--r-md);
   }
   .map-farm-story {
     display: -webkit-box;
