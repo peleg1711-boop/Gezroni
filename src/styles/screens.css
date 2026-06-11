@@ -2081,6 +2081,11 @@ body.a11y-reduced-motion .advanced-filters-panel { animation: none; }
 .farm-detail-produce-img{
   width:36px;height:36px;object-fit:contain;flex-shrink:0;
 }
+.farm-detail-produce-img.is-photo{
+  width:48px;height:48px;object-fit:cover;
+  border-radius:var(--r-sm);
+  box-shadow:var(--shadow-sm);
+}
 .farm-detail-produce-name{flex:1;font-size:14px;font-weight:700;color:var(--text-1)}
 .farm-detail-produce-price{font-size:14px;font-weight:900;color:var(--green-800)}
 .farm-detail-actions{
@@ -2518,6 +2523,9 @@ body.a11y-reduced-motion .advanced-filters-panel { animation: none; }
   }
   .farm-modal-sheet {
     border-radius: var(--r-xl);
+    max-width: 640px;
+    margin-inline: auto;
+    height: auto;
     max-height: 80vh;
     box-shadow: var(--shadow-xl);
     animation: popIn 0.3s var(--spring) both;

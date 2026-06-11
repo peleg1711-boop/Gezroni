@@ -1,15 +1,15 @@
 import { getDb } from '../lib/supabase.js';
 import { escapeHtml } from '../lib/escape.js';
-import { createFarmCard } from '../components/farm-card.js?v=20260611-map-hero';
+import { createFarmCard } from '../components/farm-card.js?v=20260611-detail-modal';
 import { state as filterState, clearBoardFilters } from '../lib/board-filters.js';
-import { initMapInstance, focusFarmOnMap, destroyMap, resizeMap, syncMapMarkers } from '../lib/maps.js?v=20260611-map-hero';
-import { STATIC_FARMS } from '../data/farms.js?v=20260611-map-hero';
+import { initMapInstance, focusFarmOnMap, destroyMap, resizeMap, syncMapMarkers } from '../lib/maps.js?v=20260611-detail-modal';
+import { STATIC_FARMS } from '../data/farms.js?v=20260611-detail-modal';
 import {
   getProduceAlt,
   getProduceById,
   getProduceCategoryLabel,
   getProduceImageSrc,
-} from '../data/produce-art.js?v=20260611-map-hero';
+} from '../data/produce-art.js?v=20260611-detail-modal';
 
 let allFarms = [];
 let abortController = null;
@@ -753,7 +753,7 @@ function openFarmModal(farm) {
               const alt = getProduceAlt(p);
               const price = Number(p.price);
               return `<div class="farm-detail-produce-row">
-                <img class="farm-detail-produce-img" src="${escapeHtml(imgSrc)}" alt="${escapeHtml(alt)}" loading="lazy" onerror="this.style.display='none'">
+                <img class="farm-detail-produce-img${p.image_url ? ' is-photo' : ''}" src="${escapeHtml(imgSrc)}" alt="${escapeHtml(alt)}" loading="lazy" onerror="this.style.display='none'">
                 <span class="farm-detail-produce-name">${escapeHtml(p.name)}${p.availability ? ` <span style="font-size:11px;background:var(--green-100);color:var(--green-800);padding:2px 7px;border-radius:20px;font-weight:800;margin-right:4px">${escapeHtml(p.availability)}</span>` : ''}</span>
                 <span class="farm-detail-produce-price">${Number.isFinite(price) ? `₪${price % 1 ? price.toFixed(1) : price.toFixed(0)} / ${escapeHtml(p.unit || 'יח׳')}` : ''}</span>
               </div>`;

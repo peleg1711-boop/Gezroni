@@ -1,7 +1,7 @@
 import { initShell, setRoute, setRootVariant } from './shell.js';
-import { mountHome } from '../screens/home.js?v=20260611-map-hero';
-import { mountMarket } from '../screens/market.js?v=20260611-map-hero';
-import { mountDashboard } from '../screens/dashboard.js?v=20260611-map-hero';
+import { mountHome } from '../screens/home.js?v=20260611-detail-modal';
+import { mountMarket } from '../screens/market.js?v=20260611-detail-modal';
+import { mountDashboard } from '../screens/dashboard.js?v=20260611-detail-modal';
 import { mountApply } from '../screens/apply.js';
 import { mountAdmin } from '../screens/admin.js';
 import { readA11yState, applyA11yState } from '../lib/a11y.js';

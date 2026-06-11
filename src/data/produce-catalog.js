@@ -1,4 +1,4 @@
-export const PRODUCE_ASSET_VERSION = '20260611-map-hero';
+export const PRODUCE_ASSET_VERSION = '20260611-detail-modal';
 export const PRODUCE_ASSET_BASE = '/src/assets/produce-generated';
 export const PRODUCE_ASSET_EXTENSION = 'png';
 

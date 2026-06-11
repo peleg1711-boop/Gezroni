@@ -1,4 +1,4 @@
-import { getProduceAlt, getProduceImageSrc } from '../data/produce-art.js?v=20260611-map-hero';
+import { getProduceAlt, getProduceImageSrc } from '../data/produce-art.js?v=20260611-detail-modal';
 
 const API_KEY = 'AIzaSyAOFEXS7JaIPnKPOLL-5H0TxXIT2AegEeM';
 

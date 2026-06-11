@@ -1,5 +1,5 @@
-import { STATIC_FARMS } from '../data/farms.js?v=20260611-map-hero';
-import { initHomeMapPreview, destroyHomeMapPreview } from '../lib/maps.js?v=20260611-map-hero';
+import { STATIC_FARMS } from '../data/farms.js?v=20260611-detail-modal';
+import { initHomeMapPreview, destroyHomeMapPreview } from '../lib/maps.js?v=20260611-detail-modal';
 
 const HOME_DEAL_INTERVAL_MS = 10000;
 
