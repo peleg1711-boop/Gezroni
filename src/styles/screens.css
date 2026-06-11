@@ -66,6 +66,8 @@ body.farm-detail-open {
   z-index: 0;
   transition: left 0.32s var(--spring), width 0.32s var(--spring);
 }
+.app-route-link[hidden] { display: none !important; }
+
 .app-route-link {
   min-height: 36px;
   display: inline-flex;
