@@ -1,5 +1,5 @@
-import { STATIC_FARMS } from '../data/farms.js?v=20260606-generated-produce-v1';
-import { initHomeMapPreview, destroyHomeMapPreview } from '../lib/maps.js?v=20260606-generated-produce-v1';
+import { STATIC_FARMS } from '../data/farms.js?v=20260611-image-upload-fix';
+import { initHomeMapPreview, destroyHomeMapPreview } from '../lib/maps.js?v=20260611-image-upload-fix';
 
 const HOME_DEAL_INTERVAL_MS = 10000;
 

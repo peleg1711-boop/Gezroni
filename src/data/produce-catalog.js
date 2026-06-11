@@ -1,4 +1,4 @@
-export const PRODUCE_ASSET_VERSION = '20260606-generated-produce-v1';
+export const PRODUCE_ASSET_VERSION = '20260611-image-upload-fix';
 export const PRODUCE_ASSET_BASE = '/src/assets/produce-generated';
 export const PRODUCE_ASSET_EXTENSION = 'png';
 

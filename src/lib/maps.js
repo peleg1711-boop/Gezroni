@@ -1,4 +1,4 @@
-import { getProduceAlt, getProduceImageSrc } from '../data/produce-art.js?v=20260606-generated-produce-v1';
+import { getProduceAlt, getProduceImageSrc } from '../data/produce-art.js?v=20260611-image-upload-fix';
 
 const API_KEY = 'AIzaSyAOFEXS7JaIPnKPOLL-5H0TxXIT2AegEeM';
 

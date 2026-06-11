@@ -4,7 +4,7 @@ import {
   PRODUCE_ASSET_VERSION,
   PRODUCE_CATALOG,
   PRODUCE_CATEGORY_LABELS,
-} from './produce-catalog.js?v=20260606-generated-produce-v1';
+} from './produce-catalog.js?v=20260611-image-upload-fix';
 
 const DEFAULT_PRODUCE_ID = 'herbs';
 

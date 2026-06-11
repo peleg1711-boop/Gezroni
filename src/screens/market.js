@@ -1,15 +1,15 @@
 import { getDb } from '../lib/supabase.js';
 import { escapeHtml } from '../lib/escape.js';
-import { createFarmCard } from '../components/farm-card.js?v=20260607-hero-produce-images';
+import { createFarmCard } from '../components/farm-card.js?v=20260611-image-upload-fix';
 import { state as filterState, clearBoardFilters } from '../lib/board-filters.js';
-import { initMapInstance, focusFarmOnMap, destroyMap, resizeMap, syncMapMarkers } from '../lib/maps.js?v=20260606-generated-produce-v1';
-import { STATIC_FARMS } from '../data/farms.js?v=20260606-generated-produce-v1';
+import { initMapInstance, focusFarmOnMap, destroyMap, resizeMap, syncMapMarkers } from '../lib/maps.js?v=20260611-image-upload-fix';
+import { STATIC_FARMS } from '../data/farms.js?v=20260611-image-upload-fix';
 import {
   getProduceAlt,
   getProduceById,
   getProduceCategoryLabel,
   getProduceImageSrc,
-} from '../data/produce-art.js?v=20260606-generated-produce-v1';
+} from '../data/produce-art.js?v=20260611-image-upload-fix';
 
 let allFarms = [];
 let abortController = null;
@@ -266,12 +266,13 @@ async function loadFarms() {
   if (data && data.length > 0) {
     const farmIds = data.map(f => f.id);
     const { data: heroRows } = await db.from('farm_images')
-      .select('farm_id, storage_path')
+      .select('farm_id, storage_path, is_primary')
       .in('farm_id', farmIds)
-      .eq('is_primary', true);
+      .order('is_primary', { ascending: false })
+      .order('created_at');
     if (heroRows) {
       const heroMap = {};
-      heroRows.forEach(h => { heroMap[h.farm_id] = h.storage_path; });
+      heroRows.forEach(h => { if (!heroMap[h.farm_id]) heroMap[h.farm_id] = h.storage_path; });
       data.forEach(farm => {
         if (heroMap[farm.id]) {
           farm.hero_image_url = db.storage.from('farm-images').getPublicUrl(heroMap[farm.id]).data?.publicUrl || null;

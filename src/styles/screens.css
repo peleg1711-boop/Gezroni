@@ -1396,6 +1396,13 @@ body.a11y-reduced-motion .advanced-filters-panel { animation: none; }
   box-shadow: none;
   background: #fff;
 }
+/* A real uploaded farm photo fills the tile edge-to-edge instead of floating like produce art */
+.farm-thumb-image.farm-thumb-photo {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  filter: none;
+}
 /* The "field rows" stripes and sun dot suit the tiny 58px thumb; at card size they're just noise */
 .product-card.farm-card .farm-thumb::before,
 .product-card.farm-card .farm-thumb::after {

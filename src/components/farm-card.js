@@ -1,4 +1,4 @@
-import { getProduceAlt, getProduceImageSrc } from '../data/produce-art.js?v=20260606-generated-produce-v1';
+import { getProduceAlt, getProduceImageSrc } from '../data/produce-art.js?v=20260611-image-upload-fix';
 
 export function createTextEl(tag, className, text) {
   const el = document.createElement(tag);
@@ -23,10 +23,12 @@ export function createFarmCard(farm, options) {
   const thumb = document.createElement('div');
   thumb.className = `farm-thumb farm-thumb-${farm.id}`;
   const leadProduce = produce[0];
+  const heroUrl = farm.hero_image_url || farm.heroImageUrl || '';
   const thumbImage = document.createElement('img');
   thumbImage.className = 'farm-thumb-image';
-  thumbImage.src = (leadProduce && leadProduce.image_url) ? leadProduce.image_url : getProduceImageSrc(leadProduce);
-  thumbImage.onerror = () => { thumbImage.src = getProduceImageSrc(leadProduce); thumbImage.onerror = null; };
+  if (heroUrl) thumbImage.classList.add('farm-thumb-photo');
+  thumbImage.src = heroUrl || (leadProduce && leadProduce.image_url) || getProduceImageSrc(leadProduce);
+  thumbImage.onerror = () => { thumbImage.src = getProduceImageSrc(leadProduce); thumbImage.classList.remove('farm-thumb-photo'); thumbImage.onerror = null; };
   thumbImage.alt = leadProduce ? getProduceAlt(leadProduce) : 'תוצרת המשק';
   thumb.appendChild(thumbImage);
   visual.appendChild(thumb);
@@ -59,7 +61,8 @@ export function createFarmCard(farm, options) {
       chip.className = 'produce-chip';
       const chipImage = document.createElement('img');
       chipImage.className = 'produce-chip-image';
-      chipImage.src = getProduceImageSrc(item);
+      chipImage.src = item.image_url || getProduceImageSrc(item);
+      chipImage.onerror = () => { chipImage.src = getProduceImageSrc(item); chipImage.onerror = null; };
       chipImage.alt = '';
       chipImage.setAttribute('aria-hidden', 'true');
       chip.appendChild(chipImage);

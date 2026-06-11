@@ -1,13 +1,13 @@
 import { getDb } from '../lib/supabase.js';
 import { showToast } from '../lib/toast.js';
-import { geocodeFarmCity } from '../lib/maps.js?v=20260606-generated-produce-v1';
+import { geocodeFarmCity } from '../lib/maps.js?v=20260611-image-upload-fix';
 import {
   getProduceAlt,
   getProduceById,
   getProduceCatalog,
   getProduceCategoryLabel,
   getProduceImageSrc,
-} from '../data/produce-art.js?v=20260606-generated-produce-v1';
+} from '../data/produce-art.js?v=20260611-image-upload-fix';
 
 // ─── module-level state (survives screen mounts) ────────────────────────────
 const FARM_DRAFT_KEY = 'gezroni:farm-listing-draft:v2';
@@ -952,7 +952,7 @@ async function handleProductImageUpload(productId, file) {
     const base64 = ev.target.result;
     try { localStorage.setItem(PRODUCT_IMAGE_KEY_PREFIX + productId, base64); } catch {}
     renderProducts();
-    showToast('תמונה נשמרה ✓', 'success');
+    if (!currentUser) showToast('תמונה נשמרה ✓', 'success');
 
     if (currentUser) {
       const db = getDb();
@@ -962,14 +962,18 @@ async function handleProductImageUpload(productId, file) {
       const mime = ext === 'jpeg' ? 'image/jpeg' : ext === 'png' ? 'image/png' : 'image/webp';
       const path = `${currentUser.id}/${productId}.${ext}`;
       const { error } = await db.storage.from('produce-images').upload(path, file, { contentType: mime, upsert: true });
-      if (!error) {
-        const url = db.storage.from('produce-images').getPublicUrl(path).data?.publicUrl;
-        if (url && product) {
-          product.imageUrl = url;
-          writeProducts(dashProducts);
-          renderProducts();
-          saveFarmToDb(farmDraft, dashProducts);
-        }
+      if (error) {
+        console.error('[gezroni] produce image upload failed', error);
+        showToast('שגיאה בהעלאת תמונה לענן — ' + error.message, 'error');
+        return;
+      }
+      const url = db.storage.from('produce-images').getPublicUrl(path).data?.publicUrl;
+      if (url && product) {
+        product.imageUrl = url;
+        writeProducts(dashProducts);
+        renderProducts();
+        const saved = await saveFarmToDb(farmDraft, dashProducts);
+        if (saved) showToast('התמונה הועלתה ותוצג בלוח המשקים ✓', 'success');
       }
     }
   };
