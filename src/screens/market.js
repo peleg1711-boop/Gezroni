@@ -2,7 +2,7 @@ import { getDb } from '../lib/supabase.js';
 import { escapeHtml } from '../lib/escape.js';
 import { createFarmCard } from '../components/farm-card.js?v=20260611-audit-fixes';
 import { state as filterState, clearBoardFilters } from '../lib/board-filters.js';
-import { initMapInstance, focusFarmOnMap, destroyMap, resizeMap, syncMapMarkers } from '../lib/maps.js?v=20260611-audit-fixes';
+import { initMapInstance, focusFarmOnMap, destroyMap, resizeMap, syncMapMarkers, closeMapInfoWindow } from '../lib/maps.js?v=20260611-mobile-fixes';
 import { STATIC_FARMS } from '../data/farms.js?v=20260611-audit-fixes';
 import {
   getProduceAlt,
@@ -15,6 +15,7 @@ let allFarms = [];
 let abortController = null;
 let debounceTimer = null;
 let currentCatalogTab = 'all';
+let farmModalLastFocus = null;
 
 export function mountMarket(root) {
   abortController = new AbortController();
@@ -191,6 +192,7 @@ export function mountMarket(root) {
 }
 
 function cleanup() {
+  closeFarmModal();
   if (abortController) { abortController.abort(); abortController = null; }
   clearTimeout(debounceTimer);
   window.removeEventListener('gezroni:open-farm-details', handleMapDetailsRequest);
@@ -725,6 +727,8 @@ function openFarmModal(farm) {
   const overlay = document.getElementById('farm-modal-overlay');
   const sheet = overlay?.querySelector('.farm-modal-sheet');
   if (!overlay || !sheet) return;
+  farmModalLastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  closeMapInfoWindow();
 
   const produce = farm.produce || [];
   const contact = farm.contact || {};
@@ -777,10 +781,20 @@ function openFarmModal(farm) {
   `;
 
   sheet.querySelector('#farm-detail-close-btn')?.addEventListener('click', closeFarmModal);
+  document.body.classList.add('farm-detail-open');
+  document.documentElement.classList.add('farm-detail-open');
   overlay.classList.add('open');
   sheet.scrollTop = 0;
+  sheet.focus({ preventScroll: true });
 }
 
 function closeFarmModal() {
-  document.getElementById('farm-modal-overlay')?.classList.remove('open');
+  const overlay = document.getElementById('farm-modal-overlay');
+  overlay?.classList.remove('open');
+  document.body.classList.remove('farm-detail-open');
+  document.documentElement.classList.remove('farm-detail-open');
+  if (farmModalLastFocus?.isConnected) {
+    farmModalLastFocus.focus({ preventScroll: true });
+  }
+  farmModalLastFocus = null;
 }

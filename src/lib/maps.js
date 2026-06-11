@@ -222,6 +222,26 @@ function createFarmInfoContent(farm) {
   ].filter(Boolean).join(' · ');
   wrap.appendChild(createTextEl('div', 'map-farm-sub', sub));
 
+  const actions = document.createElement('div');
+  actions.className = 'map-farm-actions';
+
+  const details = createTextEl('button', 'primary', 'פרטי המשק');
+  details.type = 'button';
+  details.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('gezroni:open-farm-details', {
+      detail: { farmId: farm?.id },
+    }));
+  });
+
+  const nav = createTextEl('a', 'secondary', 'נווט');
+  nav.href = getNavigationUrl(farm);
+  nav.target = '_blank';
+  nav.rel = 'noopener';
+
+  actions.appendChild(details);
+  actions.appendChild(nav);
+  wrap.appendChild(actions);
+
   const story = [farm?.availability, farm?.pickup, farm?.story].filter(Boolean).join(' · ');
   if (story) wrap.appendChild(createTextEl('div', 'map-farm-story', story));
 
@@ -251,26 +271,6 @@ function createFarmInfoContent(farm) {
     wrap.appendChild(prices);
   }
 
-  const actions = document.createElement('div');
-  actions.className = 'map-farm-actions';
-
-  const details = createTextEl('button', 'primary', 'פרטים מלאים');
-  details.type = 'button';
-  details.addEventListener('click', () => {
-    window.dispatchEvent(new CustomEvent('gezroni:open-farm-details', {
-      detail: { farmId: farm?.id },
-    }));
-  });
-
-  const nav = createTextEl('a', 'secondary', 'נווט למשק');
-  nav.href = getNavigationUrl(farm);
-  nav.target = '_blank';
-  nav.rel = 'noopener';
-
-  actions.appendChild(details);
-  actions.appendChild(nav);
-  wrap.appendChild(actions);
-
   return wrap;
 }
 
@@ -299,6 +299,10 @@ function clearMapListeners() {
 function closeActiveInfoWindow() {
   if (activeInfoWindow) activeInfoWindow.close();
   activeInfoWindow = null;
+}
+
+export function closeMapInfoWindow() {
+  closeActiveInfoWindow();
 }
 
 function setFocusedMarkerStyle(farmId) {

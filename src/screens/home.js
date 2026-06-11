@@ -1,5 +1,5 @@
 import { STATIC_FARMS } from '../data/farms.js?v=20260611-audit-fixes';
-import { initHomeMapPreview, destroyHomeMapPreview } from '../lib/maps.js?v=20260611-audit-fixes';
+import { initHomeMapPreview, destroyHomeMapPreview } from '../lib/maps.js?v=20260611-mobile-fixes';
 
 const HOME_DEAL_INTERVAL_MS = 10000;
 
@@ -183,7 +183,7 @@ export function mountHome(root) {
       <p class="lp-sub">לוח משקים ישראלי שמראה מי מגדל מה, איפה, ובכמה לקילו — בלי סופרמרקט, בלי מתווכים, ובלי רכישה באתר.</p>
       <div class="lp-primary-actions">
         <a class="lp-main-cta" href="#market" id="lp-find-farms-cta">מצא משקים עכשיו</a>
-        <a class="lp-secondary-cta" href="#dashboard">חקלאי? פרסם משק</a>
+        <a class="lp-secondary-cta" href="#apply">חקלאי? הצטרפות</a>
       </div>
     </div>
   </div>

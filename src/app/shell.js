@@ -1,4 +1,5 @@
 import { readA11yState, applyA11yState, initKeyboardControls, syncPressedStates, initGlobalEscape, initAccessibilityWidget } from '../lib/a11y.js';
+import { getDb } from '../lib/supabase.js';
 
 export function initShell() {
   if (document.documentElement.getAttribute('data-mode')) return;
@@ -59,6 +60,7 @@ export function initShell() {
   syncPressedStates();
   applyA11yState(readA11yState());
   _initNavPillHover();
+  _initFarmerNavVisibility();
 }
 
 export function setRoute(route) {
@@ -66,7 +68,7 @@ export function setRoute(route) {
   document.querySelectorAll('[data-route-link]').forEach(link => {
     const isActive = link.getAttribute('data-route-link') === route;
     link.classList.toggle('active', isActive);
-    if (isActive) {
+    if (isActive && !link.hidden) {
       link.setAttribute('aria-current', 'page');
     } else {
       link.removeAttribute('aria-current');
@@ -79,8 +81,7 @@ export function setRoute(route) {
 function _slideNavPill() {
   const switcher = document.querySelector('.app-route-switcher');
   if (!switcher) return;
-  const activeLink = switcher.querySelector('.app-route-link.active');
-  if (!activeLink) return;
+  const activeLink = switcher.querySelector('.app-route-link.active:not([hidden])');
 
   let pill = switcher.querySelector('.nav-slider-pill');
   const isFirst = !pill;
@@ -97,6 +98,12 @@ function _slideNavPill() {
     pill.offsetWidth; // eslint-disable-line no-unused-expressions
   }
 
+  if (!activeLink) {
+    pill.hidden = true;
+    return;
+  }
+
+  pill.hidden = false;
   pill.style.width = activeLink.offsetWidth + 'px';
   pill.style.left = activeLink.offsetLeft + 'px';
 
@@ -115,8 +122,10 @@ function _initNavPillHover() {
   // On hover: slide the pill to whichever link is hovered (including active)
   switcher.querySelectorAll('.app-route-link').forEach(link => {
     link.addEventListener('mouseenter', () => {
+      if (link.hidden) return;
       const pill = switcher.querySelector('.nav-slider-pill');
       if (!pill) return;
+      pill.hidden = false;
       pill.style.left  = link.offsetLeft + 'px';
       pill.style.width = link.offsetWidth + 'px';
     });
@@ -125,10 +134,71 @@ function _initNavPillHover() {
   // On mouse leave: slide pill back to the active link
   switcher.addEventListener('mouseleave', () => {
     const pill = switcher.querySelector('.nav-slider-pill');
-    const activeLink = switcher.querySelector('.app-route-link.active');
+    const activeLink = switcher.querySelector('.app-route-link.active:not([hidden])');
     if (!pill || !activeLink) return;
     pill.style.left  = activeLink.offsetLeft + 'px';
     pill.style.width = activeLink.offsetWidth + 'px';
+  });
+}
+
+function _setFarmerNavVisible(isVisible) {
+  document.querySelectorAll('[data-route-link="dashboard"]').forEach(link => {
+    link.hidden = !isVisible;
+    link.toggleAttribute('aria-hidden', !isVisible);
+    link.tabIndex = isVisible ? 0 : -1;
+    if (!isVisible) link.removeAttribute('aria-current');
+  });
+  _slideNavPill();
+}
+
+async function _hasFarmerAccess(db, user) {
+  if (!user) return false;
+
+  const role = user.app_metadata?.role || user.user_metadata?.role;
+  if (role === 'admin' || role === 'farmer') return true;
+
+  try {
+    const { data: farm } = await db
+      .from('farms')
+      .select('id')
+      .eq('user_id', user.id)
+      .limit(1)
+      .maybeSingle();
+    if (farm?.id) return true;
+  } catch {}
+
+  try {
+    const email = user.email || '';
+    if (!email) return false;
+    const { data: application } = await db
+      .from('farm_applications')
+      .select('id')
+      .eq('applicant_email', email)
+      .limit(1)
+      .maybeSingle();
+    return Boolean(application?.id);
+  } catch {
+    return false;
+  }
+}
+
+function _initFarmerNavVisibility() {
+  _setFarmerNavVisible(false);
+
+  const db = getDb();
+  if (!db?.auth) return;
+
+  const refresh = async user => {
+    const isVisible = await _hasFarmerAccess(db, user);
+    _setFarmerNavVisible(isVisible);
+  };
+
+  db.auth.getSession()
+    .then(({ data }) => refresh(data?.session?.user || null))
+    .catch(() => _setFarmerNavVisible(false));
+
+  db.auth.onAuthStateChange((_event, session) => {
+    refresh(session?.user || null);
   });
 }
 
