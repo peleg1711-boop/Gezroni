@@ -1,5 +1,6 @@
 import { STATIC_FARMS } from '../data/farms.js?v=20260611-audit-fixes';
 import { initHomeMapPreview, destroyHomeMapPreview } from '../lib/maps.js?v=20260611-mobile-fixes';
+import { initNumberTickers } from '../lib/magic-fx.js?v=20260612-magic-fx';
 
 const HOME_DEAL_INTERVAL_MS = 10000;
 
@@ -188,6 +189,23 @@ export function mountHome(root) {
     </div>
   </div>
 
+  <div class="home-marquee" aria-hidden="true">
+    <div class="home-marquee-track">
+      <span class="home-marquee-item">🍅 עגבנייה חממה · ₪6 לק״ג</span>
+      <span class="home-marquee-item">🥕 גזר שמח · ₪5 לק״ג</span>
+      <span class="home-marquee-item">🥬 חסה צפונית · ₪6 ליחידה</span>
+      <span class="home-marquee-item">🥒 מלפפונים · ₪5–8 לק״ג</span>
+      <span class="home-marquee-item">🫑 פלפלים · ₪8–13 לק״ג</span>
+      <span class="home-marquee-item">🍎 תפוחים · ₪8–12 לק״ג</span>
+      <span class="home-marquee-item">🍅 עגבנייה חממה · ₪6 לק״ג</span>
+      <span class="home-marquee-item">🥕 גזר שמח · ₪5 לק״ג</span>
+      <span class="home-marquee-item">🥬 חסה צפונית · ₪6 ליחידה</span>
+      <span class="home-marquee-item">🥒 מלפפונים · ₪5–8 לק״ג</span>
+      <span class="home-marquee-item">🫑 פלפלים · ₪8–13 לק״ג</span>
+      <span class="home-marquee-item">🍎 תפוחים · ₪8–12 לק״ג</span>
+    </div>
+  </div>
+
   <section class="today-deals-section reveal" aria-label="מבצעים היום">
     <div class="today-deals-head">
       <div>
@@ -197,17 +215,17 @@ export function mountHome(root) {
       <a href="#market" class="today-deals-link">לכל המשקים</a>
     </div>
     <div class="today-deals-grid">
-      <a class="today-deal-card" href="#market">
+      <a class="today-deal-card bf-item" style="--bf-delay:120ms" href="#market">
         <span class="today-deal-farm">חממות עוטף ישראל</span>
         <strong>עגבנייה חממה</strong>
         <span class="today-deal-price">₪6 / ק״ג</span>
       </a>
-      <a class="today-deal-card" href="#market">
+      <a class="today-deal-card bf-item" style="--bf-delay:210ms" href="#market">
         <span class="today-deal-farm">בוסתן חרוצים</span>
         <strong>גזר שמח</strong>
         <span class="today-deal-price">₪5 / ק״ג</span>
       </a>
-      <a class="today-deal-card" href="#market">
+      <a class="today-deal-card bf-item" style="--bf-delay:300ms" href="#market">
         <span class="today-deal-farm">משק גליל עליון</span>
         <strong>חסה צפונית</strong>
         <span class="today-deal-price">₪6 / יחידה</span>
@@ -246,21 +264,21 @@ export function mountHome(root) {
         </div>
         <div class="price-col super">
           <div class="price-col-label">סופר</div>
-          <div class="price-item bad">~₪13–18</div>
-          <div class="price-item bad">~₪11–15</div>
-          <div class="price-item bad">~₪16–22</div>
-          <div class="price-item bad">~₪14–20</div>
+          <div class="price-item bad" data-ticker>~₪13–18</div>
+          <div class="price-item bad" data-ticker>~₪11–15</div>
+          <div class="price-item bad" data-ticker>~₪16–22</div>
+          <div class="price-item bad" data-ticker>~₪14–20</div>
         </div>
         <div class="price-col direct">
           <div class="price-col-label">ישירות*</div>
-          <div class="price-item good">~₪5–9</div>
-          <div class="price-item good">~₪5–8</div>
-          <div class="price-item good">~₪8–13</div>
-          <div class="price-item good">~₪8–12</div>
+          <div class="price-item good" data-ticker>~₪5–9</div>
+          <div class="price-item good" data-ticker>~₪5–8</div>
+          <div class="price-item good" data-ticker>~₪8–13</div>
+          <div class="price-item good" data-ticker>~₪8–12</div>
         </div>
       </div>
       <div class="price-footer">
-        <p class="price-saving">חיסכון ממוצע <strong>35–55%</strong> על סל ירקות שבועי</p>
+        <p class="price-saving">חיסכון ממוצע <strong data-ticker>35–55%</strong> על סל ירקות שבועי</p>
       </div>
       <p class="price-disclaimer">* מחירים משוערים ומשתנים לפי עונה ומשק</p>
     </div>
@@ -320,8 +338,11 @@ export function mountHome(root) {
     revealEls.forEach(el => el.classList.add('visible'));
   }
 
+  const disposeTickers = initNumberTickers(root);
+
   return () => {
     if (typeof disposeHomeFarmMap === 'function') disposeHomeFarmMap();
     if (revealObserver) revealObserver.disconnect();
+    disposeTickers();
   };
 }

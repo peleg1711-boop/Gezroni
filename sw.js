@@ -1,5 +1,5 @@
 // Gezroni Service Worker — network-first with cache fallback
-const CACHE_NAME = 'gezroni-v6-20260611-mobile-fixes';
+const CACHE_NAME = 'gezroni-v7-20260612-magic-fx';
 
 const PRECACHE_URLS = [
   '/',

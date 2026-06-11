@@ -66,6 +66,8 @@ body.farm-detail-open {
   z-index: 0;
   transition: left 0.32s var(--spring), width 0.32s var(--spring);
 }
+.app-route-link[hidden] { display: none !important; }
+
 .app-route-link {
   min-height: 36px;
   display: inline-flex;
@@ -5696,4 +5698,61 @@ body.a11y-reduced-motion *::after{
 
   /* ── Prevent iOS tap callout on interactive elements ── */
   button, a, label { -webkit-tap-highlight-color: transparent; }
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   Magic FX — Magic-UI-inspired motion (blur fade, marquee, number ticker)
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── Blur fade entrance ── */
+.bf-item { opacity: 0; }
+.bf-in,
+.reveal.visible .bf-item {
+  animation: bf-in 0.55s cubic-bezier(0.21, 0.47, 0.32, 0.98) both;
+  animation-delay: var(--bf-delay, 0ms);
+}
+@keyframes bf-in {
+  from { opacity: 0; filter: blur(6px); transform: translateY(10px); }
+  to   { opacity: 1; filter: blur(0);  transform: translateY(0); }
+}
+
+/* ── Home produce marquee ── */
+.home-marquee {
+  overflow: hidden;
+  direction: ltr;
+  padding: 14px 0;
+  border-block: 1px solid color-mix(in srgb, var(--olive, #6b7c4a) 18%, transparent);
+  background: color-mix(in srgb, var(--linen, #faf6ef) 60%, transparent);
+  -webkit-mask-image: linear-gradient(to left, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(to left, transparent, #000 8%, #000 92%, transparent);
+}
+.home-marquee-track {
+  display: inline-flex;
+  direction: ltr;
+  gap: 40px;
+  padding-inline-start: 40px;
+  white-space: nowrap;
+  will-change: transform;
+  animation: marquee-rtl 36s linear infinite;
+}
+.home-marquee:hover .home-marquee-track { animation-play-state: paused; }
+.home-marquee-item {
+  direction: rtl;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--ink-soft, #4a4a40);
+}
+@keyframes marquee-rtl {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+/* ── Number ticker ── */
+.ticker-num { font-variant-numeric: tabular-nums; }
+
+/* ── Respect reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .bf-item { opacity: 1; }
+  .bf-in, .reveal.visible .bf-item { animation: none; }
+  .home-marquee-track { animation: none; }
 }

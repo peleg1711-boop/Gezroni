@@ -1,6 +1,6 @@
 import { initShell, setRoute, setRootVariant } from './shell.js?v=20260611-mobile-fixes';
-import { mountHome } from '../screens/home.js?v=20260611-mobile-fixes';
-import { mountMarket } from '../screens/market.js?v=20260611-mobile-fixes';
+import { mountHome } from '../screens/home.js?v=20260612-magic-fx';
+import { mountMarket } from '../screens/market.js?v=20260612-magic-fx';
 import { mountDashboard } from '../screens/dashboard.js?v=20260611-audit-fixes';
 import { mountApply } from '../screens/apply.js';
 import { mountAdmin } from '../screens/admin.js';
