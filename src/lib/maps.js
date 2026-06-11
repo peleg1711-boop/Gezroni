@@ -1,4 +1,4 @@
-import { getProduceAlt, getProduceImageSrc } from '../data/produce-art.js?v=20260611-detail-modal';
+import { getProduceAlt, getProduceImageSrc } from '../data/produce-art.js?v=20260611-audit-fixes';
 
 const API_KEY = 'AIzaSyAOFEXS7JaIPnKPOLL-5H0TxXIT2AegEeM';
 
@@ -606,7 +606,7 @@ export async function initMapInstance(container, farms = []) {
     fullscreenControl: true,
     mapTypeControl: true,
     scaleControl: true,
-    gestureHandling: 'greedy',
+    gestureHandling: 'cooperative',
     mapTypeControlOptions: {
       style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
       position: google.maps.ControlPosition.TOP_LEFT,

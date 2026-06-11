@@ -1945,6 +1945,13 @@ body.a11y-reduced-motion .advanced-filters-panel { animation: none; }
   pointer-events: none;
   transition: opacity 0.25s ease, visibility 0.25s ease;
 }
+@media (min-width: 1024px) {
+  .farm-modal-overlay {
+    background: rgba(20, 38, 10, 0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+}
 .farm-modal-overlay.open {
   opacity: 1;
   visibility: visible;

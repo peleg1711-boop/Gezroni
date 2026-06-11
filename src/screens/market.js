@@ -1,15 +1,15 @@
 import { getDb } from '../lib/supabase.js';
 import { escapeHtml } from '../lib/escape.js';
-import { createFarmCard } from '../components/farm-card.js?v=20260611-detail-modal';
+import { createFarmCard } from '../components/farm-card.js?v=20260611-audit-fixes';
 import { state as filterState, clearBoardFilters } from '../lib/board-filters.js';
-import { initMapInstance, focusFarmOnMap, destroyMap, resizeMap, syncMapMarkers } from '../lib/maps.js?v=20260611-detail-modal';
-import { STATIC_FARMS } from '../data/farms.js?v=20260611-detail-modal';
+import { initMapInstance, focusFarmOnMap, destroyMap, resizeMap, syncMapMarkers } from '../lib/maps.js?v=20260611-audit-fixes';
+import { STATIC_FARMS } from '../data/farms.js?v=20260611-audit-fixes';
 import {
   getProduceAlt,
   getProduceById,
   getProduceCategoryLabel,
   getProduceImageSrc,
-} from '../data/produce-art.js?v=20260611-detail-modal';
+} from '../data/produce-art.js?v=20260611-audit-fixes';
 
 let allFarms = [];
 let abortController = null;
@@ -364,8 +364,9 @@ function applyFilters(farms) {
   if (currentRegion !== 'all') result = result.filter(f => f.region === currentRegion);
   if (currentCategory !== 'all') result = result.filter(f => (f.produce || []).some(p => getProduceCategory(p) === currentCategory));
   if (currentProduce !== 'all') result = result.filter(f => (f.produce || []).some(p => getProduceCatalogId(p) === currentProduce));
-  if (currentSearchTerm) {
-    const q = currentSearchTerm.toLowerCase();
+  const trimmedSearch = (currentSearchTerm || '').trim();
+  if (trimmedSearch) {
+    const q = trimmedSearch.toLowerCase();
     result = result.filter(f =>
       f.name.toLowerCase().includes(q) ||
       (f.farmer_name || '').toLowerCase().includes(q) ||
@@ -400,8 +401,9 @@ function getCatalogBaseFarms() {
 
   if (currentRegion !== 'all') result = result.filter(f => f.region === currentRegion);
   if (currentCategory !== 'all') result = result.filter(f => (f.produce || []).some(p => getProduceCategory(p) === currentCategory));
-  if (currentSearchTerm) {
-    const q = currentSearchTerm.toLowerCase();
+  const trimmedSearch = (currentSearchTerm || '').trim();
+  if (trimmedSearch) {
+    const q = trimmedSearch.toLowerCase();
     result = result.filter(f =>
       f.name.toLowerCase().includes(q) ||
       (f.farmer_name || '').toLowerCase().includes(q) ||
@@ -726,9 +728,15 @@ function openFarmModal(farm) {
 
   const produce = farm.produce || [];
   const contact = farm.contact || {};
-  const waNum = (contact.whatsapp || contact.phone || '').replace(/\D/g, '');
+  const rawDigits = (contact.whatsapp || contact.phone || '').replace(/\D/g, '');
+  // Israeli numbers stored as 0XXXXXXXXX need country code 972 for wa.me to work
+  const waNum = rawDigits.startsWith('0') ? '972' + rawDigits.slice(1) : rawDigits;
   const waLink = waNum ? `https://wa.me/${waNum}` : null;
-  const phoneLink = contact.phone ? `tel:${contact.phone}` : null;
+  const phoneDigits = (contact.phone || '').replace(/\D/g, '');
+  const phoneLink = phoneDigits ? `tel:${phoneDigits}` : null;
+  const phoneDisplay = phoneDigits.length === 10
+    ? `${phoneDigits.slice(0,3)}-${phoneDigits.slice(3,6)}-${phoneDigits.slice(6)}`
+    : (contact.phone || '');
 
   const heroUrl = farm.hero_image_url || farm.heroImageUrl || '';
 
@@ -763,7 +771,7 @@ function openFarmModal(farm) {
       ${(waLink || phoneLink) ? `
         <div class="farm-detail-actions">
           ${waLink ? `<a class="farm-action-btn primary" href="${escapeHtml(waLink)}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;background:var(--green-800);color:#fff">WhatsApp 💬</a>` : ''}
-          ${phoneLink ? `<a class="farm-action-btn secondary" href="${escapeHtml(phoneLink)}" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;background:var(--green-100);color:var(--green-800)">${escapeHtml(contact.phone)} 📞</a>` : ''}
+          ${phoneLink ? `<a class="farm-action-btn secondary" href="${escapeHtml(phoneLink)}" style="display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;background:var(--green-100);color:var(--green-800)">${escapeHtml(phoneDisplay)} 📞</a>` : ''}
         </div>` : ''}
     </div>
   `;

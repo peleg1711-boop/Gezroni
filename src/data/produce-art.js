@@ -4,7 +4,7 @@ import {
   PRODUCE_ASSET_VERSION,
   PRODUCE_CATALOG,
   PRODUCE_CATEGORY_LABELS,
-} from './produce-catalog.js?v=20260611-detail-modal';
+} from './produce-catalog.js?v=20260611-audit-fixes';
 
 const DEFAULT_PRODUCE_ID = 'herbs';
 

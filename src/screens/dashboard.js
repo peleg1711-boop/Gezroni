@@ -1,13 +1,13 @@
 import { getDb } from '../lib/supabase.js';
 import { showToast } from '../lib/toast.js';
-import { geocodeFarmCity } from '../lib/maps.js?v=20260611-detail-modal';
+import { geocodeFarmCity } from '../lib/maps.js?v=20260611-audit-fixes';
 import {
   getProduceAlt,
   getProduceById,
   getProduceCatalog,
   getProduceCategoryLabel,
   getProduceImageSrc,
-} from '../data/produce-art.js?v=20260611-detail-modal';
+} from '../data/produce-art.js?v=20260611-audit-fixes';
 
 // ─── module-level state (survives screen mounts) ────────────────────────────
 const FARM_DRAFT_KEY = 'gezroni:farm-listing-draft:v2';
@@ -78,10 +78,7 @@ export function mountDashboard(root) {
   bindAddProductModal();
   renderProducts();
   applyFarmDraft();
-  setTimeout(() => {
-    updateStats(true);
-    animateCounter(document.getElementById('stat-views'), 0, 124, '', '', 1100);
-  }, 300);
+  setTimeout(() => updateStats(true), 300);
 
   setTimeout(() => initAuth(), 400);
   initPhotoUpload();
@@ -165,20 +162,9 @@ function buildShell() {
         </div>
         <div class="stat-card">
           <div class="stat-val" id="stat-revenue">₪0</div>
-          <div class="stat-label">מחיר פתיחה</div>
+          <div class="stat-label">המחיר הזול ביותר</div>
           <div class="stat-delta same">שקוף</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-val" id="stat-views">0</div>
-          <div class="stat-label">צפיות מודעה</div>
-          <div class="stat-delta same">→ יציב</div>
-        </div>
-      </div>
-
-      <div class="card" style="padding:16px 18px;margin-top:12px;text-align:center">
-        <div style="font-size:15px;font-weight:800;color:var(--text-1)">צפיות במודעה השבוע</div>
-        <div style="font-size:32px;font-weight:900;color:var(--green-800);margin:8px 0">124 צפיות</div>
-        <div style="font-size:12px;color:var(--text-3)">הנתונים מעודכנים ל-7 הימים האחרונים</div>
       </div>
 
       <div class="sec-header"><div class="sec-title">פעולות מהירות</div></div>
@@ -933,10 +919,6 @@ function updateStats(skipViews) {
   const sr = document.getElementById('stat-revenue');
   if (so) so.textContent = active.length;
   if (sr) sr.textContent = minPrice ? '₪' + minPrice : '—';
-  if (!skipViews) {
-    const sv = document.getElementById('stat-views');
-    if (sv && !sv.textContent) sv.textContent = '124';
-  }
 }
 
 // ─── product images ───────────────────────────────────────────────────────────
@@ -1455,7 +1437,10 @@ async function saveFarmToDb(draft, products) {
     story: draft.note || '', distance_km: 0,
     working_hours: draft.hours ? { text: draft.hours } : {},
     directions:    draft.directions || null,
-    contact: { phone: draft.phone, whatsapp: (draft.phone || '').replace(/\D/g, '') },
+    contact: { phone: draft.phone, whatsapp: (() => {
+      const d = (draft.phone || '').replace(/\D/g, '');
+      return d.startsWith('0') ? '972' + d.slice(1) : d;
+    })() },
     tags: [], last_updated: new Date().toLocaleDateString('he-IL'),
     ...(lat != null && lng != null ? { lat, lng } : {}),
   });

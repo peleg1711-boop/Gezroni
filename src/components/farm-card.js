@@ -1,4 +1,4 @@
-import { getProduceAlt, getProduceImageSrc } from '../data/produce-art.js?v=20260611-detail-modal';
+import { getProduceAlt, getProduceImageSrc } from '../data/produce-art.js?v=20260611-audit-fixes';
 
 export function createTextEl(tag, className, text) {
   const el = document.createElement(tag);
@@ -47,10 +47,18 @@ export function createFarmCard(farm, options) {
   profile.appendChild(titleWrap);
   header.appendChild(profile);
 
-  const distance = document.createElement('div');
-  distance.className = 'farm-distance';
-  distance.textContent = farm.distance_km != null ? '~' + farm.distance_km + ' ק״מ' : farm.region;
-  header.appendChild(distance);
+  const km = Number(farm.distance_km);
+  if (Number.isFinite(km) && km > 0) {
+    const distance = document.createElement('div');
+    distance.className = 'farm-distance';
+    distance.textContent = '~' + km + ' ק״מ';
+    header.appendChild(distance);
+  } else if (farm.region) {
+    const distance = document.createElement('div');
+    distance.className = 'farm-distance';
+    distance.textContent = farm.region;
+    header.appendChild(distance);
+  }
   main.appendChild(header);
 
   if (produce.length) {
