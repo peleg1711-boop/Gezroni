@@ -2750,7 +2750,7 @@ body.a11y-reduced-motion *::after{
 }
 @keyframes screenIn{
   from{opacity:0;transform:translateY(8px)}
-  to{opacity:1;transform:none}
+  to{opacity:1;transform:translateY(0)}
 }
 @keyframes slideUp{
   from{transform:translateY(100%)}

@@ -216,11 +216,6 @@ function buildShell() {
       <div id="products-list"></div>
       <div style="height:90px"></div>
     </div>
-    <button class="fab show" id="fab-add-product" type="button" aria-label="הוסף תוצרת">
-      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
-        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-      </svg>
-    </button>
     </div>
 
     <!-- LISTING SCREEN -->
@@ -389,6 +384,12 @@ function buildShell() {
     </div>
   </nav>
 
+  <button class="fab" id="fab-add-product" type="button" aria-label="הוסף תוצרת">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+  </button>
+
 </div><!-- /app -->
 
 <!-- ADD PRODUCT MODAL -->
@@ -539,6 +540,15 @@ function switchTab(tab) {
   document.getElementById('screen-' + tab)?.classList.add('active');
   document.getElementById('nav-' + tab)?.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'instant' });
+
+  const fab = document.getElementById('fab-add-product');
+  if (fab) {
+    if (tab === 'products') {
+      fab.classList.add('show');
+    } else {
+      fab.classList.remove('show');
+    }
+  }
 }
 
 function bindNavTabs() {
