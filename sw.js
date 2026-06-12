@@ -1,5 +1,5 @@
 // Gezroni Service Worker — network-first with cache fallback
-const CACHE_NAME = 'gezroni-v8-20260612-firebase';
+const CACHE_NAME = 'gezroni-v9-20260612-fm3d';
 
 const PRECACHE_URLS = [
   '/',

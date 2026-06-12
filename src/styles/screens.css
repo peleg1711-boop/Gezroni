@@ -5849,3 +5849,68 @@ body.a11y-reduced-motion *::after{
 .farm-fav-btn.is-fav { color: #d85a30; }
 .farm-fav-btn.is-fav svg { fill: #d85a30; }
 .product-visual { position: relative; }
+
+/* ── 3D farm marquee ── */
+.farm-marquee-section { max-width: 1060px; margin: 0 auto; padding: 0 18px; }
+.farm-marquee-3d {
+  position: relative;
+  height: 420px;
+  overflow: hidden;
+  border-radius: 22px;
+  background: linear-gradient(160deg, #2f4a1d 0%, #3b5a26 55%, #2a421a 100%);
+  perspective: 300px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+          mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+}
+.fm3d-stage {
+  position: absolute;
+  inset: -120px -60px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  transform: translateX(-60px) translateY(0px) translateZ(-100px) rotateX(20deg) rotateY(-10deg) rotateZ(20deg);
+}
+.fm3d-col { flex: 1; max-width: 240px; overflow: visible; }
+.fm3d-track { display: flex; flex-direction: column; gap: 14px; will-change: transform; }
+.fm3d-card {
+  background: rgba(250, 247, 240, 0.96);
+  border: 1px solid rgba(45, 90, 27, 0.18);
+  border-radius: 14px;
+  padding: 14px;
+  direction: rtl;
+  box-shadow: 0 10px 24px rgba(10, 25, 5, 0.25);
+}
+.fm3d-name { font-weight: 900; font-size: 14px; color: #243618; }
+.fm3d-sub { font-size: 12px; color: #5c6b50; margin-top: 2px; }
+.fm3d-price {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2d5a1b;
+  background: rgba(45, 90, 27, 0.10);
+  border-radius: 999px;
+  padding: 4px 10px;
+  display: inline-block;
+}
+@media (max-width: 640px) {
+  .farm-marquee-3d { height: 340px; }
+  .fm3d-stage { gap: 10px; inset: -120px -90px; }
+  .fm3d-card { padding: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fm3d-stage { transform: none; inset: 0; padding: 16px; }
+}
+
+/* ── Hero savings strip ── */
+.lp-savings-strip {
+  margin-top: 18px;
+  display: inline-block;
+  background: rgba(250, 247, 240, 0.14);
+  border: 1px solid rgba(250, 247, 240, 0.28);
+  color: #f3efe5;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.lp-savings-strip strong { color: #ffd9a8; font-weight: 900; }
