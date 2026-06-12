@@ -5962,3 +5962,30 @@ body.a11y-reduced-motion *::after{
   border-radius: 2px;
   flex: 0 0 auto;
 }
+
+/* ── "איך זה עובד" connecting beam ── */
+.how-section { position: relative; }
+.how-section .step { position: relative; z-index: 1; }
+.how-beam {
+  position: absolute;
+  z-index: 0;
+  background: rgba(45, 90, 27, 0.14);
+  border-radius: 2px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.how-beam-pulse { position: absolute; }
+.how-beam:not(.is-horizontal) .how-beam-pulse {
+  left: 0; width: 100%;
+  height: 70px; top: -80px;
+  background: linear-gradient(180deg, transparent, #639922 50%, transparent);
+  animation: how-beam-v 3.6s ease-in-out infinite;
+}
+.how-beam.is-horizontal .how-beam-pulse {
+  top: 0; height: 100%;
+  width: 90px; left: 100%;
+  background: linear-gradient(90deg, transparent, #639922 50%, transparent);
+  animation: how-beam-h 3.6s ease-in-out infinite;
+}
+@keyframes how-beam-v { from { top: -80px; } to { top: 100%; } }
+@keyframes how-beam-h { from { left: 100%; } to { left: -90px; } }

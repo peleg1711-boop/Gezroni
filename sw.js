@@ -1,5 +1,5 @@
 // Gezroni Service Worker — network-first with cache fallback
-const CACHE_NAME = 'gezroni-v10-20260612-fm3d-fix';
+const CACHE_NAME = 'gezroni-v11-20260613-howbeam';
 
 const PRECACHE_URLS = [
   '/',

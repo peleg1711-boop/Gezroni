@@ -263,15 +263,15 @@ export function mountHome(root) {
   <!-- How it works -->
   <div class="how-section reveal">
     <div class="how-title">איך זה עובד?</div>
-    <div class="step">
+    <div class="step bf-item" style="--bf-delay:0ms">
       <div class="step-num">1</div>
       <div class="step-body"><b>החקלאי מפרסם</b> מה יש לו השבוע — תוצרת, מחיר לקילו/יחידה, זמינות ומיקום</div>
     </div>
-    <div class="step">
+    <div class="step bf-item" style="--bf-delay:220ms">
       <div class="step-num">2</div>
       <div class="step-body"><b>אתה מסנן</b> לפי אזור ותוצרת, ורואה אילו משקים רלוונטיים אליך</div>
     </div>
-    <div class="step">
+    <div class="step bf-item" style="--bf-delay:440ms">
       <div class="step-num">3</div>
       <div class="step-body"><b>פונים ישירות</b> לחקלאי לתיאום איסוף, שיחה או וואטסאפ — בלי רכישה באתר</div>
     </div>
@@ -323,12 +323,14 @@ export function mountHome(root) {
     img.alt = getProduceAlt(ref);
   });
   initWordReveal(root);
+  const disposeHowBeam = initHowBeam(root);
 
   return () => {
     if (typeof disposeHomeFarmMap === 'function') disposeHomeFarmMap();
     if (revealObserver) revealObserver.disconnect();
     disposeTickers();
     disposeFarmMarquee();
+    disposeHowBeam();
   };
 }
 
@@ -413,4 +415,48 @@ function initFarmMarquee3d() {
     if (rafId) cancelAnimationFrame(rafId);
     if (onScroll) window.removeEventListener('scroll', onScroll);
   };
+}
+
+// ─── Animated beam through the "איך זה עובד" steps (Magic UI Animated Beam) ──
+function initHowBeam(root) {
+  const section = root.querySelector('.how-section');
+  const nums = [...root.querySelectorAll('.how-section .step-num')];
+  if (!section || nums.length < 2) return () => {};
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return () => {};
+
+  const beam = document.createElement('div');
+  beam.className = 'how-beam';
+  beam.setAttribute('aria-hidden', 'true');
+  beam.innerHTML = '<div class="how-beam-pulse"></div>';
+  section.appendChild(beam);
+
+  const layout = () => {
+    const sr = section.getBoundingClientRect();
+    const first = nums[0].getBoundingClientRect();
+    const last = nums[nums.length - 1].getBoundingClientRect();
+    const horizontal = Math.abs(last.top - first.top) < first.height;
+    beam.classList.toggle('is-horizontal', horizontal);
+    if (horizontal) {
+      const y = first.top + first.height / 2 - sr.top;
+      const x1 = Math.min(first.left, last.left) + first.width / 2 - sr.left;
+      const x2 = Math.max(first.right, last.right) - first.width / 2 - sr.left;
+      beam.style.top = y - 1 + 'px';
+      beam.style.left = x1 + 'px';
+      beam.style.width = (x2 - x1) + 'px';
+      beam.style.height = '2px';
+    } else {
+      const x = first.left + first.width / 2 - sr.left;
+      const y1 = first.top + first.height / 2 - sr.top;
+      const y2 = last.top + last.height / 2 - sr.top;
+      beam.style.left = x - 1 + 'px';
+      beam.style.top = y1 + 'px';
+      beam.style.height = (y2 - y1) + 'px';
+      beam.style.width = '2px';
+    }
+  };
+  layout();
+  const ro = new ResizeObserver(layout);
+  ro.observe(section);
+
+  return () => { ro.disconnect(); beam.remove(); };
 }
