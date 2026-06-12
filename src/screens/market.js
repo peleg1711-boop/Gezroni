@@ -2,7 +2,7 @@ import { fetchFarms, watchAuth, getUserProfile, getCurrentUser, addFavorite, rem
 import { escapeHtml } from '../lib/escape.js';
 import { createFarmCard } from '../components/farm-card.js?v=20260611-audit-fixes';
 import { state as filterState, clearBoardFilters } from '../lib/board-filters.js';
-import { initMapInstance, focusFarmOnMap, destroyMap, resizeMap, syncMapMarkers, closeMapInfoWindow } from '../lib/maps.js?v=20260611-mobile-fixes';
+import { initMapInstance, focusFarmOnMap, destroyMap, resizeMap, syncMapMarkers, closeMapInfoWindow } from '../lib/maps.js?v=20260612-satellite';
 import { applyBlurFade } from '../lib/magic-fx.js?v=20260612-magic-fx';
 import { STATIC_FARMS } from '../data/farms.js?v=20260611-audit-fixes';
 import {

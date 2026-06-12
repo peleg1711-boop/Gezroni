@@ -1,7 +1,8 @@
 import { STATIC_FARMS } from '../data/farms.js?v=20260611-audit-fixes';
-import { initHomeMapPreview, destroyHomeMapPreview } from '../lib/maps.js?v=20260611-mobile-fixes';
-import { initNumberTickers } from '../lib/magic-fx.js?v=20260612-magic-fx';
+import { initHomeMapPreview, destroyHomeMapPreview } from '../lib/maps.js?v=20260612-satellite';
+import { initNumberTickers, initWordReveal } from '../lib/magic-fx.js?v=20260612-textfx';
 import { fetchFarms } from '../lib/firebase.js?v=20260612-firebase';
+import { getProduceImageSrc, getProduceAlt } from '../data/produce-art.js?v=20260611-audit-fixes';
 
 const HOME_DEAL_INTERVAL_MS = 10000;
 
@@ -175,11 +176,8 @@ export function mountHome(root) {
         </div>
       </div>
       <div class="il-badge">
-        <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;vertical-align:middle;margin:0 4px;" aria-hidden="true">
-          <path d="M12 2L19 15H5L12 2Z"/>
-          <path d="M12 22L5 9H19L12 22Z"/>
-        </svg>
-        <span class="il-badge-text">תוצרת חקלאית ישראלית בלבד</span>
+        <img class="il-badge-flag" src="/icons/israel-flag.svg" alt="" aria-hidden="true">
+        <span class="il-badge-text shiny-text">תוצרת חקלאית ישראלית בלבד</span>
       </div>
       <h1 class="lp-headline">ישירות מהחקלאי<br>הישראלי <span>אל השכונה</span></h1>
       <p class="lp-sub">לוח משקים ישראלי שמראה מי מגדל מה, איפה, ובכמה לקילו — בלי סופרמרקט, בלי מתווכים, ובלי רכישה באתר.</p>
@@ -212,24 +210,24 @@ export function mountHome(root) {
     <div class="today-deals-head">
       <div>
         <div class="section-label">מבצעים היום</div>
-        <h2>מחירים טובים שמופיעים עכשיו בלוח</h2>
+        <h2 class="word-reveal">מחירים טובים שמופיעים עכשיו בלוח</h2>
       </div>
       <a href="#market" class="today-deals-link">לכל המשקים</a>
     </div>
     <div class="today-deals-grid">
       <a class="today-deal-card bf-item" style="--bf-delay:120ms" href="#market">
         <span class="today-deal-farm">חממות עוטף ישראל</span>
-        <strong>עגבנייה חממה</strong>
+        <span class="today-deal-prodrow"><img class="today-deal-icon" data-produce-name="tomato" alt="" loading="lazy"><strong>עגבנייה חממה</strong></span>
         <span class="today-deal-price">₪6 / ק״ג</span>
       </a>
       <a class="today-deal-card bf-item" style="--bf-delay:210ms" href="#market">
         <span class="today-deal-farm">בוסתן חרוצים</span>
-        <strong>גזר שמח</strong>
+        <span class="today-deal-prodrow"><img class="today-deal-icon" data-produce-name="גזר" alt="" loading="lazy"><strong>גזר שמח</strong></span>
         <span class="today-deal-price">₪5 / ק״ג</span>
       </a>
       <a class="today-deal-card bf-item" style="--bf-delay:300ms" href="#market">
         <span class="today-deal-farm">משק גליל עליון</span>
-        <strong>חסה צפונית</strong>
+        <span class="today-deal-prodrow"><img class="today-deal-icon" data-produce-name="חסה" alt="" loading="lazy"><strong>חסה צפונית</strong></span>
         <span class="today-deal-price">₪6 / יחידה</span>
       </a>
     </div>
@@ -253,7 +251,7 @@ export function mountHome(root) {
     <div class="today-deals-head">
       <div>
         <div class="section-label">המשקים בלוח</div>
-        <h2>מתעדכן ישירות מהחקלאים</h2>
+        <h2 class="word-reveal">מתעדכן ישירות מהחקלאים</h2>
       </div>
       <a href="#market" class="today-deals-link">לכל המשקים</a>
     </div>
@@ -319,6 +317,13 @@ export function mountHome(root) {
   const disposeTickers = initNumberTickers(root);
   const disposeFarmMarquee = initFarmMarquee3d();
 
+  root.querySelectorAll('.today-deal-icon').forEach(img => {
+    const ref = { name: img.dataset.produceName };
+    img.src = getProduceImageSrc(ref);
+    img.alt = getProduceAlt(ref);
+  });
+  initWordReveal(root);
+
   return () => {
     if (typeof disposeHomeFarmMap === 'function') disposeHomeFarmMap();
     if (revealObserver) revealObserver.disconnect();
@@ -356,15 +361,21 @@ function initFarmMarquee3d() {
     const cols = Array.from({ length: COLS }, () => []);
     farms.forEach((f, i) => cols[i % COLS].push(f));
     stage.innerHTML = cols.map((colFarms, i) => {
-      const inner = colFarms.map(cardHtml).join('') || '';
+      // Repeat content so each column over-fills its viewport even with few farms,
+      // then duplicate once more for the seamless wrap.
+      const repeats = Math.max(3, Math.ceil(10 / Math.max(colFarms.length, 1)));
+      const inner = colFarms.map(cardHtml).join('').repeat(repeats);
       return `<div class="fm3d-col"><div class="fm3d-track" data-dir="${i % 2 === 0 ? 1 : -1}">${inner}${inner}</div></div>`;
     }).join('');
 
     if (reduced) return;
 
-    const tracks = [...stage.querySelectorAll('.fm3d-track')].map(el => ({
-      el, dir: Number(el.dataset.dir), offset: 0, half: el.scrollHeight / 2,
-    }));
+    const tracks = [...stage.querySelectorAll('.fm3d-track')].map(el => {
+      const half = el.scrollHeight / 2;
+      const dir = Number(el.dataset.dir);
+      // Reversed columns start mid-track so there is always content above the frame.
+      return { el, dir, half, offset: dir === -1 ? half : 0 };
+    });
 
     let lastScrollY = window.scrollY;
     let velocity = 0;
@@ -379,10 +390,13 @@ function initFarmMarquee3d() {
       velocity *= 0.94;
       const speed = BASE * (1 + Math.min(velocity, 10));
       tracks.forEach(t => {
-        if (!t.half) t.half = t.el.scrollHeight / 2;
+        if (!t.half) {
+          t.half = t.el.scrollHeight / 2;
+          if (t.dir === -1) t.offset = t.half;
+        }
         t.offset += speed * t.dir;
         if (t.offset >= t.half) t.offset -= t.half;
-        if (t.offset <= -t.half) t.offset += t.half;
+        if (t.offset < 0) t.offset += t.half;
         t.el.style.transform = `translateY(${-t.offset}px)`;
       });
       rafId = requestAnimationFrame(tick);

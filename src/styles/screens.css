@@ -4369,18 +4369,19 @@ body.a11y-reduced-motion *::after{
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.96);
+  border: 1px solid rgba(255,255,255,0.6);
   border-radius: var(--r-pill);
-  padding: 6px 14px;
+  padding: 7px 16px;
   margin-bottom: 1.25rem;
   transition: background 0.3s;
+  color: #0038B8;
 }
-.il-badge:hover { background: rgba(255,255,255,0.12); }
+.il-badge:hover { background: #ffffff; }
 .il-badge-text {
-  color: rgba(255,255,255,0.9);
-  font-size: 12px;
-  font-weight: 600;
+  color: #0038B8;
+  font-size: 13px;
+  font-weight: 700;
 }
 .lp-headline {
   color: #fff;
@@ -5914,3 +5915,50 @@ body.a11y-reduced-motion *::after{
   font-weight: 600;
 }
 .lp-savings-strip strong { color: #ffd9a8; font-weight: 900; }
+
+/* ── Text FX: hero highlight, shiny badge, word reveal ── */
+
+.shiny-text {
+  background: linear-gradient(110deg, #0038B8 40%, #7da7e8 50%, #0038B8 60%);
+  background-size: 240% 100%;
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #0038B8;
+  animation: shiny-sweep 11s linear infinite;
+}
+@keyframes shiny-sweep {
+  0%, 60% { background-position: 240% 0; }
+  95%, 100% { background-position: -60% 0; }
+}
+
+.wr-word {
+  display: inline-block;
+  opacity: 0;
+}
+.reveal.visible .wr-word {
+  animation: wr-in 0.5s cubic-bezier(0.21, 0.47, 0.32, 0.98) both;
+  animation-delay: var(--wr-delay, 0ms);
+}
+@keyframes wr-in {
+  from { opacity: 0; filter: blur(7px); transform: translateY(12px); }
+  to   { opacity: 1; filter: blur(0);  transform: translateY(0); }
+}
+
+/* ── Deal card produce icons ── */
+.today-deal-prodrow { display: flex; align-items: center; gap: 8px; }
+.today-deal-icon { width: 30px; height: 30px; object-fit: contain; flex: 0 0 auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .shiny-text { animation: none; background: none; -webkit-text-fill-color: currentColor; }
+  .wr-word { opacity: 1; }
+  .reveal.visible .wr-word { animation: none; }
+}
+
+.il-badge-flag {
+  width: 22px;
+  height: 15px;
+  object-fit: cover;
+  border-radius: 2px;
+  flex: 0 0 auto;
+}

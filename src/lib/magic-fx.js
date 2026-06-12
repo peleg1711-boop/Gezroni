@@ -102,3 +102,25 @@ export function initNumberTickers(root) {
     rafIds.forEach(id => cancelAnimationFrame(id));
   };
 }
+
+/**
+ * Word-by-word blur reveal (Magic UI "Text Animate" blurInUp).
+ * Splits .word-reveal headings into word spans; CSS plays them with a
+ * stagger when the surrounding .reveal section becomes visible.
+ */
+export function initWordReveal(root) {
+  root.querySelectorAll('.word-reveal').forEach(el => {
+    if (el.dataset.wordReveal) return;
+    el.dataset.wordReveal = '1';
+    const words = el.textContent.trim().split(/\s+/);
+    el.textContent = '';
+    words.forEach((w, i) => {
+      const span = document.createElement('span');
+      span.className = 'wr-word';
+      span.style.setProperty('--wr-delay', (i * 70) + 'ms');
+      span.textContent = w;
+      el.appendChild(span);
+      if (i < words.length - 1) el.appendChild(document.createTextNode(' '));
+    });
+  });
+}

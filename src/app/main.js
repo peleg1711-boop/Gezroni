@@ -1,7 +1,7 @@
 import { initShell, setRoute, setRootVariant } from './shell.js?v=20260612-firebase';
-import { mountHome } from '../screens/home.js?v=20260612-fm3d';
-import { mountMarket } from '../screens/market.js?v=20260612-firebase';
-import { mountDashboard } from '../screens/dashboard.js?v=20260612-firebase';
+import { mountHome } from '../screens/home.js?v=20260612-satellite';
+import { mountMarket } from '../screens/market.js?v=20260612-satellite';
+import { mountDashboard } from '../screens/dashboard.js?v=20260612-satellite';
 import { mountApply } from '../screens/apply.js?v=20260612-firebase';
 import { mountAdmin } from '../screens/admin.js?v=20260612-firebase';
 import { mountAccount } from '../screens/account.js?v=20260612-firebase';

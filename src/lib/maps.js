@@ -480,7 +480,7 @@ export async function initHomeMapPreview(container, farms = [], options = {}) {
     zoom: OVERVIEW_ZOOM,
     minZoom: 5,
     maxZoom: 13,
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    mapTypeId: google.maps.MapTypeId.SATELLITE,
     restriction: {
       latLngBounds: ISRAEL_MAP_BOUNDS,
       strictBounds: true,
@@ -489,14 +489,9 @@ export async function initHomeMapPreview(container, farms = [], options = {}) {
     clickableIcons: false,
     streetViewControl: false,
     fullscreenControl: true,
-    mapTypeControl: true,
+    mapTypeControl: false,
     scaleControl: false,
     gestureHandling: 'cooperative',
-    mapTypeControlOptions: {
-      style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-      position: google.maps.ControlPosition.TOP_LEFT,
-      mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE],
-    },
     styles: [
       { featureType: 'poi', stylers: [{ visibility: 'off' }] },
       { featureType: 'transit', stylers: [{ visibility: 'off' }] },
@@ -599,7 +594,7 @@ export async function initMapInstance(container, farms = []) {
     zoom: OVERVIEW_ZOOM,
     minZoom: OVERVIEW_ZOOM,
     maxZoom: 14,
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    mapTypeId: google.maps.MapTypeId.SATELLITE,
     restriction: {
       latLngBounds: ISRAEL_MAP_BOUNDS,
       strictBounds: true,
@@ -608,14 +603,9 @@ export async function initMapInstance(container, farms = []) {
     clickableIcons: false,
     streetViewControl: false,
     fullscreenControl: true,
-    mapTypeControl: true,
+    mapTypeControl: false,
     scaleControl: true,
     gestureHandling: 'cooperative',
-    mapTypeControlOptions: {
-      style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-      position: google.maps.ControlPosition.TOP_LEFT,
-      mapTypeIds: [google.maps.MapTypeId.ROADMAP, google.maps.MapTypeId.SATELLITE],
-    },
     styles: [
       { featureType: 'poi', stylers: [{ visibility: 'off' }] },
       { featureType: 'transit', stylers: [{ visibility: 'off' }] },
