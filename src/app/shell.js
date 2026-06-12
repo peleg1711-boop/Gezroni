@@ -1,5 +1,5 @@
 import { readA11yState, applyA11yState, initKeyboardControls, syncPressedStates, initGlobalEscape, initAccessibilityWidget } from '../lib/a11y.js';
-import { getDb } from '../lib/supabase.js';
+import { watchAuth, getUserProfile } from '../lib/firebase.js?v=20260612-firebase';
 
 export function initShell() {
   if (document.documentElement.getAttribute('data-mode')) return;
@@ -17,6 +17,13 @@ export function initShell() {
         <a class="app-route-link" data-route-link="home" href="#home">בית</a>
         <a class="app-route-link" data-route-link="market" href="#market">לוח משקים</a>
         <a class="app-route-link" data-route-link="dashboard" href="#dashboard">חקלאי</a>
+        <a class="app-route-link app-nav-account" data-route-link="account" href="#account" aria-label="האזור האישי">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" width="16" height="16">
+            <circle cx="12" cy="8" r="4"></circle>
+            <path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"></path>
+          </svg>
+          <img class="app-nav-avatar" alt="" hidden>
+        </a>
       </nav>
     </aside>
     <main class="app-main" id="app-main"></main>
@@ -151,54 +158,42 @@ function _setFarmerNavVisible(isVisible) {
   _slideNavPill();
 }
 
-async function _hasFarmerAccess(db, user) {
-  if (!user) return false;
-
-  const role = user.app_metadata?.role || user.user_metadata?.role;
-  if (role === 'admin' || role === 'farmer') return true;
-
-  try {
-    const { data: farm } = await db
-      .from('farms')
-      .select('id')
-      .eq('user_id', user.id)
-      .limit(1)
-      .maybeSingle();
-    if (farm?.id) return true;
-  } catch {}
-
-  try {
-    const email = user.email || '';
-    if (!email) return false;
-    const { data: application } = await db
-      .from('farm_applications')
-      .select('id')
-      .eq('applicant_email', email)
-      .limit(1)
-      .maybeSingle();
-    return Boolean(application?.id);
-  } catch {
-    return false;
+function _setAccountAvatar(user) {
+  const link = document.querySelector('.app-nav-account');
+  if (!link) return;
+  const icon = link.querySelector('svg');
+  const avatar = link.querySelector('.app-nav-avatar');
+  const hasPhoto = Boolean(user?.photoURL);
+  if (avatar) {
+    if (hasPhoto) {
+      avatar.src = user.photoURL;
+      avatar.onerror = () => {
+        avatar.hidden = true;
+        avatar.removeAttribute('src');
+        if (icon) icon.style.display = '';
+      };
+    } else {
+      avatar.removeAttribute('src');
+    }
+    avatar.hidden = !hasPhoto;
   }
+  if (icon) icon.style.display = hasPhoto ? 'none' : '';
+  link.setAttribute('aria-label', user ? 'האזור האישי' : 'כניסה לחשבון');
 }
 
 function _initFarmerNavVisibility() {
   _setFarmerNavVisible(false);
 
-  const db = getDb();
-  if (!db?.auth) return;
-
-  const refresh = async user => {
-    const isVisible = await _hasFarmerAccess(db, user);
-    _setFarmerNavVisible(isVisible);
-  };
-
-  db.auth.getSession()
-    .then(({ data }) => refresh(data?.session?.user || null))
-    .catch(() => _setFarmerNavVisible(false));
-
-  db.auth.onAuthStateChange((_event, session) => {
-    refresh(session?.user || null);
+  watchAuth(async user => {
+    _setAccountAvatar(user);
+    if (!user) { _setFarmerNavVisible(false); return; }
+    try {
+      const profile = await getUserProfile(user.uid);
+      const role = profile?.role;
+      _setFarmerNavVisible(role === 'farmer' || role === 'admin');
+    } catch {
+      _setFarmerNavVisible(false);
+    }
   });
 }
 

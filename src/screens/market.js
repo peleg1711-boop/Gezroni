@@ -1,4 +1,4 @@
-import { getDb } from '../lib/supabase.js';
+import { fetchFarms, watchAuth, getUserProfile, getCurrentUser, addFavorite, removeFavorite } from '../lib/firebase.js?v=20260612-firebase';
 import { escapeHtml } from '../lib/escape.js';
 import { createFarmCard } from '../components/farm-card.js?v=20260611-audit-fixes';
 import { state as filterState, clearBoardFilters } from '../lib/board-filters.js';
@@ -17,9 +17,19 @@ let abortController = null;
 let debounceTimer = null;
 let currentCatalogTab = 'all';
 let farmModalLastFocus = null;
+let userFavorites = new Set();
+let unwatchAuth = null;
 
 export function mountMarket(root) {
   abortController = new AbortController();
+  unwatchAuth = watchAuth(async user => {
+    if (!user) { userFavorites = new Set(); syncFavoriteHearts(); return; }
+    try {
+      const profile = await getUserProfile(user.uid);
+      userFavorites = new Set(profile?.favorites || []);
+    } catch { userFavorites = new Set(); }
+    syncFavoriteHearts();
+  });
 
   root.innerHTML = `
     <div class="app-container">
@@ -194,6 +204,7 @@ export function mountMarket(root) {
 
 function cleanup() {
   closeFarmModal();
+  if (unwatchAuth) { unwatchAuth(); unwatchAuth = null; }
   if (abortController) { abortController.abort(); abortController = null; }
   clearTimeout(debounceTimer);
   window.removeEventListener('gezroni:open-farm-details', handleMapDetailsRequest);
@@ -250,41 +261,31 @@ async function loadFarms() {
   if (!list) return;
   list.innerHTML = buildSkeletons(3);
 
-  const db = getDb();
-  if (!db) {
-    renderStaticFallback('מציגים נתוני דמו עד שחיבור השרת יחזור');
-    return;
-  }
-
-  const { data, error } = await db.from('farms').select('*, produce(*)');
-
-  if (abortController?.signal.aborted) return;
-
-  if (error) {
+  let data;
+  try {
+    data = await fetchFarms();
+  } catch (e) {
+    console.error('[gezroni] farms load failed', e);
     renderStaticFallback('חיבור השרת נכשל, מציגים את לוח הדמו המקומי');
     return;
   }
 
-  // Attach hero image URLs from farm_images table
-  if (data && data.length > 0) {
-    const farmIds = data.map(f => f.id);
-    const { data: heroRows } = await db.from('farm_images')
-      .select('farm_id, storage_path, is_primary')
-      .in('farm_id', farmIds)
-      .order('is_primary', { ascending: false })
-      .order('created_at');
-    if (heroRows) {
-      const heroMap = {};
-      heroRows.forEach(h => { if (!heroMap[h.farm_id]) heroMap[h.farm_id] = h.storage_path; });
-      data.forEach(farm => {
-        if (heroMap[farm.id]) {
-          farm.hero_image_url = db.storage.from('farm-images').getPublicUrl(heroMap[farm.id]).data?.publicUrl || null;
-        }
-      });
-    }
+  if (abortController?.signal.aborted) return;
+
+  if (!data || data.length === 0) {
+    renderStaticFallback('מציגים נתוני דמו עד שחיבור השרת יחזור');
+    return;
   }
 
-  allFarms = data || [];
+  // Hero image: first image reference on the farm doc (still hosted on the old storage bucket)
+  const LEGACY_STORAGE = 'https://owugjzjegchuldizgurj.supabase.co/storage/v1/object/public/farm-images/';
+  data.forEach(farm => {
+    const imgs = Array.isArray(farm.images) ? farm.images : [];
+    const hero = imgs.find(i => i.is_primary) || imgs[0];
+    if (hero?.storage_path) farm.hero_image_url = LEGACY_STORAGE + hero.storage_path;
+  });
+
+  allFarms = data;
   buildRegionPills(allFarms);
   buildCategoryChips(allFarms);
   renderProduceCatalog();
@@ -537,6 +538,7 @@ function renderFarmList(farms) {
   list.innerHTML = '';
   farms.forEach(farm => {
     const card = createFarmCard(farm, {});
+    attachFavoriteHeart(card, farm);
     const detailBtn = card.querySelector('.farm-action-btn.primary');
     if (detailBtn) detailBtn.addEventListener('click', e => { e.stopPropagation(); openFarmModal(farm); });
     card.addEventListener('click', () => {
@@ -799,4 +801,39 @@ function closeFarmModal() {
     farmModalLastFocus.focus({ preventScroll: true });
   }
   farmModalLastFocus = null;
+}
+
+
+function attachFavoriteHeart(card, farm) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'farm-fav-btn';
+  btn.dataset.farmId = farm.id;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.5-1.5 2-3.2 2-5a5 5 0 0 0-9-3 5 5 0 0 0-9 3c0 1.8.5 3.5 2 5l7 7z"/></svg>';
+  setHeartState(btn, userFavorites.has(farm.id));
+  btn.addEventListener('click', async e => {
+    e.stopPropagation();
+    if (!getCurrentUser()) { location.hash = '#account'; return; }
+    const isFav = userFavorites.has(farm.id);
+    try {
+      if (isFav) { await removeFavorite(farm.id); userFavorites.delete(farm.id); }
+      else { await addFavorite(farm.id); userFavorites.add(farm.id); }
+      setHeartState(btn, !isFav);
+    } catch (err) {
+      console.error('[gezroni] favorite toggle failed', err);
+    }
+  });
+  card.querySelector('.product-visual')?.appendChild(btn);
+}
+
+function setHeartState(btn, isFav) {
+  btn.classList.toggle('is-fav', isFav);
+  btn.setAttribute('aria-label', isFav ? 'הסרת המשק מהשמורים' : 'שמירת המשק');
+  btn.setAttribute('aria-pressed', String(isFav));
+}
+
+function syncFavoriteHearts() {
+  document.querySelectorAll('.farm-fav-btn').forEach(btn => {
+    setHeartState(btn, userFavorites.has(btn.dataset.farmId));
+  });
 }

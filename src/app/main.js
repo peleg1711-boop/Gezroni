@@ -1,11 +1,11 @@
-import { initShell, setRoute, setRootVariant } from './shell.js?v=20260611-mobile-fixes';
-import { mountHome } from '../screens/home.js?v=20260612-magic-fx';
-import { mountMarket } from '../screens/market.js?v=20260612-magic-fx';
-import { mountDashboard } from '../screens/dashboard.js?v=20260611-audit-fixes';
-import { mountApply } from '../screens/apply.js';
-import { mountAdmin } from '../screens/admin.js';
+import { initShell, setRoute, setRootVariant } from './shell.js?v=20260612-firebase';
+import { mountHome } from '../screens/home.js?v=20260612-fm3d';
+import { mountMarket } from '../screens/market.js?v=20260612-firebase';
+import { mountDashboard } from '../screens/dashboard.js?v=20260612-firebase';
+import { mountApply } from '../screens/apply.js?v=20260612-firebase';
+import { mountAdmin } from '../screens/admin.js?v=20260612-firebase';
+import { mountAccount } from '../screens/account.js?v=20260612-firebase';
 import { readA11yState, applyA11yState } from '../lib/a11y.js';
-import { getDb } from '../lib/supabase.js';
 
 const screenMounters = {
   home:      mountHome,
@@ -13,6 +13,7 @@ const screenMounters = {
   dashboard: mountDashboard,
   apply:     mountApply,
   admin:     mountAdmin,
+  account:   mountAccount,
 };
 
 let currentCleanup = null;
@@ -28,6 +29,7 @@ const SCREEN_META = {
   dashboard: { title: 'גזרוני — ניהול משק', description: 'ניהול מודעת משק: פרטי משק, תוצרת, מחירים, זמינות ופרטי קשר.' },
   apply:     { title: 'גזרוני — הצטרפות חקלאים', description: 'הגש בקשה לפרסם את המשק שלך בלוח גזרוני.' },
   admin:     { title: 'גזרוני — פאנל ניהול', description: '' },
+  account:   { title: 'גזרוני — האזור האישי', description: 'המשקים השמורים שלך ופרטי החשבון.' },
 };
 
 function ensureMeta() {
@@ -60,16 +62,6 @@ function navigateTo(route) {
   window.scrollTo(0, 0);
 }
 
-function registerAuthListenerOnce() {
-  try {
-    const db = getDb();
-    if (!db?.auth.onAuthStateChange) return;
-    db.auth.onAuthStateChange((_event, session) => {
-      if (!session) return;
-    });
-  } catch {}
-}
-
 function registerLifecycleGuards() {
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
@@ -92,7 +84,6 @@ function start() {
   }
   initShell();
   navigateTo(resolveRoute());
-  registerAuthListenerOnce();
   registerLifecycleGuards();
   window.addEventListener('hashchange', () => navigateTo(resolveRoute()));
 }

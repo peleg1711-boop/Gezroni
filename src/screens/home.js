@@ -1,6 +1,7 @@
 import { STATIC_FARMS } from '../data/farms.js?v=20260611-audit-fixes';
 import { initHomeMapPreview, destroyHomeMapPreview } from '../lib/maps.js?v=20260611-mobile-fixes';
 import { initNumberTickers } from '../lib/magic-fx.js?v=20260612-magic-fx';
+import { fetchFarms } from '../lib/firebase.js?v=20260612-firebase';
 
 const HOME_DEAL_INTERVAL_MS = 10000;
 
@@ -186,6 +187,7 @@ export function mountHome(root) {
         <a class="lp-main-cta" href="#market" id="lp-find-farms-cta">מצא משקים עכשיו</a>
         <a class="lp-secondary-cta" href="#apply">חקלאי? הצטרפות</a>
       </div>
+      <div class="lp-savings-strip">💸 חיסכון ממוצע <strong data-ticker>35–55%</strong> על סל ירקות שבועי</div>
     </div>
   </div>
 
@@ -246,43 +248,19 @@ export function mountHome(root) {
     <div class="home-farm-map" id="home-farm-map" role="img" aria-label="מפת Google של משקים פעילים בישראל"></div>
   </section>
 
-  <!-- Price comparison banner -->
-  <div class="section reveal">
-    <div class="price-banner">
-      <div class="price-banner-top">
-        <span class="price-bang">💸</span>
-        <span class="price-banner-title">יוקר המחיה? לא אצלנו.</span>
+  <!-- 3D farm marquee — live farms from the board -->
+  <section class="farm-marquee-section reveal" aria-label="המשקים בלוח">
+    <div class="today-deals-head">
+      <div>
+        <div class="section-label">המשקים בלוח</div>
+        <h2>מתעדכן ישירות מהחקלאים</h2>
       </div>
-      <p class="price-banner-sub">משרד החקלאות אישר: הרשתות קונות מהחקלאי בזול ומוכרות לך ביוקר — הפערים גבוהים בעשרות אחוזים. אנחנו מורידים את האמצעים מהמשוואה.</p>
-      <div class="price-compare-grid">
-        <div class="price-col header">
-          <div class="price-col-label">מוצר</div>
-          <div class="price-item-name">עגבניות (ק"ג)</div>
-          <div class="price-item-name">מלפפונים (ק"ג)</div>
-          <div class="price-item-name">פלפל (ק"ג)</div>
-          <div class="price-item-name">תפוחים (ק"ג)</div>
-        </div>
-        <div class="price-col super">
-          <div class="price-col-label">סופר</div>
-          <div class="price-item bad" data-ticker>~₪13–18</div>
-          <div class="price-item bad" data-ticker>~₪11–15</div>
-          <div class="price-item bad" data-ticker>~₪16–22</div>
-          <div class="price-item bad" data-ticker>~₪14–20</div>
-        </div>
-        <div class="price-col direct">
-          <div class="price-col-label">ישירות*</div>
-          <div class="price-item good" data-ticker>~₪5–9</div>
-          <div class="price-item good" data-ticker>~₪5–8</div>
-          <div class="price-item good" data-ticker>~₪8–13</div>
-          <div class="price-item good" data-ticker>~₪8–12</div>
-        </div>
-      </div>
-      <div class="price-footer">
-        <p class="price-saving">חיסכון ממוצע <strong data-ticker>35–55%</strong> על סל ירקות שבועי</p>
-      </div>
-      <p class="price-disclaimer">* מחירים משוערים ומשתנים לפי עונה ומשק</p>
+      <a href="#market" class="today-deals-link">לכל המשקים</a>
     </div>
-  </div>
+    <div class="farm-marquee-3d" id="farm-marquee-3d" aria-hidden="true">
+      <div class="fm3d-stage" id="fm3d-stage"></div>
+    </div>
+  </section>
 
   <!-- How it works -->
   <div class="how-section reveal">
@@ -339,10 +317,86 @@ export function mountHome(root) {
   }
 
   const disposeTickers = initNumberTickers(root);
+  const disposeFarmMarquee = initFarmMarquee3d();
 
   return () => {
     if (typeof disposeHomeFarmMap === 'function') disposeHomeFarmMap();
     if (revealObserver) revealObserver.disconnect();
     disposeTickers();
+    disposeFarmMarquee();
+  };
+}
+
+// ─── 3D farm marquee (Magic-UI-inspired) ────────────────────────────────────
+// Four tilted vertical columns of live farm cards; scroll velocity feeds the
+// animation speed so fast page scrolling spins the board faster.
+function initFarmMarquee3d() {
+  const stage = document.getElementById('fm3d-stage');
+  if (!stage) return () => {};
+
+  const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  let rafId = null;
+  let onScroll = null;
+  let disposed = false;
+
+  const cardHtml = farm => {
+    const p = (farm.produce || [])[0];
+    const price = p ? `${p.icon || '🌿'} ${esc(p.name)} · ₪${p.price} / ${esc(p.unit || '')}` : '';
+    return `<div class="fm3d-card">
+      <div class="fm3d-name">${esc(farm.name || '')}</div>
+      <div class="fm3d-sub">${esc([farm.region, farm.city].filter(Boolean).join(' · '))}</div>
+      ${price ? `<div class="fm3d-price">${price}</div>` : ''}
+    </div>`;
+  };
+  const esc = t => String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  const build = farms => {
+    if (disposed || !farms.length) return;
+    const COLS = 4;
+    const cols = Array.from({ length: COLS }, () => []);
+    farms.forEach((f, i) => cols[i % COLS].push(f));
+    stage.innerHTML = cols.map((colFarms, i) => {
+      const inner = colFarms.map(cardHtml).join('') || '';
+      return `<div class="fm3d-col"><div class="fm3d-track" data-dir="${i % 2 === 0 ? 1 : -1}">${inner}${inner}</div></div>`;
+    }).join('');
+
+    if (reduced) return;
+
+    const tracks = [...stage.querySelectorAll('.fm3d-track')].map(el => ({
+      el, dir: Number(el.dataset.dir), offset: 0, half: el.scrollHeight / 2,
+    }));
+
+    let lastScrollY = window.scrollY;
+    let velocity = 0;
+    onScroll = () => {
+      velocity += Math.abs(window.scrollY - lastScrollY) * 0.06;
+      lastScrollY = window.scrollY;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    const BASE = 0.4;
+    const tick = () => {
+      velocity *= 0.94;
+      const speed = BASE * (1 + Math.min(velocity, 10));
+      tracks.forEach(t => {
+        if (!t.half) t.half = t.el.scrollHeight / 2;
+        t.offset += speed * t.dir;
+        if (t.offset >= t.half) t.offset -= t.half;
+        if (t.offset <= -t.half) t.offset += t.half;
+        t.el.style.transform = `translateY(${-t.offset}px)`;
+      });
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+  };
+
+  fetchFarms()
+    .then(farms => build(farms.filter(f => f.is_active !== false)))
+    .catch(() => build(STATIC_FARMS));
+
+  return () => {
+    disposed = true;
+    if (rafId) cancelAnimationFrame(rafId);
+    if (onScroll) window.removeEventListener('scroll', onScroll);
   };
 }

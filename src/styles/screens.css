@@ -5756,3 +5756,161 @@ body.a11y-reduced-motion *::after{
   .bf-in, .reveal.visible .bf-item { animation: none; }
   .home-marquee-track { animation: none; }
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+   Firebase era — account nav icon, account screen, favorites hearts
+   ════════════════════════════════════════════════════════════════════════ */
+
+.app-nav-account {
+  padding: 8px 10px;
+  border-right: 1px solid rgba(45,90,27,0.14);
+  margin-right: 2px;
+}
+.app-nav-avatar {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: block;
+}
+.app-nav-avatar[hidden] { display: none !important; }
+
+.account-screen {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 92px 18px 60px;
+}
+.account-head h1 { font-size: 26px; font-weight: 900; color: var(--text-1); margin: 0 0 4px; }
+.account-head p { color: var(--text-2); font-size: 14px; margin: 0 0 24px; }
+.account-loading { color: var(--text-2); padding: 30px 0; text-align: center; }
+
+.account-login-card {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(45,90,27,0.14);
+  border-radius: 18px;
+  padding: 36px 24px;
+  text-align: center;
+}
+.account-login-text { color: var(--text-2); font-size: 15px; line-height: 1.7; margin: 0 0 20px; }
+.account-google-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: #fff; color: var(--text-1);
+  border: 1px solid rgba(45,90,27,0.25);
+  border-radius: 999px; padding: 11px 22px;
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  box-shadow: 0 6px 16px rgba(15,23,42,0.10);
+}
+.account-google-btn:hover { background: #f6f8f3; }
+
+.account-profile-card {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(45,90,27,0.14);
+  border-radius: 18px; padding: 18px;
+  margin-bottom: 28px;
+}
+.account-avatar { width: 52px; height: 52px; border-radius: 50%; }
+.account-profile-info { flex: 1; min-width: 0; }
+.account-name { font-weight: 900; font-size: 17px; color: var(--text-1); }
+.account-meta { font-size: 13px; color: var(--text-2); }
+.account-logout-btn {
+  border: 1px solid rgba(45,90,27,0.25); background: transparent;
+  color: var(--text-1); border-radius: 999px; padding: 8px 16px;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.account-logout-btn:hover { background: rgba(45,90,27,0.06); }
+
+.account-favorites h2 { font-size: 18px; font-weight: 900; color: var(--text-1); margin: 0 0 12px; }
+.account-empty { color: var(--text-2); font-size: 14px; line-height: 1.7; }
+.account-fav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.account-fav-card {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(45,90,27,0.14);
+  border-radius: 14px; padding: 14px;
+}
+.account-fav-name { font-weight: 800; color: var(--text-1); }
+.account-fav-sub { font-size: 12px; color: var(--text-2); margin: 2px 0 10px; }
+.account-fav-actions { display: flex; gap: 10px; align-items: center; }
+.account-fav-open { font-size: 13px; font-weight: 700; color: var(--green-800); text-decoration: none; }
+.account-fav-open:hover { text-decoration: underline; }
+.account-fav-remove {
+  font-size: 12px; color: var(--text-2); background: none; border: none;
+  cursor: pointer; text-decoration: underline; padding: 0;
+}
+
+.farm-fav-btn {
+  position: absolute; top: 10px; left: 10px; z-index: 2;
+  width: 34px; height: 34px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(45,90,27,0.18);
+  color: var(--text-2); cursor: pointer;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+.farm-fav-btn:hover { transform: scale(1.08); }
+.farm-fav-btn.is-fav { color: #d85a30; }
+.farm-fav-btn.is-fav svg { fill: #d85a30; }
+.product-visual { position: relative; }
+
+/* ── 3D farm marquee ── */
+.farm-marquee-section { max-width: 1060px; margin: 0 auto; padding: 0 18px; }
+.farm-marquee-3d {
+  position: relative;
+  height: 420px;
+  overflow: hidden;
+  border-radius: 22px;
+  background: linear-gradient(160deg, #2f4a1d 0%, #3b5a26 55%, #2a421a 100%);
+  perspective: 300px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+          mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+}
+.fm3d-stage {
+  position: absolute;
+  inset: -120px -60px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  transform: translateX(-60px) translateY(0px) translateZ(-100px) rotateX(20deg) rotateY(-10deg) rotateZ(20deg);
+}
+.fm3d-col { flex: 1; max-width: 240px; overflow: visible; }
+.fm3d-track { display: flex; flex-direction: column; gap: 14px; will-change: transform; }
+.fm3d-card {
+  background: rgba(250, 247, 240, 0.96);
+  border: 1px solid rgba(45, 90, 27, 0.18);
+  border-radius: 14px;
+  padding: 14px;
+  direction: rtl;
+  box-shadow: 0 10px 24px rgba(10, 25, 5, 0.25);
+}
+.fm3d-name { font-weight: 900; font-size: 14px; color: #243618; }
+.fm3d-sub { font-size: 12px; color: #5c6b50; margin-top: 2px; }
+.fm3d-price {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2d5a1b;
+  background: rgba(45, 90, 27, 0.10);
+  border-radius: 999px;
+  padding: 4px 10px;
+  display: inline-block;
+}
+@media (max-width: 640px) {
+  .farm-marquee-3d { height: 340px; }
+  .fm3d-stage { gap: 10px; inset: -120px -90px; }
+  .fm3d-card { padding: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fm3d-stage { transform: none; inset: 0; padding: 16px; }
+}
+
+/* ── Hero savings strip ── */
+.lp-savings-strip {
+  margin-top: 18px;
+  display: inline-block;
+  background: rgba(250, 247, 240, 0.14);
+  border: 1px solid rgba(250, 247, 240, 0.28);
+  color: #f3efe5;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.lp-savings-strip strong { color: #ffd9a8; font-weight: 900; }
