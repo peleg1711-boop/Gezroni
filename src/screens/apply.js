@@ -1,4 +1,4 @@
-import { getDb } from '../lib/supabase.js';
+import { watchAuth, signInWithGoogle, getCurrentUser, submitApplication } from '../lib/firebase.js?v=20260612-firebase';
 
 const REGIONS = [
   'עמק חפר', 'דרום השרון', 'צפון השרון', 'שרון',
@@ -8,6 +8,28 @@ const REGIONS = [
 export function mountApply(root) {
   root.innerHTML = buildApplyScreen();
   document.getElementById('apply-submit')?.addEventListener('click', handleApplySubmit);
+  document.getElementById('apply-google-btn')?.addEventListener('click', async () => {
+    try { await signInWithGoogle(); } catch (e) {
+      if (e?.code !== 'auth/popup-closed-by-user') console.error('[gezroni] sign-in failed', e);
+    }
+  });
+
+  const unwatch = watchAuth(user => {
+    const gate = document.getElementById('apply-signin-state');
+    const form = document.getElementById('apply-form-state');
+    const success = document.getElementById('apply-success-state');
+    if (!gate || !form) return;
+    if (success && success.style.display === 'block') return;
+    gate.style.display = user ? 'none' : 'block';
+    form.style.display = user ? 'block' : 'none';
+    if (user) {
+      const emailEl = document.getElementById('apply-email');
+      if (emailEl) { emailEl.value = user.email || ''; emailEl.readOnly = true; }
+      const nameEl = document.getElementById('apply-name');
+      if (nameEl && !nameEl.value) nameEl.value = user.displayName || '';
+    }
+  });
+  return () => unwatch();
 }
 
 function buildApplyScreen() {
@@ -20,7 +42,11 @@ function buildApplyScreen() {
   </div>
 
   <div class="apply-form-wrap">
-    <div id="apply-form-state">
+    <div id="apply-signin-state" style="display:none;text-align:center;padding:40px 0">
+      <div style="font-size:15px;color:var(--text-2);line-height:1.7;margin-bottom:20px">כדי להגיש בקשה, התחברו עם חשבון Google.<br>הבקשה תישמר על החשבון שלכם ותוכלו לעקוב אחרי הסטטוס.</div>
+      <button class="btn-shine" id="apply-google-btn" type="button">כניסה עם Google</button>
+    </div>
+    <div id="apply-form-state" style="display:none">
 
       <div class="apply-section-title">פרטים אישיים</div>
       <div class="field">
@@ -60,13 +86,13 @@ function buildApplyScreen() {
 
       <div class="apply-error" id="apply-error"></div>
       <button class="btn-shine apply-submit-btn" id="apply-submit" type="button">שלח בקשת הצטרפות ←</button>
-      <div class="apply-note">לאחר אישור הבקשה תקבל הזמנה באימייל להגדרת הסיסמה ויצירת חשבון.</div>
+      <div class="apply-note">לאחר אישור הבקשה, אזור ניהול המשק ייפתח אוטומטית בחשבון הזה.</div>
     </div>
 
     <div id="apply-success-state" style="display:none;text-align:center;padding:48px 0">
       <div style="font-size:52px;margin-bottom:16px">✅</div>
       <div style="font-size:20px;font-weight:800;color:var(--text-1);margin-bottom:10px">הבקשה התקבלה!</div>
-      <div style="font-size:14px;color:var(--text-2);line-height:1.7">נבדוק את הבקשה ונחזור אליך באימייל<br>תוך 1–3 ימי עסקים.<br><br>לאחר האישור תקבל הזמנה באימייל<br>להגדרת סיסמה ויצירת חשבון.</div>
+      <div style="font-size:14px;color:var(--text-2);line-height:1.7">נבדוק את הבקשה ונחזור אליך באימייל<br>תוך 1–3 ימי עסקים.<br><br>לאחר האישור, אזור ניהול המשק<br>ייפתח אוטומטית בחשבון שלך.</div>
       <a href="#home" class="btn-shine" style="display:inline-block;margin-top:28px;text-decoration:none">חזרה לדף הבית</a>
     </div>
   </div>
@@ -93,25 +119,25 @@ async function handleApplySubmit() {
 
   if (btn) { btn.disabled = true; btn.textContent = 'שולח...'; }
 
-  const db = getDb();
-  if (!db) {
+  if (!getCurrentUser()) {
     if (btn) { btn.disabled = false; btn.textContent = 'שלח בקשת הצטרפות ←'; }
-    setErr('שגיאת חיבור — נסה שוב');
+    setErr('יש להתחבר עם Google לפני שליחת הבקשה');
     return;
   }
 
-  const { error: appErr } = await db.from('farm_applications').insert({
-    applicant_name:  name,
-    applicant_email: email,
-    applicant_phone: phone || null,
-    farm_name:       farmName,
-    region,
-    city,
-    story:           story || null,
-    contact:         { phone: phone || '' },
-  });
-
-  if (appErr) {
+  try {
+    await submitApplication({
+      applicant_name:  name,
+      applicant_email: email,
+      applicant_phone: phone || null,
+      farm_name:       farmName,
+      region,
+      city,
+      story:           story || null,
+      contact:         { phone: phone || '' },
+    });
+  } catch (e) {
+    console.error('[gezroni] application submit failed', e);
     if (btn) { btn.disabled = false; btn.textContent = 'שלח בקשת הצטרפות ←'; }
     setErr('שגיאה בשמירת הבקשה — נסה שוב');
     return;

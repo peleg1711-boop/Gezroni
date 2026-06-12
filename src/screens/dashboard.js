@@ -1,4 +1,7 @@
-import { getDb } from '../lib/supabase.js';
+import {
+  watchAuth, signInWithGoogle, signOut as fbSignOut, getUserProfile,
+  fetchFarmByOwner, fetchMyApplications, createFarm, updateFarm,
+} from '../lib/firebase.js?v=20260612-firebase';
 import { showToast } from '../lib/toast.js';
 import { geocodeFarmCity } from '../lib/maps.js?v=20260611-audit-fixes';
 import {
@@ -56,6 +59,8 @@ function normalizeProduct(product) {
 let farmDraft        = readDraft();
 let dashProducts     = readProducts();
 let currentUser      = null;
+let dashFarm         = null;
+let unwatchDashAuth  = null;
 let abortController  = null;
 let currentTab       = 'home';
 let tickerTimer      = null;
@@ -88,14 +93,15 @@ export function mountDashboard(root) {
 
 function cleanup() {
   if (abortController) { abortController.abort(); abortController = null; }
+  if (unwatchDashAuth) { unwatchDashAuth(); unwatchDashAuth = null; }
   clearInterval(tickerTimer);
   tickerTimer = null;
   currentUser = null;
 }
 
-function applyAdminBadge(user) {
+function applyAdminBadge(role) {
   const wrap = document.getElementById('si-admin-wrap');
-  if (wrap) wrap.hidden = user?.app_metadata?.role !== 'admin';
+  if (wrap) wrap.hidden = role !== 'admin';
 }
 
 // ─── HTML shell ─────────────────────────────────────────────────────────────
@@ -420,11 +426,9 @@ function buildShell() {
   <div class="auth-card">
     <div class="auth-logo">🌾</div>
     <div class="auth-title" id="auth-title">כניסה לחקלאי</div>
-    <div class="auth-sub" id="auth-sub">הזן אימייל וסיסמה כדי לנהל את המשק שלך</div>
-    <input type="email" id="auth-email" class="auth-input" placeholder="אימייל" autocomplete="email">
-    <input type="password" id="auth-password" class="auth-input" placeholder="סיסמה" autocomplete="current-password">
+    <div class="auth-sub" id="auth-sub">התחברו עם Google כדי לנהל את המשק שלכם</div>
     <div class="auth-error" id="auth-error"></div>
-    <button class="auth-btn" id="auth-submit" type="button">כניסה</button>
+    <button class="auth-btn" id="auth-submit" type="button">כניסה עם Google</button>
     <a class="auth-apply-link" href="#apply">עדיין לא חקלאי בגזרוני? הגש בקשת הצטרפות</a>
     <button class="auth-skip" id="auth-skip" type="button">המשך ללא כניסה (טיוטה מקומית)</button>
     <a class="auth-home-link" href="#home">← חזרה לדף הבית</a>
@@ -930,34 +934,11 @@ function getProductImageUrl(product) {
 async function handleProductImageUpload(productId, file) {
   if (file.size > 5 * 1024 * 1024) { showToast('התמונה גדולה מ-5MB', 'warning'); return; }
   const reader = new FileReader();
-  reader.onload = async (ev) => {
+  reader.onload = ev => {
     const base64 = ev.target.result;
     try { localStorage.setItem(PRODUCT_IMAGE_KEY_PREFIX + productId, base64); } catch {}
     renderProducts();
-    if (!currentUser) showToast('תמונה נשמרה ✓', 'success');
-
-    if (currentUser) {
-      const db = getDb();
-      if (!db) return;
-      const product = dashProducts.find(p => p.id === productId);
-      const ext = file.name.split('.').pop().toLowerCase().replace('jpg', 'jpeg') || 'jpeg';
-      const mime = ext === 'jpeg' ? 'image/jpeg' : ext === 'png' ? 'image/png' : 'image/webp';
-      const path = `${currentUser.id}/${productId}.${ext}`;
-      const { error } = await db.storage.from('produce-images').upload(path, file, { contentType: mime, upsert: true });
-      if (error) {
-        console.error('[gezroni] produce image upload failed', error);
-        showToast('שגיאה בהעלאת תמונה לענן — ' + error.message, 'error');
-        return;
-      }
-      const url = db.storage.from('produce-images').getPublicUrl(path).data?.publicUrl;
-      if (url && product) {
-        product.imageUrl = url;
-        writeProducts(dashProducts);
-        renderProducts();
-        const saved = await saveFarmToDb(farmDraft, dashProducts);
-        if (saved) showToast('התמונה הועלתה ותוצג בלוח המשקים ✓', 'success');
-      }
-    }
+    showToast('תמונה נשמרה ✓ (העלאה לענן תתאפשר בקרוב)', 'success');
   };
   reader.readAsDataURL(file);
 }
@@ -1173,7 +1154,7 @@ function closeProfileModal(modalId) {
 
 function shareFarmListing() {
   const farmName = farmDraft.farmName || 'משק ישראלי';
-  const farmId = currentUser ? 'farm-' + currentUser.id.slice(0, 8) : '';
+  const farmId = currentUser ? 'farm-' + currentUser.uid.slice(0, 8) : '';
   const shareUrl = `${window.location.origin}/#market?farm=${farmId}`;
   const shareText = `שלום! מוזמנים לבקר בעמוד של ${farmName} בלוח המשקים גזרוני, לעקוב אחר זמינות התוצרת ולקנות ישירות מאיתנו: ${shareUrl}`;
 
@@ -1250,49 +1231,76 @@ function bindAddProductModal() {
 }
 
 // ─── auth ─────────────────────────────────────────────────────────────────────
-let authMode = 'login';
 
 async function initAuth() {
-  const db = getDb();
-  if (!db) { showAuthOverlay(); return; }
-  const { data: { session } } = await db.auth.getSession();
-  if (abortController?.signal.aborted) return;
-  if (session?.user) {
-    currentUser = session.user;
+  unwatchDashAuth = watchAuth(async user => {
+    if (abortController?.signal.aborted) return;
+    if (!user) {
+      currentUser = null;
+      showAuthOverlay('login');
+      return;
+    }
+    let profile = null;
+    try { profile = await getUserProfile(user.uid); } catch {}
+    const role = profile?.role;
+    if (role !== 'farmer' && role !== 'admin') {
+      currentUser = null;
+      let hasPending = false;
+      try {
+        const apps = await fetchMyApplications(user.uid);
+        hasPending = apps.some(a => a.status === 'pending');
+      } catch {}
+      showAuthOverlay(hasPending ? 'pending' : 'not-farmer');
+      return;
+    }
+    currentUser = user;
+    hideAuthOverlay();
     await loadFarmFromDb(currentUser);
     loadFarmPhotos();
-    applyAdminBadge(currentUser);
-  } else {
-    showAuthOverlay();
-  }
-  db.auth.onAuthStateChange((_e, s) => { currentUser = s?.user || null; });
+    resolveHeroImage();
+    applyAdminBadge(role);
+  });
 }
 
-function showAuthOverlay() {
+function showAuthOverlay(mode) {
   const overlay = document.getElementById('auth-overlay');
-  if (overlay) overlay.style.display = 'flex';
+  if (!overlay) return;
+  overlay.style.display = 'flex';
+  const title = document.getElementById('auth-title');
+  const sub   = document.getElementById('auth-sub');
+  const btn   = document.getElementById('auth-submit');
+  if (mode === 'pending') {
+    if (title) title.textContent = 'הבקשה שלך בבדיקה';
+    if (sub)   sub.textContent   = 'נעדכן אותך באימייל ברגע שהמשק יאושר. אזור הניהול ייפתח אוטומטית לאחר האישור.';
+    if (btn)   btn.style.display = 'none';
+  } else if (mode === 'not-farmer') {
+    if (title) title.textContent = 'אזור החקלאים';
+    if (sub)   sub.textContent   = 'החשבון שלך עדיין לא מאושר כחקלאי. רוצים לפרסם משק בלוח? הגישו בקשת הצטרפות.';
+    if (btn)   btn.style.display = 'none';
+  } else {
+    if (title) title.textContent = 'כניסה לחקלאי';
+    if (sub)   sub.textContent   = 'התחברו עם Google כדי לנהל את המשק שלכם';
+    if (btn)   btn.style.display = '';
+  }
   bindAuthOverlay();
 }
 
+function hideAuthOverlay() {
+  const overlay = document.getElementById('auth-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
+let authOverlayBound = false;
 function bindAuthOverlay() {
-  document.getElementById('auth-submit')?.addEventListener('click', handleAuthSubmit);
-  document.getElementById('auth-skip')?.addEventListener('click', () => {
-    const overlay = document.getElementById('auth-overlay');
-    if (overlay) overlay.style.display = 'none';
+  if (authOverlayBound) return;
+  authOverlayBound = true;
+  document.getElementById('auth-submit')?.addEventListener('click', async () => {
+    try { await signInWithGoogle(); } catch (e) {
+      if (e?.code !== 'auth/popup-closed-by-user') showAuthError('שגיאה בכניסה — נסה שוב');
+    }
   });
-  document.getElementById('auth-toggle')?.addEventListener('click', () => {
-    authMode = authMode === 'login' ? 'signup' : 'login';
-    const isSignup = authMode === 'signup';
-    const title = document.getElementById('auth-title');
-    const sub   = document.getElementById('auth-sub');
-    const btn   = document.getElementById('auth-submit');
-    const tog   = document.getElementById('auth-toggle');
-    if (title) title.textContent = isSignup ? 'הרשמה כחקלאי' : 'כניסה לחקלאי';
-    if (sub)   sub.textContent   = isSignup ? 'צור חשבון חדש עם אימייל וסיסמה' : 'הזן אימייל וסיסמה כדי לנהל את המשק שלך';
-    if (btn)   btn.textContent   = isSignup ? 'הרשמה' : 'כניסה';
-    if (tog)   tog.textContent   = isSignup ? 'כבר יש לך חשבון? כניסה' : 'אין לך חשבון? הרשם';
-    const errEl = document.getElementById('auth-error');
-    if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
+  document.getElementById('auth-skip')?.addEventListener('click', () => {
+    hideAuthOverlay();
   });
 }
 
@@ -1301,66 +1309,23 @@ function showAuthError(msg) {
   if (el) { el.textContent = msg; el.style.display = 'block'; }
 }
 
-async function handleAuthSubmit() {
-  const db = getDb();
-  if (!db) { showAuthError('שגיאת חיבור לשרת — נסה שוב'); return; }
-  const email    = document.getElementById('auth-email')?.value.trim();
-  const password = document.getElementById('auth-password')?.value;
-  if (!email || !password) { showAuthError('נא למלא אימייל וסיסמה'); return; }
-
-  const btn = document.getElementById('auth-submit');
-  if (btn) { btn.textContent = '...'; btn.disabled = true; }
-
-  const result = authMode === 'login'
-    ? await db.auth.signInWithPassword({ email, password })
-    : await db.auth.signUp({ email, password });
-
-  if (btn) { btn.disabled = false; btn.textContent = authMode === 'login' ? 'כניסה' : 'הרשמה'; }
-
-  if (result.error) {
-    let msg = result.error.message;
-    if (msg.includes('Invalid login credentials')) msg = 'אימייל או סיסמה שגויים';
-    if (msg.includes('already registered'))        msg = 'האימייל כבר רשום — נסה להיכנס';
-    if (msg.includes('Password should'))           msg = 'סיסמה חייבת להכיל לפחות 6 תווים';
-    showAuthError(msg); return;
-  }
-
-  const overlay = document.getElementById('auth-overlay');
-  if (overlay) overlay.style.display = 'none';
-  showToast(authMode === 'signup' ? 'ברוך הבא! בדוק את האימייל לאישור ✓' : 'כניסה בוצעה בהצלחה ✓', 'success');
-  if (authMode === 'login') {
-    currentUser = result.data?.user || null;
-    await loadFarmFromDb(currentUser);
-    loadFarmPhotos();
-    resolveHeroImage();
-    applyAdminBadge(currentUser);
-  }
-}
-
 async function signOut() {
-  const db = getDb();
-  if (db) await db.auth.signOut();
+  await fbSignOut();
   currentUser = null;
+  dashFarm = null;
   showToast('יצאת מהחשבון', 'info');
-  setTimeout(() => showAuthOverlay(), 900);
 }
 
 // ─── Supabase save / load ─────────────────────────────────────────────────────
 async function loadFarmFromDb(user) {
-  const db = getDb();
-  if (!db || !user) return;
+  if (!user) return;
   try {
-    const { data: row, error } = await db.from('farms').select('*, produce(*)').eq('user_id', user.id).maybeSingle();
+    const row = await fetchFarmByOwner(user.uid);
 
     if (!row) {
-      // No farm yet — pre-populate from their application
-      const { data: app } = await db
-        .from('farm_applications')
-        .select('*')
-        .eq('applicant_email', user.email)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+      // No farm yet — pre-populate from their latest application
+      const apps = await fetchMyApplications(user.uid);
+      const app = apps.sort((a, b) => String(b.created_at || '').localeCompare(String(a.created_at || '')))[0];
       if (app) {
         farmDraft = {
           ...DEFAULT_FARM_DRAFT,
@@ -1376,7 +1341,7 @@ async function loadFarmFromDb(user) {
       return;
     }
 
-    if (error) return;
+    dashFarm = row;
 
     farmDraft = {
       farmName:     row.name                          || '',
@@ -1413,9 +1378,8 @@ async function loadFarmFromDb(user) {
 }
 
 async function saveFarmToDb(draft, products) {
-  const db = getDb();
-  if (!db || !currentUser) return false;
-  const farmId = 'farm-' + currentUser.id.slice(0, 8);
+  if (!currentUser) return false;
+  const farmId = dashFarm?.id || ('farm-' + currentUser.uid.slice(0, 8));
 
   let lat = draft.lat ?? null;
   let lng = draft.lng ?? null;
@@ -1429,8 +1393,17 @@ async function saveFarmToDb(draft, products) {
     }
   }
 
-  const { error: fe } = await db.from('farms').upsert({
-    id: farmId, user_id: currentUser.id,
+  const produceRows = products.filter(p => p.active).map(p => ({
+    id: p.id, name: p.name,
+    catalog_id: p.catalogId || null,
+    category: p.category || getProduceById(p.catalogId)?.category || 'vegetables',
+    price: parseFloat(p.price) || 0,
+    unit: (p.unit || '').replace(/^ל/, '').trim(),
+    availability: p.qty || 'זמין', icon: p.icon || '', deal_key: null,
+    image_url: p.imageUrl || null,
+  }));
+
+  const farmDoc = {
     name: draft.farmName, farmer_name: draft.farmerName,
     region: draft.region, city: draft.city,
     availability: draft.availability || '', pickup: draft.pickup || '',
@@ -1442,125 +1415,67 @@ async function saveFarmToDb(draft, products) {
       return d.startsWith('0') ? '972' + d.slice(1) : d;
     })() },
     tags: [], last_updated: new Date().toLocaleDateString('he-IL'),
+    produce: produceRows,
+    ownerUid: currentUser.uid,
+    is_active: true,
     ...(lat != null && lng != null ? { lat, lng } : {}),
-  });
-  if (fe) { console.error('[gezroni] farm upsert', fe); return false; }
+  };
 
-  const rows = products.filter(p => p.active).map(p => ({
-    id: p.id, farm_id: farmId, name: p.name,
-    catalog_id: p.catalogId || null,
-    category: p.category || getProduceById(p.catalogId)?.category || 'vegetables',
-    price: parseFloat(p.price) || 0,
-    unit: (p.unit || '').replace(/^ל/, '').trim(),
-    availability: p.qty || 'זמין', icon: p.icon || '', deal_key: null,
-    image_url: p.imageUrl || null,
-  }));
-  await db.from('produce').delete().eq('farm_id', farmId);
-  if (rows.length) {
-    const { error: pe } = await db.from('produce').insert(rows);
-    if (pe) { console.error('[gezroni] produce insert', pe); return false; }
+  try {
+    if (dashFarm) {
+      await updateFarm(farmId, farmDoc);
+    } else {
+      await createFarm(farmId, { ...farmDoc, images: [], created_at: new Date().toISOString() });
+      dashFarm = { id: farmId, ...farmDoc, images: [] };
+    }
+  } catch (e) {
+    console.error('[gezroni] farm save failed', e);
+    return false;
   }
   return true;
 }
 
 // ─── photo upload ─────────────────────────────────────────────────────────────
+// Image files still live on the legacy storage bucket; new uploads are parked
+// until the Firebase Storage migration.
+const LEGACY_IMG_BASE = 'https://owugjzjegchuldizgurj.supabase.co/storage/v1/object/public/farm-images/';
 
 async function loadFarmPhotos() {
-  const db = getDb();
-  if (!db || !currentUser) return;
-  const farmId = 'farm-' + currentUser.id.slice(0, 8);
-  const { data } = await db.from('farm_images').select('*').eq('farm_id', farmId).order('sort_order').order('created_at');
-  renderPhotoGrid(data || []);
+  if (!currentUser) return;
+  renderPhotoGrid(Array.isArray(dashFarm?.images) ? dashFarm.images : []);
 }
 
 function renderPhotoGrid(images) {
   const grid = document.getElementById('farm-photos-grid');
   if (!grid) return;
-  grid.innerHTML = images.map(img => {
-    const db = getDb();
-    const url = db?.storage.from('farm-images').getPublicUrl(img.storage_path).data?.publicUrl || '';
-    return `
+  grid.innerHTML = images.map(img => `
 <div class="photo-thumb" data-img-id="${img.id}">
-  <img src="${url}" alt="תמונת משק" loading="lazy">
-  <button class="photo-delete-btn" data-img-id="${img.id}" data-path="${img.storage_path}" aria-label="מחק תמונה" type="button">✕</button>
+  <img src="${LEGACY_IMG_BASE + img.storage_path}" alt="תמונת משק" loading="lazy">
+  <button class="photo-delete-btn" data-img-id="${img.id}" aria-label="מחק תמונה" type="button">✕</button>
   ${img.is_primary ? '<div class="photo-primary-badge">ראשית</div>' : ''}
 </div>
-`;
-  }).join('');
+`).join('');
 
   grid.querySelectorAll('.photo-delete-btn').forEach(btn => {
-    btn.addEventListener('click', () => deletePhoto(btn.dataset.imgId, btn.dataset.path));
+    btn.addEventListener('click', () => deletePhoto(btn.dataset.imgId));
   });
 }
 
 async function handlePhotoInput(e) {
-  const files = [...e.target.files];
-  if (!files.length) return;
-  const label = document.getElementById('farm-photo-label');
-  if (label) { label.style.opacity = '0.5'; label.style.pointerEvents = 'none'; }
-
-  for (const file of files) {
-    if (file.size > 5 * 1024 * 1024) { showToast(`${file.name} גדולה מ-5MB`, 'warning'); continue; }
-    await uploadPhoto(file);
-  }
-
-  if (label) { label.style.opacity = ''; label.style.pointerEvents = ''; }
   e.target.value = '';
-  loadFarmPhotos();
+  showToast('העלאת תמונות חדשות תתאפשר בקרוב — אנחנו משדרגים את אחסון התמונות', 'info');
 }
 
-async function ensureFarmExists(db) {
-  const farmId = 'farm-' + currentUser.id.slice(0, 8);
-
-  let lat = farmDraft.lat ?? null;
-  let lng = farmDraft.lng ?? null;
-  if ((lat == null || lng == null) && (farmDraft.city || farmDraft.region)) {
-    const coords = await geocodeFarmCity(farmDraft.city, farmDraft.region);
-    if (coords) {
-      lat = coords.lat;
-      lng = coords.lng;
-      farmDraft = { ...farmDraft, lat, lng };
-      writeDraft(farmDraft);
-    }
+async function deletePhoto(imgId) {
+  if (!currentUser || !dashFarm) return;
+  const images = (dashFarm.images || []).filter(i => String(i.id) !== String(imgId));
+  try {
+    await updateFarm(dashFarm.id, { images });
+    dashFarm.images = images;
+  } catch (err) {
+    showToast('שגיאה במחיקת התמונה', 'error');
+    return;
   }
-
-  await db.from('farms').upsert({
-    id: farmId, user_id: currentUser.id,
-    name:         farmDraft.farmName   || 'משק חדש',
-    farmer_name:  farmDraft.farmerName || '',
-    region:       farmDraft.region     || '',
-    city:         farmDraft.city       || '',
-    distance_km:  0,
-    contact:      { phone: farmDraft.phone || '' },
-    last_updated: new Date().toLocaleDateString('he-IL'),
-    ...(lat != null && lng != null ? { lat, lng } : {}),
-  }, { onConflict: 'id', ignoreDuplicates: true });
-  return farmId;
-}
-
-async function uploadPhoto(file) {
-  const db = getDb();
-  if (!db || !currentUser) return;
-
-  const ext    = file.name.split('.').pop().toLowerCase().replace('jpg', 'jpeg') || 'jpeg';
-  const mime   = ext === 'jpeg' ? 'image/jpeg' : ext === 'png' ? 'image/png' : 'image/webp';
-  const path   = `${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-
-  const { error: upErr } = await db.storage.from('farm-images').upload(path, file, { contentType: mime, upsert: false });
-  if (upErr) { showToast('שגיאה בהעלאת תמונה — ' + upErr.message, 'error'); return; }
-
-  // Ensure farm row exists (FK requirement) before inserting image record
-  const farmId = await ensureFarmExists(db);
-
-  const { error: dbErr } = await db.from('farm_images').insert({ farm_id: farmId, storage_path: path });
-  if (dbErr) { showToast('שגיאה בשמירת תמונה — ' + dbErr.message, 'error'); }
-}
-
-async function deletePhoto(imgId, storagePath) {
-  const db = getDb();
-  if (!db) return;
-  await db.storage.from('farm-images').remove([storagePath]);
-  await db.from('farm_images').delete().eq('id', imgId);
   loadFarmPhotos();
 }
 
@@ -1579,23 +1494,9 @@ function applyHeroImage(url) {
 }
 
 async function resolveHeroImage() {
-  // Prefer Supabase primary image for logged-in users
-  if (currentUser) {
-    const db = getDb();
-    if (db) {
-      const farmId = 'farm-' + currentUser.id.slice(0, 8);
-      const { data } = await db.from('farm_images')
-        .select('storage_path')
-        .eq('farm_id', farmId)
-        .eq('is_primary', true)
-        .maybeSingle();
-      if (data?.storage_path) {
-        const url = db.storage.from('farm-images').getPublicUrl(data.storage_path).data?.publicUrl;
-        if (url) { applyHeroImage(url); return; }
-      }
-    }
-  }
-  // Fall back to localStorage base64
+  const imgs = Array.isArray(dashFarm?.images) ? dashFarm.images : [];
+  const primary = imgs.find(i => i.is_primary) || imgs[0];
+  if (primary?.storage_path) { applyHeroImage(LEGACY_IMG_BASE + primary.storage_path); return; }
   const cached = localStorage.getItem(FARM_HERO_KEY);
   if (cached) applyHeroImage(cached);
 }
@@ -1603,34 +1504,13 @@ async function resolveHeroImage() {
 async function handleHeroPhotoInput(e) {
   const file = e.target.files[0];
   if (!file) return;
-  e.target.disabled = true;
-  if (file.size > 5 * 1024 * 1024) { showToast('התמונה גדולה מ-5MB', 'warning'); e.target.value = ''; e.target.disabled = false; return; }
-
+  if (file.size > 5 * 1024 * 1024) { showToast('התמונה גדולה מ-5MB', 'warning'); e.target.value = ''; return; }
   const reader = new FileReader();
-  reader.onload = async (ev) => {
+  reader.onload = ev => {
     const base64 = ev.target.result;
     try { localStorage.setItem(FARM_HERO_KEY, base64); } catch {}
     applyHeroImage(base64);
-    showToast('תמונה נשמרה ✓', 'success');
-
-    // Upload to Supabase if logged in
-    if (currentUser) {
-      const db = getDb();
-      if (!db) return;
-      const farmId = await ensureFarmExists(db);
-      const ext = file.name.split('.').pop().toLowerCase().replace('jpg', 'jpeg') || 'jpeg';
-      const mime = ext === 'jpeg' ? 'image/jpeg' : ext === 'png' ? 'image/png' : 'image/webp';
-      const path = `${currentUser.id}/hero.${ext}`;
-      const { error: upErr } = await db.storage.from('farm-images').upload(path, file, { contentType: mime, upsert: true });
-      if (upErr) { console.error('Hero image upload failed:', upErr); showToast('שגיאה בהעלאה לענן', 'warning'); return; }
-      // Mark as primary in DB
-      await db.from('farm_images').upsert({ farm_id: farmId, storage_path: path, is_primary: true }, { onConflict: 'farm_id,storage_path' });
-      // Remove old primary flags
-      await db.from('farm_images').update({ is_primary: false }).eq('farm_id', farmId).neq('storage_path', path);
-      const url = db.storage.from('farm-images').getPublicUrl(path).data?.publicUrl;
-      if (url) { applyHeroImage(url); showToast('תמונה הועלתה לענן ✓', 'success'); }
-    }
-    e.target.disabled = false;
+    showToast('התמונה נשמרה מקומית — העלאה לענן תתאפשר בקרוב', 'success');
   };
   reader.readAsDataURL(file);
   e.target.value = '';
