@@ -5771,6 +5771,7 @@ body.a11y-reduced-motion *::after{
   border-radius: 50%;
   display: block;
 }
+.app-nav-avatar[hidden] { display: none !important; }
 
 .account-screen {
   max-width: 720px;
