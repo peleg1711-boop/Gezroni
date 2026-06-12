@@ -1,5 +1,5 @@
 import { initShell, setRoute, setRootVariant } from './shell.js?v=20260612-firebase';
-import { mountHome } from '../screens/home.js?v=20260613-howbeam';
+import { mountHome } from '../screens/home.js?v=20260613-hero-cleanup';
 import { mountMarket } from '../screens/market.js?v=20260612-satellite';
 import { mountDashboard } from '../screens/dashboard.js?v=20260612-satellite';
 import { mountApply } from '../screens/apply.js?v=20260612-firebase';

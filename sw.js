@@ -1,5 +1,5 @@
 // Gezroni Service Worker — network-first with cache fallback
-const CACHE_NAME = 'gezroni-v11-20260613-howbeam';
+const CACHE_NAME = 'gezroni-v12-20260613-hero-cleanup';
 
 const PRECACHE_URLS = [
   '/',
