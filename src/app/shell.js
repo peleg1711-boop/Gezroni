@@ -165,7 +165,16 @@ function _setAccountAvatar(user) {
   const avatar = link.querySelector('.app-nav-avatar');
   const hasPhoto = Boolean(user?.photoURL);
   if (avatar) {
-    avatar.src = hasPhoto ? user.photoURL : '';
+    if (hasPhoto) {
+      avatar.src = user.photoURL;
+      avatar.onerror = () => {
+        avatar.hidden = true;
+        avatar.removeAttribute('src');
+        if (icon) icon.style.display = '';
+      };
+    } else {
+      avatar.removeAttribute('src');
+    }
     avatar.hidden = !hasPhoto;
   }
   if (icon) icon.style.display = hasPhoto ? 'none' : '';
