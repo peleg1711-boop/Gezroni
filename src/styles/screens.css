@@ -5756,3 +5756,95 @@ body.a11y-reduced-motion *::after{
   .bf-in, .reveal.visible .bf-item { animation: none; }
   .home-marquee-track { animation: none; }
 }
+
+/* ════════════════════════════════════════════════════════════════════════
+   Firebase era — account nav icon, account screen, favorites hearts
+   ════════════════════════════════════════════════════════════════════════ */
+
+.app-nav-account {
+  padding: 8px 10px;
+  border-right: 1px solid rgba(45,90,27,0.14);
+  margin-right: 2px;
+}
+.app-nav-avatar {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  display: block;
+}
+
+.account-screen {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 92px 18px 60px;
+}
+.account-head h1 { font-size: 26px; font-weight: 900; color: var(--text-1); margin: 0 0 4px; }
+.account-head p { color: var(--text-2); font-size: 14px; margin: 0 0 24px; }
+.account-loading { color: var(--text-2); padding: 30px 0; text-align: center; }
+
+.account-login-card {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(45,90,27,0.14);
+  border-radius: 18px;
+  padding: 36px 24px;
+  text-align: center;
+}
+.account-login-text { color: var(--text-2); font-size: 15px; line-height: 1.7; margin: 0 0 20px; }
+.account-google-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: #fff; color: var(--text-1);
+  border: 1px solid rgba(45,90,27,0.25);
+  border-radius: 999px; padding: 11px 22px;
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  box-shadow: 0 6px 16px rgba(15,23,42,0.10);
+}
+.account-google-btn:hover { background: #f6f8f3; }
+
+.account-profile-card {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(45,90,27,0.14);
+  border-radius: 18px; padding: 18px;
+  margin-bottom: 28px;
+}
+.account-avatar { width: 52px; height: 52px; border-radius: 50%; }
+.account-profile-info { flex: 1; min-width: 0; }
+.account-name { font-weight: 900; font-size: 17px; color: var(--text-1); }
+.account-meta { font-size: 13px; color: var(--text-2); }
+.account-logout-btn {
+  border: 1px solid rgba(45,90,27,0.25); background: transparent;
+  color: var(--text-1); border-radius: 999px; padding: 8px 16px;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.account-logout-btn:hover { background: rgba(45,90,27,0.06); }
+
+.account-favorites h2 { font-size: 18px; font-weight: 900; color: var(--text-1); margin: 0 0 12px; }
+.account-empty { color: var(--text-2); font-size: 14px; line-height: 1.7; }
+.account-fav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.account-fav-card {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(45,90,27,0.14);
+  border-radius: 14px; padding: 14px;
+}
+.account-fav-name { font-weight: 800; color: var(--text-1); }
+.account-fav-sub { font-size: 12px; color: var(--text-2); margin: 2px 0 10px; }
+.account-fav-actions { display: flex; gap: 10px; align-items: center; }
+.account-fav-open { font-size: 13px; font-weight: 700; color: var(--green-800); text-decoration: none; }
+.account-fav-open:hover { text-decoration: underline; }
+.account-fav-remove {
+  font-size: 12px; color: var(--text-2); background: none; border: none;
+  cursor: pointer; text-decoration: underline; padding: 0;
+}
+
+.farm-fav-btn {
+  position: absolute; top: 10px; left: 10px; z-index: 2;
+  width: 34px; height: 34px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(45,90,27,0.18);
+  color: var(--text-2); cursor: pointer;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+.farm-fav-btn:hover { transform: scale(1.08); }
+.farm-fav-btn.is-fav { color: #d85a30; }
+.farm-fav-btn.is-fav svg { fill: #d85a30; }
+.product-visual { position: relative; }
