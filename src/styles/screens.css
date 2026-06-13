@@ -4296,43 +4296,6 @@ body.a11y-reduced-motion *::after{
   z-index: 1;
   width: 100%;
 }
-.landing-top-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px;
-  border-radius: var(--r-pill);
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(8px);
-}
-.landing-audience-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 38px;
-  min-width: 82px;
-  padding: 8px 16px;
-  border-radius: var(--r-pill);
-  color: rgba(255,255,255,0.82);
-  font-size: 13px;
-  font-weight: 900;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: background 0.18s var(--spring), color 0.18s var(--spring);
-}
-.landing-audience-btn:hover {
-  background: rgba(255,255,255,0.14);
-  color: #fff;
-}
-.landing-audience-btn.active {
-  background: #fff;
-  color: var(--green-800);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
-}
-.landing-audience-btn.farmer {
-  border: 1px solid rgba(255,255,255,0.18);
-}
 .il-badge {
   display: inline-flex;
   align-items: center;
@@ -4374,22 +4337,6 @@ body.a11y-reduced-motion *::after{
   line-height: 1.6;
   margin-bottom: 2rem;
 }
-.lp-pills {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.lp-pill {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.05);
-  color: rgba(255,255,255,0.95);
-  font-size: 12px;
-  padding: 6px 14px;
-  border-radius: var(--r-pill);
-  font-weight: 600;
-  transition: background 0.2s;
-}
-.lp-pill:hover { background: rgba(255,255,255,0.15); }
 .lp-primary-actions {
   margin-top: 1.35rem;
   display: flex;
@@ -4430,35 +4377,6 @@ body.a11y-reduced-motion *::after{
   border: 1px solid rgba(255,255,255,0.22);
   box-shadow: none;
 }
-.lp-quick-stats {
-  width: min(520px, 100%);
-  margin: 1.15rem auto 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-.lp-quick-stats div {
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.08);
-  padding: 9px 10px;
-  text-align: center;
-}
-.lp-quick-stats strong {
-  display: block;
-  color: #fff;
-  font-size: 18px;
-  font-weight: 900;
-  line-height: 1;
-}
-.lp-quick-stats span {
-  display: block;
-  color: rgba(255,255,255,0.66);
-  font-size: 10.5px;
-  font-weight: 800;
-  margin-top: 4px;
-}
-
 /* Marquee */
 .marquee-container {
   overflow: hidden;
@@ -5344,7 +5262,6 @@ body.a11y-reduced-motion *::after{
   }
   .lp-headline { font-size: 68px; line-height: 1.08; margin-bottom: 1.5rem; letter-spacing: -1.5px; }
   .lp-sub { font-size: 19px; max-width: 680px; margin: 0 auto 2.75rem; line-height: 1.7; }
-  .lp-pills { justify-content: center; gap: 12px; }
   .today-deals-section { padding: 3rem 5rem 0; }
   .today-deals-grid { grid-template-columns: repeat(3, 1fr); }
   .today-deal-card { min-height: 118px; align-content: center; }
@@ -5699,9 +5616,18 @@ body.a11y-reduced-motion *::after{
 .home-marquee:hover .home-marquee-track { animation-play-state: paused; }
 .home-marquee-item {
   direction: rtl;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.95rem;
   font-weight: 500;
   color: var(--ink-soft, #4a4a40);
+}
+.home-marquee-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex: 0 0 auto;
 }
 @keyframes marquee-rtl {
   from { transform: translateX(-50%); }
@@ -5863,9 +5789,23 @@ body.a11y-reduced-motion *::after{
 }
 
 /* ── Hero savings strip ── */
-.lp-savings-strip {
+.lp-trust-strip {
   margin-top: 18px;
-  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.82);
+  letter-spacing: 0.1px;
+}
+.lp-trust-strip strong {
+  color: #fff;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.lp-savings-strip {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   background: rgba(250, 247, 240, 0.14);
   border: 1px solid rgba(250, 247, 240, 0.28);
   color: #f3efe5;
@@ -5875,6 +5815,12 @@ body.a11y-reduced-motion *::after{
   font-weight: 600;
 }
 .lp-savings-strip strong { color: #ffd9a8; font-weight: 900; }
+.lp-savings-icon {
+  width: 16px;
+  height: 16px;
+  color: #ffd9a8;
+  flex: 0 0 auto;
+}
 
 /* ── Text FX: hero highlight, shiny badge, word reveal ── */
 

@@ -169,25 +169,22 @@ export function mountHome(root) {
         <a class="lp-main-cta" href="#market" id="lp-find-farms-cta">מצא משקים עכשיו</a>
         <a class="lp-secondary-cta" href="#apply">חקלאי? הצטרפות</a>
       </div>
-      <div class="lp-savings-strip">💸 חיסכון ממוצע <strong data-ticker>35–55%</strong> על סל ירקות שבועי</div>
+      <div class="lp-trust-strip">
+        פעילים ב-<strong data-ticker>7</strong> אזורי גידול · מעוטף ועד הגליל
+      </div>
+      <div class="lp-savings-strip">
+        <svg class="lp-savings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <line x1="19" y1="5" x2="5" y2="19"/>
+          <circle cx="6.5" cy="6.5" r="2.5"/>
+          <circle cx="17.5" cy="17.5" r="2.5"/>
+        </svg>
+        חיסכון ממוצע <strong data-ticker>35–55%</strong> על סל ירקות שבועי
+      </div>
     </div>
   </div>
 
   <div class="home-marquee" aria-hidden="true">
-    <div class="home-marquee-track">
-      <span class="home-marquee-item">🍅 עגבנייה חממה · ₪6 לק״ג</span>
-      <span class="home-marquee-item">🥕 גזר שמח · ₪5 לק״ג</span>
-      <span class="home-marquee-item">🥬 חסה צפונית · ₪6 ליחידה</span>
-      <span class="home-marquee-item">🥒 מלפפונים · ₪5–8 לק״ג</span>
-      <span class="home-marquee-item">🫑 פלפלים · ₪8–13 לק״ג</span>
-      <span class="home-marquee-item">🍎 תפוחים · ₪8–12 לק״ג</span>
-      <span class="home-marquee-item">🍅 עגבנייה חממה · ₪6 לק״ג</span>
-      <span class="home-marquee-item">🥕 גזר שמח · ₪5 לק״ג</span>
-      <span class="home-marquee-item">🥬 חסה צפונית · ₪6 ליחידה</span>
-      <span class="home-marquee-item">🥒 מלפפונים · ₪5–8 לק״ג</span>
-      <span class="home-marquee-item">🫑 פלפלים · ₪8–13 לק״ג</span>
-      <span class="home-marquee-item">🍎 תפוחים · ₪8–12 לק״ג</span>
-    </div>
+    <div class="home-marquee-track" id="home-marquee-track"></div>
   </div>
 
   <section class="today-deals-section reveal" aria-label="מבצעים היום">
@@ -306,6 +303,24 @@ export function mountHome(root) {
     img.src = getProduceImageSrc(ref);
     img.alt = getProduceAlt(ref);
   });
+
+  const marqueeTrack = root.querySelector('#home-marquee-track');
+  if (marqueeTrack) {
+    const items = [
+      { name: 'tomato',   label: 'עגבנייה חממה', price: '₪6 לק״ג' },
+      { name: 'גזר',      label: 'גזר שמח',      price: '₪5 לק״ג' },
+      { name: 'חסה',      label: 'חסה צפונית',   price: '₪6 ליחידה' },
+      { name: 'מלפפון',   label: 'מלפפונים',     price: '₪5–8 לק״ג' },
+      { name: 'פלפל',     label: 'פלפלים',       price: '₪8–13 לק״ג' },
+      { name: 'תפוח',     label: 'תפוחים',       price: '₪8–12 לק״ג' },
+    ];
+    const itemHtml = items.map(item => {
+      const ref = { name: item.name };
+      const src = getProduceImageSrc(ref);
+      return `<span class="home-marquee-item"><img class="home-marquee-icon" src="${src}" alt="" loading="lazy">${item.label} · ${item.price}</span>`;
+    }).join('');
+    marqueeTrack.innerHTML = itemHtml + itemHtml;
+  }
   initWordReveal(root);
   const disposeHowBeam = initHowBeam(root);
 
