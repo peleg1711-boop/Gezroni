@@ -1,5 +1,6 @@
 import { readA11yState, applyA11yState, initKeyboardControls, syncPressedStates, initGlobalEscape, initAccessibilityWidget } from '../lib/a11y.js';
 import { watchAuth, getUserProfile } from '../lib/firebase.js?v=20260612-firebase';
+import { initPwaInstall } from '../lib/pwa-install.js?v=20260613-landing-v1.1';
 
 export function initShell() {
   if (document.documentElement.getAttribute('data-mode')) return;
@@ -68,6 +69,7 @@ export function initShell() {
   applyA11yState(readA11yState());
   _initNavPillHover();
   _initFarmerNavVisibility();
+  initPwaInstall();
 }
 
 export function setRoute(route) {

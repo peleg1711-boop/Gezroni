@@ -220,7 +220,13 @@ export function mountHome(root) {
       <div>
         <div class="section-label">מפת משקים</div>
         <h2>משקים פעילים על המפה</h2>
-        <p>עוטף, עמק חפר, השרון, גליל והערבה במקום אחד.</p>
+        <p id="home-map-subline">עוטף, עמק חפר, השרון, גליל והערבה במקום אחד.</p>
+        <button type="button" class="home-nearby-btn" id="home-nearby-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>
+          </svg>
+          כמה משקים יש לידי?
+        </button>
       </div>
       <a href="#market" class="home-map-link">פתח לוח מלא</a>
     </div>
@@ -258,9 +264,37 @@ export function mountHome(root) {
     </div>
   </div>
 
-  <div class="footer">
-    <p class="footer-text">מהשדה לשולחן · עמק חפר ודרום השרון<br>כל המחירים גלויים, כל חקלאי מזוהה עם שם ויישוב<br>© 2026 · כל הזכויות שמורות</p>
-  </div>
+  <footer class="footer reveal">
+    <div class="footer-cols">
+      <div class="footer-col footer-faq bf-item" style="--bf-delay:0ms">
+        <h3 class="footer-col-title">שאלות נפוצות</h3>
+        <details class="faq-item">
+          <summary>האם זו קנייה אונליין או משלוחים?</summary>
+          <p>לא. גזרוני הוא לוח משקים בלבד — רואים מי מגדל מה, באיזה מחיר ואיפה, ופונים ישירות לחקלאי. אין עגלה, אין תשלום ואין הזמנה באתר.</p>
+        </details>
+        <details class="faq-item">
+          <summary>מה אם החקלאי לא עונה?</summary>
+          <p>כל משק מציג כמה דרכי קשר (טלפון / וואטסאפ). אפשר לפנות למשק אחר באותו אזור — הלוח מתעדכן ישירות מהחקלאים, כך שתמיד יש חלופות פעילות.</p>
+        </details>
+        <details class="faq-item">
+          <summary>איך נקבעים המחירים?</summary>
+          <p>כל חקלאי קובע ומעדכן את המחירים של עצמו, והם מוצגים גלויים לקילו או ליחידה. גזרוני לא מתערב בתמחור ולא גובה עמלה מהעסקה.</p>
+        </details>
+        <details class="faq-item">
+          <summary>צריך להירשם כדי לגלוש?</summary>
+          <p>לא. הצפייה בלוח ובמחירים פתוחה לכולם. התחברות עם Google נדרשת רק כדי לשמור משקים מועדפים, ולחקלאים — כדי לנהל מודעת משק לאחר אישור.</p>
+        </details>
+      </div>
+
+      <div class="footer-col bf-item" style="--bf-delay:120ms">
+        <h3 class="footer-col-title">מידע</h3>
+        <a class="footer-link" href="#legal">מדיניות פרטיות</a>
+        <a class="footer-link" href="#legal">תנאי שימוש</a>
+        <a class="footer-link" href="#legal">יצירת קשר</a>
+      </div>
+    </div>
+    <p class="footer-text">מהשדה לשולחן · עמק חפר ודרום השרון · כל המחירים גלויים, כל חקלאי מזוהה עם שם ויישוב<br>© 2026 גזרוני · כל הזכויות שמורות</p>
+  </footer>
 </div>
   `;
 
@@ -322,6 +356,7 @@ export function mountHome(root) {
     marqueeTrack.innerHTML = itemHtml + itemHtml;
   }
   initWordReveal(root);
+  initNearbyTeaser(root);
   const disposeHowBeam = initHowBeam(root);
 
   return () => {
@@ -331,6 +366,61 @@ export function mountHome(root) {
     disposeFarmMarquee();
     disposeHowBeam();
   };
+}
+
+// ─── Nearby teaser ──────────────────────────────────────────────────────────
+// On tap, asks for location and counts farms within a radius. Enhances the
+// existing map section rather than adding a new one. Geolocation only fires on
+// explicit user intent (no silent prompt on load).
+const NEARBY_RADIUS_KM = 25;
+
+function haversineKm(aLat, aLng, bLat, bLng) {
+  const R = 6371;
+  const toRad = d => (d * Math.PI) / 180;
+  const dLat = toRad(bLat - aLat);
+  const dLng = toRad(bLng - aLng);
+  const lat1 = toRad(aLat);
+  const lat2 = toRad(bLat);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+function initNearbyTeaser(root) {
+  const btn = root.querySelector('#home-nearby-btn');
+  const subline = root.querySelector('#home-map-subline');
+  if (!btn || !subline) return;
+
+  if (!('geolocation' in navigator)) { btn.remove(); return; }
+
+  btn.addEventListener('click', () => {
+    btn.disabled = true;
+    btn.textContent = 'מאתר מיקום…';
+
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const { latitude, longitude } = pos.coords;
+        const farmsWithGeo = STATIC_FARMS.filter(f => Number.isFinite(f.lat) && Number.isFinite(f.lng));
+        const nearby = farmsWithGeo
+          .map(f => haversineKm(latitude, longitude, f.lat, f.lng))
+          .filter(km => km <= NEARBY_RADIUS_KM)
+          .sort((a, b) => a - b);
+
+        btn.remove();
+        if (nearby.length) {
+          const nearestKm = Math.max(1, Math.round(nearby[0]));
+          subline.innerHTML = `<strong data-ticker>${nearby.length}</strong> משקים בטווח של עד ${NEARBY_RADIUS_KM} ק״מ ממך · הקרוב ביותר במרחק כ-${nearestKm} ק״מ`;
+        } else {
+          subline.textContent = `אין עדיין משקים בטווח הקרוב אליך — אבל אפשר לגלות את כל המשקים בלוח המלא.`;
+        }
+        initNumberTickers(subline.parentElement || subline);
+      },
+      () => {
+        btn.disabled = false;
+        btn.textContent = 'לא הצלחנו לאתר מיקום — נסו שוב';
+      },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
+    );
+  });
 }
 
 // ─── 3D farm marquee (Magic-UI-inspired) ────────────────────────────────────
@@ -347,11 +437,12 @@ function initFarmMarquee3d() {
 
   const cardHtml = farm => {
     const p = (farm.produce || [])[0];
-    const price = p ? `${p.icon || '🌿'} ${esc(p.name)} · ₪${p.price} / ${esc(p.unit || '')}` : '';
+    const priceText = p ? `${esc(p.name)} · ₪${p.price} / ${esc(p.unit || '')}` : '';
+    const icon = p ? `<img class="fm3d-icon" src="${esc(getProduceImageSrc({ name: p.name }))}" alt="" loading="lazy">` : '';
     return `<div class="fm3d-card">
       <div class="fm3d-name">${esc(farm.name || '')}</div>
       <div class="fm3d-sub">${esc([farm.region, farm.city].filter(Boolean).join(' · '))}</div>
-      ${price ? `<div class="fm3d-price">${price}</div>` : ''}
+      ${p ? `<div class="fm3d-price">${icon}${priceText}</div>` : ''}
     </div>`;
   };
   const esc = t => String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

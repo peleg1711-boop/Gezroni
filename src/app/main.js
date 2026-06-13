@@ -1,10 +1,11 @@
-import { initShell, setRoute, setRootVariant } from './shell.js?v=20260612-firebase';
-import { mountHome } from '../screens/home.js?v=20260613-landing-v1';
+import { initShell, setRoute, setRootVariant } from './shell.js?v=20260613-landing-v1.1';
+import { mountHome } from '../screens/home.js?v=20260613-landing-v1.1';
 import { mountMarket } from '../screens/market.js?v=20260612-satellite';
 import { mountDashboard } from '../screens/dashboard.js?v=20260612-satellite';
 import { mountApply } from '../screens/apply.js?v=20260612-firebase';
 import { mountAdmin } from '../screens/admin.js?v=20260612-firebase';
 import { mountAccount } from '../screens/account.js?v=20260612-firebase';
+import { mountLegal } from '../screens/legal.js?v=20260613-landing-v1.1';
 import { readA11yState, applyA11yState } from '../lib/a11y.js';
 
 const screenMounters = {
@@ -14,6 +15,7 @@ const screenMounters = {
   apply:     mountApply,
   admin:     mountAdmin,
   account:   mountAccount,
+  legal:     mountLegal,
 };
 
 let currentCleanup = null;
@@ -30,6 +32,7 @@ const SCREEN_META = {
   apply:     { title: 'גזרוני — הצטרפות חקלאים', description: 'הגש בקשה לפרסם את המשק שלך בלוח גזרוני.' },
   admin:     { title: 'גזרוני — פאנל ניהול', description: '' },
   account:   { title: 'גזרוני — האזור האישי', description: 'המשקים השמורים שלך ופרטי החשבון.' },
+  legal:     { title: 'גזרוני — מידע, פרטיות ותנאי שימוש', description: 'מדיניות הפרטיות, תנאי השימוש ופרטי יצירת קשר של גזרוני.' },
 };
 
 function ensureMeta() {
