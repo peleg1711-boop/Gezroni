@@ -4,6 +4,7 @@ import { createFarmCard } from '../components/farm-card.js?v=20260611-audit-fixe
 import { state as filterState, clearBoardFilters } from '../lib/board-filters.js';
 import { initMapInstance, focusFarmOnMap, destroyMap, resizeMap, syncMapMarkers, closeMapInfoWindow } from '../lib/maps.js?v=20260613-maps-cleanup';
 import { applyBlurFade } from '../lib/magic-fx.js?v=20260612-magic-fx';
+import { showToast } from '../lib/toast.js';
 import { STATIC_FARMS } from '../data/farms.js?v=20260611-audit-fixes';
 import {
   getProduceAlt,
@@ -13,6 +14,7 @@ import {
 } from '../data/produce-art.js?v=20260611-audit-fixes';
 
 let allFarms = [];
+let pendingRegionFilter = null;
 let abortController = null;
 let debounceTimer = null;
 let currentCatalogTab = 'all';
@@ -188,6 +190,19 @@ export function mountMarket(root) {
     </div>
   `;
 
+  // Deep link from the home regions grid: #market?region=<name> applies that
+  // region filter on arrival. Captured before the async render so pills, board
+  // and map markers all open already filtered.
+  const deepRegion = readRegionParam();
+  if (deepRegion) {
+    filterState.currentRegion = deepRegion;
+    filterState.selectedFarmFilter = null;
+    filterState.focusedFarmId = null;
+    pendingRegionFilter = deepRegion;
+    // Drop the query from the URL so the filter lives in state, not the hash.
+    try { history.replaceState(null, '', `${location.pathname}${location.search}#market`); } catch {}
+  }
+
   loadFarms();
   bindToolbar();
   bindMapToggle();
@@ -202,7 +217,14 @@ export function mountMarket(root) {
   return cleanup;
 }
 
+function readRegionParam() {
+  const query = location.hash.split('?')[1] || '';
+  const value = new URLSearchParams(query).get('region');
+  return value ? value.trim() : '';
+}
+
 function cleanup() {
+  pendingRegionFilter = null;
   closeFarmModal();
   if (unwatchAuth) { unwatchAuth(); unwatchAuth = null; }
   if (abortController) { abortController.abort(); abortController = null; }
@@ -310,22 +332,62 @@ function emptyState(msg) {
 function buildRegionPills(farms) {
   const row = document.getElementById('regions-sec');
   if (!row) return;
-  const regions = ['all', ...new Set(farms.map(f => f.region).filter(Boolean))];
-  row.innerHTML = regions.map(r => `
-    <div class="region-pill${r === filterState.currentRegion ? ' active' : ''}"
-      data-val="${r}" role="button" tabindex="0">${r === 'all' ? 'כל האזורים' : r}</div>
-  `).join('');
-  row.addEventListener('click', e => {
-    const pill = e.target.closest('.region-pill');
-    if (!pill) return;
+
+  const regionNames = [...new Set(farms.map(f => f.region).filter(Boolean))];
+  // Guard against a stale/unknown region (e.g. an old deep link) leaving the
+  // board filtered to nothing.
+  if (filterState.currentRegion !== 'all' && !regionNames.includes(filterState.currentRegion)) {
+    filterState.currentRegion = 'all';
+    pendingRegionFilter = null;
+  }
+
+  const regions = ['all', ...regionNames];
+  row.innerHTML = regions.map(r => {
+    const active = r === filterState.currentRegion;
+    const label = r === 'all' ? 'כל האזורים' : r;
+    return `<div class="region-pill${active ? ' active' : ''}" data-val="${escapeHtml(r)}" role="button" tabindex="0" aria-pressed="${active}" aria-label="סינון לפי אזור: ${escapeHtml(label)}">${escapeHtml(label)}</div>`;
+  }).join('');
+
+  const activate = pill => {
     const val = pill.dataset.val;
-    row.querySelectorAll('.region-pill').forEach(b => b.classList.remove('active'));
+    row.querySelectorAll('.region-pill').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
     pill.classList.add('active');
+    pill.setAttribute('aria-pressed', 'true');
     filterState.currentRegion = val;
     filterState.selectedFarmFilter = null;
     renderProduceCatalog();
     renderFarmList(applyFilters(allFarms));
-  });
+  };
+
+  if (!row.dataset.bound) {
+    row.dataset.bound = '1';
+    row.addEventListener('click', e => {
+      const pill = e.target.closest('.region-pill');
+      if (pill) activate(pill);
+    });
+    row.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const pill = e.target.closest('.region-pill');
+      if (!pill) return;
+      e.preventDefault();
+      activate(pill);
+    });
+  }
+
+  // Arrived via a region deep link: reveal the filtered map and announce it.
+  if (pendingRegionFilter) {
+    const region = pendingRegionFilter;
+    const count = farms.filter(f => f.region === region).length;
+    pendingRegionFilter = null;
+    requestAnimationFrame(() => {
+      const mapEl = document.getElementById('map-container');
+      if (mapEl) mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      showToast(`מציג ${count} ${count === 1 ? 'משק' : 'משקים'} באזור ${region}`, 'success');
+    });
+  }
 }
 
 const CAT_ICONS = {

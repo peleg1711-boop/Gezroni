@@ -325,7 +325,8 @@ function renderRegionsBento(root, farms, rebind) {
 
   bento.innerHTML = regions.map((region, i) => {
     const unit = region.count === 1 ? 'משק' : 'משקים';
-    return `<a class="region-tile magic-card bf-item" href="#market" aria-label="${homeEsc(region.name)}, ${region.count} ${unit}" style="--bf-delay:${i * 45}ms">
+    const href = `#market?region=${encodeURIComponent(region.name)}`;
+    return `<a class="region-tile magic-card bf-item" href="${href}" aria-label="הצגת ${region.count} ${unit} באזור ${homeEsc(region.name)} בלוח המשקים" style="--bf-delay:${i * 45}ms">
       <span class="region-spot" aria-hidden="true"></span>
       <span class="region-name">${homeEsc(region.name)}</span>
       <span class="region-count"><strong data-ticker>${region.count}</strong></span>
