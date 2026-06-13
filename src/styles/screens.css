@@ -5436,11 +5436,13 @@ body.a11y-reduced-motion *::after{
   .trust-row { background: var(--surface); border: 1px solid rgba(0,0,0,0.05); border-radius: var(--r-xl); padding: 1.5rem 1.25rem; margin-bottom: 0; }
   .lp > .footer { padding: 5rem 5rem 3rem; }
   .footer-cols {
-    grid-template-columns: 1.6fr 1fr;
-    gap: 3rem;
-    max-width: 720px;
-    margin-bottom: 2.5rem;
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+    gap: 4rem;
+    max-width: none;
+    margin: 0 0 2.5rem;
+    align-items: start;
   }
+  .footer-text { text-align: center; }
 }
 
 /* ================================================================
