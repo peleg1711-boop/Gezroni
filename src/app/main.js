@@ -1,5 +1,5 @@
 import { initShell, setRoute, setRootVariant } from './shell.js?v=20260613-landing-v1.1';
-import { mountHome } from '../screens/home.js?v=20260613-landing-v1.1';
+import { mountHome } from '../screens/home.js?v=20260613-regions';
 import { mountMarket } from '../screens/market.js?v=20260612-satellite';
 import { mountDashboard } from '../screens/dashboard.js?v=20260612-satellite';
 import { mountApply } from '../screens/apply.js?v=20260612-firebase';

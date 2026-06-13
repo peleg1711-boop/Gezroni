@@ -4558,9 +4558,53 @@ body.a11y-reduced-motion *::after{
 }
 
 /* Home farm map */
-.home-farm-map-section {
+.regions-section {
   padding: 2rem 1.5rem 0;
 }
+
+/* ── Regions dense grid (replaces home map) ── */
+.regions-bento {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.region-tile {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 46px;
+  padding: 10px 14px;
+  border-radius: var(--r-md, 12px);
+  background: var(--surface, #fff);
+  border: 1px solid color-mix(in srgb, var(--olive, #6b7c4a) 14%, transparent);
+  text-decoration: none;
+  transition: transform 0.18s var(--spring), box-shadow 0.18s var(--spring), border-color 0.18s var(--spring);
+}
+.region-tile:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--green-800, #2d5a1b) 28%, transparent);
+  box-shadow: 0 8px 20px rgba(45,90,27,0.08);
+}
+.region-name { font-size: 14px; font-weight: 800; color: var(--green-900, #1B3B10); position: relative; z-index: 1; }
+.region-count { position: relative; z-index: 1; }
+.region-count strong { font-size: 16px; color: var(--green-800, #2d5a1b); font-weight: 900; font-variant-numeric: tabular-nums; }
+/* Magic Card cursor spotlight */
+.region-spot {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.25s var(--spring);
+  pointer-events: none;
+  background: radial-gradient(120px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--green-400, #a5d96a) 30%, transparent), transparent 62%);
+}
+.region-tile:hover .region-spot { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .region-tile, .region-spot { transition: none; }
+}
+
 .home-map-head {
   display: flex;
   align-items: end;
@@ -4623,44 +4667,6 @@ body.a11y-reduced-motion *::after{
   transform: translateY(-2px);
   box-shadow: 0 16px 28px rgba(45,90,27,0.22);
 }
-.home-farm-map {
-  position: relative;
-  min-height: 320px;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  border-radius: var(--r-xl);
-  background: #f8f4ea;
-  border: 1px solid rgba(45,90,27,0.14);
-  box-shadow: 0 18px 48px rgba(45,90,27,0.08);
-  direction: ltr;
-  isolation: isolate;
-}
-.home-farm-map::before {
-  display: none;
-}
-.home-farm-map.is-google-map {
-  background: #e9e3d7;
-}
-.home-farm-map > .gm-style {
-  border-radius: inherit;
-}
-.home-map-loading,
-.home-map-error {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  direction: rtl;
-  text-align: center;
-  padding: 28px;
-  color: var(--text-2);
-  font-size: 14px;
-  font-weight: 800;
-  background:
-    radial-gradient(circle at 58% 28%, rgba(165,217,106,0.24), transparent 26%),
-    linear-gradient(135deg, #f9f5ed, #ece5d9);
-}
 .home-map-info-card {
   direction: rtl;
   min-width: 236px;
@@ -4707,217 +4713,6 @@ body.a11y-reduced-motion *::after{
   font-size: 12px;
   font-weight: 900;
 }
-.home-farm-map .gm-style .gm-style-iw-c {
-  border-radius: 18px;
-  padding: 10px !important;
-  box-shadow: 0 22px 48px rgba(15,23,42,0.18);
-  border: 1px solid rgba(45,90,27,0.12);
-}
-.home-farm-map .gm-style .gm-style-iw-d {
-  overflow: visible !important;
-}
-.home-farm-map .gm-style .gm-style-iw-tc::after {
-  background: #fff;
-}
-.home-map-canvas,
-.home-map-farms {
-  position: absolute;
-  inset: 0;
-}
-.home-map-sea {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 42%;
-  background:
-    linear-gradient(110deg, rgba(99,164,190,0.72), rgba(183,220,224,0.72)),
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.16) 0 1px, transparent 1px 20px);
-}
-.home-map-land {
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, transparent 0 29%, rgba(224,218,202,0.64) 29% 48%, rgba(243,238,226,0.95) 48% 100%),
-    repeating-linear-gradient(35deg, rgba(45,90,27,0.045) 0 1px, transparent 1px 22px);
-}
-.home-map-coast {
-  position: absolute;
-  left: 33%;
-  top: -10%;
-  width: 13%;
-  height: 122%;
-  border-radius: 52% 42% 56% 44%;
-  border-right: 3px solid rgba(45,90,27,0.28);
-  transform: rotate(8deg);
-  opacity: 0.76;
-}
-.home-map-road {
-  position: absolute;
-  border-radius: var(--r-pill);
-  background: rgba(196,131,74,0.22);
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.34) inset;
-}
-.home-map-road.road-a {
-  left: 47%;
-  top: 13%;
-  width: 3px;
-  height: 73%;
-  transform: rotate(5deg);
-}
-.home-map-road.road-b {
-  left: 44%;
-  top: 45%;
-  width: 34%;
-  height: 3px;
-  transform: rotate(-12deg);
-}
-.home-map-road.road-c {
-  left: 54%;
-  top: 65%;
-  width: 23%;
-  height: 3px;
-  transform: rotate(23deg);
-}
-.home-map-region {
-  position: absolute;
-  border-radius: 999px;
-  background: rgba(165,217,106,0.16);
-  border: 1px solid rgba(45,90,27,0.08);
-}
-.home-map-region.region-north {
-  left: 61%;
-  top: 12%;
-  width: 20%;
-  height: 20%;
-}
-.home-map-region.region-center {
-  left: 46%;
-  top: 34%;
-  width: 24%;
-  height: 24%;
-}
-.home-map-region.region-south {
-  left: 45%;
-  top: 67%;
-  width: 30%;
-  height: 18%;
-  transform: rotate(-12deg);
-}
-.home-farm-marker {
-  position: absolute;
-  left: var(--x);
-  top: var(--y);
-  z-index: 4;
-  width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 1px solid rgba(45,90,27,0.18);
-  border-radius: 14px;
-  background: rgba(255,255,255,0.94);
-  color: var(--green-800);
-  box-shadow: 0 10px 24px rgba(15,23,42,0.12);
-  transform: translate(-50%, -50%);
-  cursor: pointer;
-  transition: transform 0.22s var(--spring), box-shadow 0.22s var(--spring), background 0.22s var(--spring), color 0.22s var(--spring);
-}
-.home-farm-marker svg {
-  width: 28px;
-  height: 28px;
-}
-.home-farm-marker:hover,
-.home-farm-marker.active {
-  background: var(--green-800);
-  color: #fff;
-  box-shadow: 0 16px 30px rgba(45,90,27,0.24);
-  transform: translate(-50%, -56%) scale(1.08);
-}
-.home-farm-marker.active::after {
-  content: '';
-  position: absolute;
-  inset: -7px;
-  border-radius: 18px;
-  border: 2px solid rgba(196,131,74,0.55);
-  animation: home-map-pulse 1.8s ease-out infinite;
-}
-.home-map-deal {
-  position: absolute;
-  left: var(--deal-x, 52%);
-  top: var(--deal-y, 42%);
-  z-index: 7;
-  width: min(292px, calc(100% - 32px));
-  display: grid;
-  grid-template-columns: 66px minmax(0, 1fr);
-  gap: 12px;
-  align-items: center;
-  padding: 12px;
-  border-radius: 18px;
-  background: rgba(255,255,255,0.96);
-  border: 1px solid rgba(45,90,27,0.16);
-  box-shadow: 0 22px 44px rgba(15,23,42,0.16);
-  direction: rtl;
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, calc(-100% - 18px)) scale(0.96);
-  transition: opacity 0.26s var(--spring), transform 0.26s var(--spring);
-}
-.home-map-deal::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: -9px;
-  width: 18px;
-  height: 18px;
-  background: rgba(255,255,255,0.96);
-  border-right: 1px solid rgba(45,90,27,0.16);
-  border-bottom: 1px solid rgba(45,90,27,0.16);
-  transform: translateX(-50%) rotate(45deg);
-}
-.home-map-deal.is-visible {
-  opacity: 1;
-  transform: translate(-50%, calc(-100% - 18px)) scale(1);
-}
-.home-deal-photo {
-  width: 66px;
-  height: 66px;
-  display: grid;
-  place-items: center;
-  border-radius: 16px;
-  background:
-    radial-gradient(circle at 28% 26%, rgba(255,255,255,0.96) 0 18%, transparent 19%),
-    linear-gradient(135deg, rgba(165,217,106,0.72), rgba(232,243,222,0.9) 52%, rgba(196,131,74,0.28));
-  font-size: 34px;
-  box-shadow: inset 0 0 0 1px rgba(45,90,27,0.08);
-}
-.home-deal-body {
-  min-width: 0;
-  display: grid;
-  gap: 3px;
-}
-.home-deal-farm {
-  color: var(--text-3);
-  font-size: 11px;
-  font-weight: 900;
-}
-.home-deal-title {
-  color: var(--text-1);
-  font-size: 16px;
-  font-weight: 900;
-  line-height: 1.2;
-}
-.home-deal-price {
-  justify-self: start;
-  display: inline-flex;
-  align-items: center;
-  min-height: 28px;
-  border-radius: var(--r-pill);
-  background: var(--green-800);
-  color: #fff;
-  padding: 5px 11px;
-  font-size: 12px;
-  font-weight: 900;
-}
-
 /* Sections */
 .lp > .section {
   padding: 2rem 1.5rem 0;
@@ -5284,11 +5079,6 @@ body.a11y-reduced-motion *::after{
 }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
-@keyframes home-map-pulse {
-  0% { opacity: 0.72; transform: scale(0.88); }
-  100% { opacity: 0; transform: scale(1.36); }
-}
-
 /* Responsive */
 @media (max-width: 767px) {
   .hero-silhouette,
@@ -5361,33 +5151,6 @@ body.a11y-reduced-motion *::after{
   .home-map-link {
     width: 100%;
   }
-  .home-farm-map {
-    min-height: 340px;
-    aspect-ratio: 1 / 1.08;
-  }
-  .home-farm-marker {
-    width: 38px;
-    height: 38px;
-    border-radius: 13px;
-  }
-  .home-farm-marker svg {
-    width: 25px;
-    height: 25px;
-  }
-  .home-map-deal {
-    left: 50% !important;
-    top: auto !important;
-    bottom: 14px;
-    width: calc(100% - 28px);
-    max-width: 320px;
-    transform: translateX(-50%) scale(0.96);
-  }
-  .home-map-deal.is-visible {
-    transform: translateX(-50%) scale(1);
-  }
-  .home-map-deal::after {
-    display: none;
-  }
   .cta-grid { grid-template-columns: 1fr; }
 }
 @media (min-width: 1024px) {
@@ -5414,16 +5177,10 @@ body.a11y-reduced-motion *::after{
   .today-deals-section { padding: 3rem 5rem 0; }
   .today-deals-grid { grid-template-columns: repeat(3, 1fr); }
   .today-deal-card { min-height: 118px; align-content: center; }
-  .home-farm-map-section { padding: 3.4rem 5rem 0; }
-  .home-farm-map {
-    min-height: 430px;
-    aspect-ratio: 16 / 7;
-  }
+  .regions-section { padding: 3.4rem 5rem 0; }
+  .regions-bento { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
   .home-map-head h2 { font-size: 28px; }
   .home-map-head p { font-size: 15px; }
-  .home-map-deal {
-    width: 304px;
-  }
   .lp > .section { padding: 3.4rem 5rem 0; }
   .value-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; padding: 0 1.25rem; }
   .value-row { border-top: 0; border-inline-start: 1px solid rgba(0,0,0,0.05); padding: 1.35rem 1rem; }

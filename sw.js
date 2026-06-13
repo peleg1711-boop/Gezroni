@@ -1,5 +1,5 @@
 // Gezroni Service Worker — network-first with cache fallback
-const CACHE_NAME = 'gezroni-v15-20260613-landing-v1.2';
+const CACHE_NAME = 'gezroni-v17-20260613-regions';
 
 const PRECACHE_URLS = [
   '/',

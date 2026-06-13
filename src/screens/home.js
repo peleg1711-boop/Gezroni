@@ -1,85 +1,7 @@
 import { STATIC_FARMS } from '../data/farms.js?v=20260611-audit-fixes';
-import { initHomeMapPreview, destroyHomeMapPreview } from '../lib/maps.js?v=20260612-satellite';
 import { initNumberTickers, initWordReveal } from '../lib/magic-fx.js?v=20260612-textfx';
 import { fetchFarms } from '../lib/firebase.js?v=20260612-firebase';
 import { getProduceImageSrc, getProduceAlt } from '../data/produce-art.js?v=20260611-audit-fixes';
-
-const HOME_DEAL_INTERVAL_MS = 10000;
-
-function getHotDeal(farm) {
-  const produce = Array.isArray(farm?.produce) ? farm.produce : [];
-  if (!produce.length) return null;
-
-  return produce.reduce((best, item) => {
-    const currentPrice = Number(item?.price);
-    const bestPrice = Number(best?.price);
-    if (!Number.isFinite(currentPrice)) return best;
-    if (!best || !Number.isFinite(bestPrice) || currentPrice < bestPrice) return item;
-    return best;
-  }, null);
-}
-
-function initHomeFarmMap(root) {
-  const map = root.querySelector('#home-farm-map');
-  if (!map) return null;
-
-  const farms = STATIC_FARMS
-    .map(farm => ({ farm, deal: getHotDeal(farm) }))
-    .filter(item => item.farm?.id && item.deal);
-
-  if (!farms.length) return null;
-
-  let activeIndex = Math.floor(Math.random() * farms.length);
-  let timer = null;
-  let preview = null;
-  let destroyed = false;
-
-  const showDeal = index => {
-    const item = farms[index];
-    if (!item || !preview) return;
-
-    activeIndex = index;
-    preview.activateFarm(item.farm.id);
-  };
-
-  const showNextDeal = () => {
-    if (farms.length < 2) return;
-    let nextIndex = Math.floor(Math.random() * farms.length);
-    if (nextIndex === activeIndex) nextIndex = (nextIndex + 1) % farms.length;
-    showDeal(nextIndex);
-  };
-
-  const startTimer = () => {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.body.classList.contains('a11y-reduced-motion');
-    if (!reduceMotion && farms.length > 1) timer = window.setInterval(showNextDeal, HOME_DEAL_INTERVAL_MS);
-  };
-
-  map.innerHTML = '<div class="home-map-loading">טוען מפת משקים...</div>';
-  initHomeMapPreview(map, farms.map(item => item.farm), {
-    getDeal: getHotDeal,
-    onActiveFarm(farm) {
-      const nextIndex = farms.findIndex(item => item.farm.id === farm.id);
-      if (nextIndex >= 0) activeIndex = nextIndex;
-    },
-  }).then(instance => {
-    if (destroyed) {
-      instance?.destroy?.();
-      return;
-    }
-    preview = instance;
-    showDeal(activeIndex);
-    startTimer();
-  }).catch(() => {
-    map.innerHTML = '<div class="home-map-error">המפה לא זמינה כרגע. אפשר לפתוח את לוח המשקים המלא.</div>';
-  });
-
-  return () => {
-    destroyed = true;
-    if (timer) window.clearInterval(timer);
-    if (preview?.destroy) preview.destroy();
-    else destroyHomeMapPreview();
-  };
-}
 
 export function mountHome(root) {
   root.innerHTML = `
@@ -215,12 +137,12 @@ export function mountHome(root) {
   </section>
 
   <!-- Home farm map -->
-  <section class="home-farm-map-section reveal" aria-label="מפת משקים בעמוד הבית">
+  <section class="regions-section reveal" aria-label="אזורי גידול">
     <div class="home-map-head">
       <div>
-        <div class="section-label">מפת משקים</div>
-        <h2>משקים פעילים על המפה</h2>
-        <p id="home-map-subline">עוטף, עמק חפר, השרון, גליל והערבה במקום אחד.</p>
+        <div class="section-label">אזורי גידול</div>
+        <h2>גלו משקים לפי אזור</h2>
+        <p id="home-map-subline">עוטף, עמק חפר, השרון, גליל והערבה — בחרו אזור כדי לפתוח את הלוח.</p>
         <button type="button" class="home-nearby-btn" id="home-nearby-btn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
             <path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>
@@ -230,7 +152,7 @@ export function mountHome(root) {
       </div>
       <a href="#market" class="home-map-link">פתח לוח מלא</a>
     </div>
-    <div class="home-farm-map" id="home-farm-map" role="img" aria-label="מפת Google של משקים פעילים בישראל"></div>
+    <div class="regions-bento" id="regions-bento"></div>
   </section>
 
   <!-- 3D farm marquee — live farms from the board -->
@@ -310,7 +232,16 @@ export function mountHome(root) {
     farmerCta.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') location.hash = '#dashboard'; });
   }
 
-  const disposeHomeFarmMap = initHomeFarmMap(root);
+  // One farms fetch, shared by the regions bento and the 3D marquee. Resolves to
+  // the live active farms, or the static seed if the fetch fails.
+  const farmsReady = fetchFarms()
+    .then(farms => farms.filter(f => f.is_active !== false))
+    .then(active => (active.length ? active : STATIC_FARMS))
+    .catch(() => STATIC_FARMS);
+
+  renderRegionsBento(root, STATIC_FARMS, false);
+  initMagicCards(root);
+  farmsReady.then(farms => renderRegionsBento(root, farms, true));
 
   // Reveal-on-scroll
   const revealEls = root.querySelectorAll('.reveal');
@@ -330,7 +261,7 @@ export function mountHome(root) {
   }
 
   const disposeTickers = initNumberTickers(root);
-  const disposeFarmMarquee = initFarmMarquee3d();
+  const disposeFarmMarquee = initFarmMarquee3d(farmsReady);
 
   root.querySelectorAll('.today-deal-icon').forEach(img => {
     const ref = { name: img.dataset.produceName };
@@ -360,7 +291,6 @@ export function mountHome(root) {
   const disposeHowBeam = initHowBeam(root);
 
   return () => {
-    if (typeof disposeHomeFarmMap === 'function') disposeHomeFarmMap();
     if (revealObserver) revealObserver.disconnect();
     disposeTickers();
     disposeFarmMarquee();
@@ -368,10 +298,63 @@ export function mountHome(root) {
   };
 }
 
+// ─── Regions bento (Magic-UI-inspired) ──────────────────────────────────────
+// Replaces the home map: a bento grid of growing regions built from farm data.
+// The region with the most farms gets the feature (larger) tile. Counts animate
+// via the existing number-ticker; each tile gets a Magic Card cursor spotlight.
+function homeEsc(t) {
+  return String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function renderRegionsBento(root, farms, rebind) {
+  const bento = root.querySelector('#regions-bento');
+  if (!bento) return;
+
+  const byRegion = new Map();
+  (farms || []).forEach(farm => {
+    const region = farm.region || 'אחר';
+    if (!byRegion.has(region)) byRegion.set(region, []);
+    byRegion.get(region).push(farm);
+  });
+
+  const regions = [...byRegion.entries()]
+    .map(([name, regionFarms]) => ({ name, count: regionFarms.length }))
+    .sort((a, b) => b.count - a.count);
+
+  if (!regions.length) return;
+
+  bento.innerHTML = regions.map((region, i) => {
+    const unit = region.count === 1 ? 'משק' : 'משקים';
+    return `<a class="region-tile magic-card bf-item" href="#market" aria-label="${homeEsc(region.name)}, ${region.count} ${unit}" style="--bf-delay:${i * 45}ms">
+      <span class="region-spot" aria-hidden="true"></span>
+      <span class="region-name">${homeEsc(region.name)}</span>
+      <span class="region-count"><strong data-ticker>${region.count}</strong></span>
+    </a>`;
+  }).join('');
+
+  if (rebind) {
+    initNumberTickers(bento);
+    initMagicCards(bento);
+  }
+}
+
+// ─── Magic Card (Magic-UI-inspired) ──────────────────────────────────────────
+// Cursor-following radial spotlight on .magic-card elements. CSS draws the glow
+// from --mx/--my; this just feeds pointer position. Skipped for touch/no-hover.
+function initMagicCards(root) {
+  if (!window.matchMedia?.('(hover: hover)').matches) return;
+  root.querySelectorAll('.magic-card').forEach(card => {
+    card.addEventListener('pointermove', e => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+}
+
 // ─── Nearby teaser ──────────────────────────────────────────────────────────
-// On tap, asks for location and counts farms within a radius. Enhances the
-// existing map section rather than adding a new one. Geolocation only fires on
-// explicit user intent (no silent prompt on load).
+// On tap, asks for location and counts farms within a radius. Lives in the
+// regions section header. Geolocation only fires on explicit user intent.
 const NEARBY_RADIUS_KM = 25;
 
 function haversineKm(aLat, aLng, bLat, bLng) {
@@ -426,7 +409,7 @@ function initNearbyTeaser(root) {
 // ─── 3D farm marquee (Magic-UI-inspired) ────────────────────────────────────
 // Four tilted vertical columns of live farm cards; scroll velocity feeds the
 // animation speed so fast page scrolling spins the board faster.
-function initFarmMarquee3d() {
+function initFarmMarquee3d(farmsReady) {
   const stage = document.getElementById('fm3d-stage');
   if (!stage) return () => {};
 
@@ -496,9 +479,8 @@ function initFarmMarquee3d() {
     rafId = requestAnimationFrame(tick);
   };
 
-  fetchFarms()
-    .then(farms => build(farms.filter(f => f.is_active !== false)))
-    .catch(() => build(STATIC_FARMS));
+  const ready = farmsReady || Promise.resolve(STATIC_FARMS);
+  ready.then(build).catch(() => build(STATIC_FARMS));
 
   return () => {
     disposed = true;
