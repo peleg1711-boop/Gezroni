@@ -3,7 +3,7 @@ import {
   fetchFarmByOwner, fetchMyApplications, createFarm, updateFarm,
 } from '../lib/firebase.js?v=20260612-firebase';
 import { showToast } from '../lib/toast.js';
-import { geocodeFarmCity } from '../lib/maps.js?v=20260612-satellite';
+import { geocodeFarmCity } from '../lib/maps.js?v=20260613-maps-cleanup';
 import {
   getProduceAlt,
   getProduceById,

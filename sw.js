@@ -1,5 +1,5 @@
 // Gezroni Service Worker — network-first with cache fallback
-const CACHE_NAME = 'gezroni-v17-20260613-regions';
+const CACHE_NAME = 'gezroni-v18-20260613-maps-cleanup';
 
 const PRECACHE_URLS = [
   '/',

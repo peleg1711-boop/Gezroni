@@ -1,11 +1,10 @@
-import { getProduceAlt, getProduceImageSrc } from '../data/produce-art.js?v=20260611-audit-fixes';
+import { getProduceImageSrc } from '../data/produce-art.js?v=20260611-audit-fixes';
 
 const API_KEY = 'AIzaSyAOFEXS7JaIPnKPOLL-5H0TxXIT2AegEeM';
 
 const DEFAULT_CENTER = { lat: 31.95, lng: 35.08 };
 const OVERVIEW_ZOOM = 5;
 const FOCUS_ZOOM = 12;
-const HOME_PREVIEW_ZOOM = 8;
 const ISRAEL_MAP_BOUNDS = {
   north: 35.55,
   south: 28.05,
@@ -21,7 +20,6 @@ let loadPromise = null;
 let animationTimers = [];
 let mapListeners = [];
 let visibleFarmIds = new Set();
-let homeMapPreview = null;
 
 function loadScript() {
   if (loadPromise) return loadPromise;
@@ -130,66 +128,6 @@ function getMarkerIcon(isActive) {
     scaledSize: new google.maps.Size(size, size),
     anchor: new google.maps.Point(size / 2, size),
   };
-}
-
-function getHomeFarmMarkerIcon(isActive) {
-  if (!window.google?.maps) return null;
-
-  const size = isActive ? 50 : 40;
-  const fill = isActive ? '#2D5A1B' : '#FFFFFF';
-  const stroke = isActive ? '#C4834A' : '#2D5A1B';
-  const roof = isActive ? '#A5D96A' : '#2D5A1B';
-  const ring = isActive ? '<circle cx="24" cy="24" r="22" fill="none" stroke="#C4834A" stroke-width="2.6" opacity=".72"/>' : '';
-
-  return {
-    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
-      `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 48 48">
-        <filter id="shadow" x="-35%" y="-35%" width="170%" height="170%">
-          <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#10220A" flood-opacity=".22"/>
-        </filter>
-        ${ring}
-        <g filter="url(#shadow)">
-          <rect x="7" y="7" width="34" height="34" rx="12" fill="${fill}" stroke="${stroke}" stroke-width="2"/>
-          <path d="M14 24 24 15l10 9" fill="none" stroke="${roof}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M17 24v11h14V24" fill="${isActive ? '#FFFFFF' : '#F4F8ED'}" stroke="${roof}" stroke-width="2.3" stroke-linejoin="round"/>
-          <path d="M21 35v-7h6v7" fill="${isActive ? '#A5D96A' : '#DDEFCB'}" stroke="${roof}" stroke-width="2.1" stroke-linejoin="round"/>
-        </g>
-      </svg>`
-    ),
-    scaledSize: new google.maps.Size(size, size),
-    anchor: new google.maps.Point(size / 2, size / 2),
-  };
-}
-
-function getBestFarmDeal(farm) {
-  const produce = Array.isArray(farm?.produce) ? farm.produce : [];
-  return produce.reduce((best, item) => {
-    const currentPrice = toNumber(item?.price);
-    const bestPrice = toNumber(best?.price);
-    if (currentPrice === null) return best;
-    if (!best || bestPrice === null || currentPrice < bestPrice) return item;
-    return best;
-  }, null);
-}
-
-function createHomeMapDealContent(farm, deal = getBestFarmDeal(farm)) {
-  const wrap = document.createElement('div');
-  wrap.className = 'home-map-info-card';
-
-  const image = document.createElement('img');
-  image.className = 'home-map-info-image';
-  image.src = getProduceImageSrc(deal);
-  image.alt = deal ? getProduceAlt(deal) : 'תוצרת המשק';
-  wrap.appendChild(image);
-
-  const body = document.createElement('div');
-  body.className = 'home-map-info-body';
-  body.appendChild(createTextEl('span', 'home-map-info-farm', farm?.name || 'משק'));
-  body.appendChild(createTextEl('strong', 'home-map-info-title', deal?.name || 'תוצרת זמינה'));
-  body.appendChild(createTextEl('span', 'home-map-info-price', deal ? formatPrice(deal) : 'מחיר מתעדכן'));
-  wrap.appendChild(body);
-
-  return wrap;
 }
 
 function createFarmInfoContent(farm) {
@@ -404,183 +342,6 @@ function clearMarkers() {
   });
   markers = [];
   markerByFarmId.clear();
-}
-
-function clearHomePreviewTimers() {
-  if (!homeMapPreview) return;
-  homeMapPreview.timers.forEach(timer => window.clearTimeout(timer));
-  homeMapPreview.timers = [];
-}
-
-function queueHomePreview(fn, delay) {
-  if (!homeMapPreview) return;
-  const timer = window.setTimeout(() => {
-    if (!homeMapPreview) return;
-    fn();
-    if (homeMapPreview) {
-      homeMapPreview.timers = homeMapPreview.timers.filter(item => item !== timer);
-    }
-  }, delay);
-  homeMapPreview.timers.push(timer);
-}
-
-function setHomePreviewMarkerStyle(activeId) {
-  if (!homeMapPreview) return;
-  const targetId = String(activeId);
-  homeMapPreview.entries.forEach(entry => {
-    entry.marker.setIcon(getHomeFarmMarkerIcon(String(entry.id) === targetId));
-    entry.marker.setZIndex(String(entry.id) === targetId ? 20 : 1);
-  });
-}
-
-function fitHomePreviewToMarkers() {
-  if (!homeMapPreview || !window.google?.maps) return;
-  const { map, entries } = homeMapPreview;
-  const preview = homeMapPreview;
-
-  if (!entries.length) {
-    map.setCenter(DEFAULT_CENTER);
-    map.setZoom(OVERVIEW_ZOOM);
-    return;
-  }
-
-  const bounds = new google.maps.LatLngBounds();
-  entries.forEach(({ marker }) => bounds.extend(marker.getPosition()));
-  map.fitBounds(bounds, { top: 42, right: 42, bottom: 42, left: 42 });
-
-  const relaxZoom = () => {
-    if (!homeMapPreview || homeMapPreview !== preview) return;
-    const zoom = map.getZoom() || OVERVIEW_ZOOM;
-    if (zoom < 6) map.setZoom(6);
-    if (zoom > 8) map.setZoom(8);
-  };
-  google.maps.event.addListenerOnce(map, 'idle', relaxZoom);
-  queueHomePreview(relaxZoom, 500);
-}
-
-export function destroyHomeMapPreview() {
-  if (!homeMapPreview) return;
-  clearHomePreviewTimers();
-  homeMapPreview.info?.close();
-  homeMapPreview.entries.forEach(entry => entry.marker.setMap(null));
-  homeMapPreview.listeners.forEach(listener => listener.remove());
-  homeMapPreview = null;
-}
-
-export async function initHomeMapPreview(container, farms = [], options = {}) {
-  await loadScript();
-  destroyHomeMapPreview();
-
-  if (!container) return null;
-  container.classList.add('is-google-map');
-  container.innerHTML = '';
-
-  const map = new google.maps.Map(container, {
-    center: DEFAULT_CENTER,
-    zoom: OVERVIEW_ZOOM,
-    minZoom: 5,
-    maxZoom: 13,
-    mapTypeId: google.maps.MapTypeId.SATELLITE,
-    restriction: {
-      latLngBounds: ISRAEL_MAP_BOUNDS,
-      strictBounds: true,
-    },
-    tilt: 0,
-    clickableIcons: false,
-    streetViewControl: false,
-    fullscreenControl: true,
-    mapTypeControl: false,
-    scaleControl: false,
-    gestureHandling: 'cooperative',
-    styles: [
-      { featureType: 'poi', stylers: [{ visibility: 'off' }] },
-      { featureType: 'transit', stylers: [{ visibility: 'off' }] },
-    ],
-  });
-
-  const info = new google.maps.InfoWindow({
-    maxWidth: window.matchMedia('(max-width: 520px)').matches ? 260 : 312,
-    disableAutoPan: false,
-  });
-  const entries = [];
-  const markerById = new Map();
-
-  farms.forEach(farm => {
-    const position = getFarmPosition(farm);
-    const id = getFarmId(farm);
-    if (!position || !id) return;
-
-    const marker = new google.maps.Marker({
-      position,
-      map,
-      title: farm.name || 'משק',
-      icon: getHomeFarmMarkerIcon(false),
-      optimized: true,
-    });
-    const entry = { id, farm, marker };
-    entries.push(entry);
-    markerById.set(id, entry);
-  });
-
-  const listeners = [
-    map.addListener('dragend', () => {
-      const center = map.getCenter();
-      if (!center) return;
-      const lat = Math.min(Math.max(center.lat(), ISRAEL_MAP_BOUNDS.south), ISRAEL_MAP_BOUNDS.north);
-      const lng = Math.min(Math.max(center.lng(), ISRAEL_MAP_BOUNDS.west), ISRAEL_MAP_BOUNDS.east);
-      if (Math.abs(lat - center.lat()) > 0.00001 || Math.abs(lng - center.lng()) > 0.00001) {
-        map.panTo({ lat, lng });
-      }
-    }),
-  ];
-
-  homeMapPreview = { map, info, entries, markerById, listeners, timers: [] };
-
-  const activateFarm = (farmId) => {
-    const entry = markerById.get(String(farmId));
-    if (!entry || !homeMapPreview) return;
-
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.body.classList.contains('a11y-reduced-motion');
-    clearHomePreviewTimers();
-    info.close();
-    setHomePreviewMarkerStyle(entry.id);
-
-    const deal = typeof options.getDeal === 'function' ? options.getDeal(entry.farm) : getBestFarmDeal(entry.farm);
-    info.setContent(createHomeMapDealContent(entry.farm, deal));
-
-    const position = entry.marker.getPosition();
-    const currentZoom = map.getZoom() || OVERVIEW_ZOOM;
-    const targetZoom = Math.max(currentZoom, HOME_PREVIEW_ZOOM);
-    const panDelay = reduceMotion ? 0 : 260;
-    const zoomDelay = reduceMotion ? 80 : 1100;
-    const openDelay = reduceMotion ? 140 : 1750;
-
-    queueHomePreview(() => map.panTo(position), panDelay);
-    queueHomePreview(() => {
-      map.panTo(position);
-      if ((map.getZoom() || 0) < targetZoom) map.setZoom(targetZoom);
-    }, zoomDelay);
-    queueHomePreview(() => {
-      info.open(map, entry.marker);
-      if (typeof options.onActiveFarm === 'function') options.onActiveFarm(entry.farm);
-    }, openDelay);
-  };
-
-  entries.forEach(entry => {
-    const listener = entry.marker.addListener('click', () => activateFarm(entry.id));
-    listeners.push(listener);
-  });
-
-  fitHomePreviewToMarkers();
-
-  return {
-    activateFarm,
-    resize() {
-      google.maps.event.trigger(map, 'resize');
-      fitHomePreviewToMarkers();
-    },
-    destroy: destroyHomeMapPreview,
-  };
 }
 
 export async function initMapInstance(container, farms = []) {

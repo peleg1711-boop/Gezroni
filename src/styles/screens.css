@@ -4667,52 +4667,6 @@ body.a11y-reduced-motion *::after{
   transform: translateY(-2px);
   box-shadow: 0 16px 28px rgba(45,90,27,0.22);
 }
-.home-map-info-card {
-  direction: rtl;
-  min-width: 236px;
-  display: grid;
-  grid-template-columns: 64px minmax(0, 1fr);
-  align-items: center;
-  gap: 12px;
-  padding: 3px;
-  color: var(--text-1);
-  font-family: 'Rubik', sans-serif;
-}
-.home-map-info-image {
-  width: 64px;
-  height: 64px;
-  object-fit: contain;
-  filter: drop-shadow(0 9px 14px rgba(15,23,42,0.14));
-}
-.home-map-info-body {
-  min-width: 0;
-  display: grid;
-  gap: 3px;
-  text-align: right;
-}
-.home-map-info-farm {
-  color: var(--text-3);
-  font-size: 11px;
-  font-weight: 900;
-}
-.home-map-info-title {
-  color: var(--text-1);
-  font-size: 17px;
-  font-weight: 900;
-  line-height: 1.18;
-}
-.home-map-info-price {
-  justify-self: start;
-  display: inline-flex;
-  align-items: center;
-  min-height: 28px;
-  border-radius: var(--r-pill);
-  background: var(--green-800);
-  color: #fff;
-  padding: 5px 11px;
-  font-size: 12px;
-  font-weight: 900;
-}
 /* Sections */
 .lp > .section {
   padding: 2rem 1.5rem 0;
