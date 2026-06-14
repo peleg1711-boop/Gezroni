@@ -1,4 +1,5 @@
 import { getProduceImageSrc } from '../data/produce-art.js?v=20260611-audit-fixes';
+import { getFarmPhotoSrc } from '../data/farm-photos.js?v=20260614-mobile-mapfix5';
 
 const API_KEY = 'AIzaSyAOFEXS7JaIPnKPOLL-5H0TxXIT2AegEeM';
 
@@ -20,6 +21,17 @@ let loadPromise = null;
 let animationTimers = [];
 let mapListeners = [];
 let visibleFarmIds = new Set();
+let resizeTimer = null;
+let activeMobileInfoCard = null;
+
+function isMobileMap() {
+  return window.matchMedia?.('(max-width: 767px), (hover: none) and (pointer: coarse)').matches === true;
+}
+
+function isMotionReduced() {
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true ||
+    document.body.classList.contains('a11y-reduced-motion');
+}
 
 function loadScript() {
   if (loadPromise) return loadPromise;
@@ -134,7 +146,7 @@ function createFarmInfoContent(farm) {
   const wrap = document.createElement('div');
   wrap.className = 'map-farm-info';
 
-  const heroUrl = farm?.hero_image_url || farm?.heroImageUrl || '';
+  const heroUrl = getFarmPhotoSrc(farm);
   if (heroUrl) {
     const hero = document.createElement('div');
     hero.className = 'map-farm-hero';
@@ -237,6 +249,10 @@ function clearMapListeners() {
 function closeActiveInfoWindow() {
   if (activeInfoWindow) activeInfoWindow.close();
   activeInfoWindow = null;
+  if (activeMobileInfoCard) {
+    activeMobileInfoCard.remove();
+    activeMobileInfoCard = null;
+  }
 }
 
 export function closeMapInfoWindow() {
@@ -283,8 +299,62 @@ function openFarmInfoWindow(farmId) {
   if (!entry || !mapInstance || !window.google?.maps) return;
 
   closeActiveInfoWindow();
+  if (isMobileMap() && openMobileInfoCard(entry.farm)) {
+    window.setTimeout(keepInfoWindowInMobileViewport, 180);
+    return;
+  }
+
   activeInfoWindow = entry.info;
   activeInfoWindow.open(mapInstance, entry.marker);
+  if (isMobileMap()) {
+    window.setTimeout(keepInfoWindowInMobileViewport, 220);
+    window.setTimeout(keepInfoWindowInMobileViewport, 900);
+  }
+}
+
+function openMobileInfoCard(farm) {
+  const map = document.getElementById('map-container');
+  if (!map) return false;
+
+  const card = document.createElement('div');
+  card.className = 'map-mobile-info-card';
+  card.setAttribute('role', 'dialog');
+  card.setAttribute('aria-label', farm?.name ? `פרטי ${farm.name}` : 'פרטי משק');
+
+  const close = createTextEl('button', 'map-mobile-info-close', '×');
+  close.type = 'button';
+  close.setAttribute('aria-label', 'סגור פרטי משק במפה');
+  close.addEventListener('click', closeActiveInfoWindow);
+
+  card.appendChild(close);
+  card.appendChild(createFarmInfoContent(farm));
+  map.appendChild(card);
+  activeMobileInfoCard = card;
+  return true;
+}
+
+function keepInfoWindowInMobileViewport() {
+  if (!isMobileMap()) return;
+  const info = document.querySelector('.map-mobile-info-card, .gm-style-iw');
+  const map = document.getElementById('map-container');
+  const target = info || map;
+  if (!target) return;
+
+  const nav = document.querySelector('.lp-topnav');
+  const navBottom = nav ? Math.max(72, Math.round(nav.getBoundingClientRect().bottom + 12)) : 84;
+  const rect = target.getBoundingClientRect();
+  const bottomLimit = window.innerHeight - 18;
+  let delta = 0;
+
+  if (rect.top < navBottom) {
+    delta = rect.top - navBottom;
+  } else if (rect.bottom > bottomLimit) {
+    delta = rect.bottom - bottomLimit;
+  }
+
+  if (Math.abs(delta) > 4) {
+    window.scrollTo({ top: Math.max(0, window.scrollY + delta), behavior: 'auto' });
+  }
 }
 
 function clampMapCenter() {
@@ -366,7 +436,7 @@ export async function initMapInstance(container, farms = []) {
     fullscreenControl: true,
     mapTypeControl: false,
     scaleControl: true,
-    gestureHandling: 'cooperative',
+    gestureHandling: isMobileMap() ? 'greedy' : 'cooperative',
     styles: [
       { featureType: 'poi', stylers: [{ visibility: 'off' }] },
       { featureType: 'transit', stylers: [{ visibility: 'off' }] },
@@ -395,6 +465,7 @@ export async function initMapInstance(container, farms = []) {
     const info = new google.maps.InfoWindow({
       content: createFarmInfoContent(farm),
       maxWidth: window.matchMedia('(max-width: 520px)').matches ? 260 : 310,
+      pixelOffset: isMobileMap() ? new google.maps.Size(0, -180) : undefined,
     });
 
     marker.addListener('click', () => focusFarmOnMap(id));
@@ -429,8 +500,12 @@ export function syncMapMarkers(farms = []) {
 
 export function resizeMap() {
   if (!mapInstance || !window.google?.maps) return;
-  google.maps.event.trigger(mapInstance, 'resize');
-  fitMapToMarkers(getVisibleMarkerEntries());
+  clearTimeout(resizeTimer);
+  resizeTimer = window.setTimeout(() => {
+    if (!mapInstance || !window.google?.maps) return;
+    google.maps.event.trigger(mapInstance, 'resize');
+    fitMapToMarkers(getVisibleMarkerEntries());
+  }, 90);
 }
 
 export function focusFarmOnMap(farmId) {
@@ -453,6 +528,16 @@ export function focusFarmOnMap(farmId) {
   const targetZoom = Math.min(FOCUS_ZOOM, Math.max(OVERVIEW_ZOOM + 1, configuredZoom));
   const currentZoom = mapInstance.getZoom() || OVERVIEW_ZOOM;
   const position = entry.marker.getPosition();
+
+  if (isMobileMap() || isMotionReduced()) {
+    mapInstance.panTo(position);
+    mapInstance.setZoom(targetZoom);
+    queueMapAnimation(() => {
+      openFarmInfoWindow(id);
+      clampMapCenter();
+    }, 180);
+    return;
+  }
 
   queueMapAnimation(() => {
     mapInstance.panTo(position);
@@ -477,6 +562,8 @@ export function focusFarmOnMap(farmId) {
 }
 
 export function destroyMap() {
+  clearTimeout(resizeTimer);
+  resizeTimer = null;
   clearMarkers();
   clearMapListeners();
   visibleFarmIds.clear();

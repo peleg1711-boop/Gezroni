@@ -1,17 +1,18 @@
 import { fetchFarms, watchAuth, getUserProfile, getCurrentUser, addFavorite, removeFavorite } from '../lib/firebase.js?v=20260612-firebase';
 import { escapeHtml } from '../lib/escape.js';
-import { createFarmCard } from '../components/farm-card.js?v=20260611-audit-fixes';
+import { createFarmCard } from '../components/farm-card.js?v=20260614-mobile-mapfix5';
 import { state as filterState, clearBoardFilters } from '../lib/board-filters.js';
-import { initMapInstance, focusFarmOnMap, destroyMap, resizeMap, syncMapMarkers, closeMapInfoWindow } from '../lib/maps.js?v=20260613-maps-cleanup';
-import { applyBlurFade } from '../lib/magic-fx.js?v=20260612-magic-fx';
+import { initMapInstance, focusFarmOnMap, destroyMap, resizeMap, syncMapMarkers, closeMapInfoWindow } from '../lib/maps.js?v=20260614-mobile-mapfix5';
+import { applyBlurFade } from '../lib/magic-fx.js?v=20260614-mobile-mapfix5';
 import { showToast } from '../lib/toast.js';
-import { STATIC_FARMS } from '../data/farms.js?v=20260611-audit-fixes';
+import { STATIC_FARMS } from '../data/farms.js?v=20260614-mobile-mapfix5';
 import {
   getProduceAlt,
   getProduceById,
   getProduceCategoryLabel,
   getProduceImageSrc,
 } from '../data/produce-art.js?v=20260611-audit-fixes';
+import { getFarmPhotoSrc } from '../data/farm-photos.js?v=20260614-mobile-mapfix5';
 
 let allFarms = [];
 let pendingRegionFilter = null;
@@ -773,7 +774,7 @@ function revealMapForFocus() {
 
   if (!isDesktop) {
     window.setTimeout(() => {
-      container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      container.scrollIntoView({ behavior: 'auto', block: 'center' });
     }, 90);
   }
 }
@@ -808,7 +809,7 @@ function openFarmModal(farm) {
     ? `${phoneDigits.slice(0,3)}-${phoneDigits.slice(3,6)}-${phoneDigits.slice(6)}`
     : (contact.phone || '');
 
-  const heroUrl = farm.hero_image_url || farm.heroImageUrl || '';
+  const heroUrl = getFarmPhotoSrc(farm);
 
   sheet.innerHTML = `
     <div class="farm-detail-hero" style="${heroUrl ? `background-image:url('${escapeHtml(heroUrl)}')` : ''}">

@@ -4,6 +4,9 @@
 const prefersReducedMotion = () =>
   window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
 
+const prefersMobileMotionLite = () =>
+  window.matchMedia?.('(max-width: 767px), (hover: none) and (pointer: coarse)').matches === true;
+
 /**
  * Staggered blur-fade entrance (Magic UI "Blur Fade").
  * Adds .bf-item with a per-element delay; animation plays when .bf-in lands.
@@ -14,9 +17,10 @@ const prefersReducedMotion = () =>
  */
 export function applyBlurFade(els, { baseDelay = 0, step = 60, playNow = true } = {}) {
   let i = 0;
+  const motionLite = prefersReducedMotion() || prefersMobileMotionLite() || document.body.classList.contains('a11y-reduced-motion');
   for (const el of els) {
     el.classList.add('bf-item');
-    el.style.setProperty('--bf-delay', (baseDelay + i * step) + 'ms');
+    el.style.setProperty('--bf-delay', (motionLite ? 0 : baseDelay + i * step) + 'ms');
     if (playNow) el.classList.add('bf-in');
     i++;
   }
@@ -31,7 +35,7 @@ export function applyBlurFade(els, { baseDelay = 0, step = 60, playNow = true } 
 export function initNumberTickers(root) {
   const targets = root.querySelectorAll('[data-ticker]');
   if (!targets.length) return () => {};
-  if (prefersReducedMotion() || !('IntersectionObserver' in window)) return () => {};
+  if (prefersReducedMotion() || prefersMobileMotionLite() || document.body.classList.contains('a11y-reduced-motion') || !('IntersectionObserver' in window)) return () => {};
 
   const rafIds = new Set();
 
@@ -109,9 +113,11 @@ export function initNumberTickers(root) {
  * stagger when the surrounding .reveal section becomes visible.
  */
 export function initWordReveal(root) {
+  const motionLite = prefersReducedMotion() || prefersMobileMotionLite() || document.body.classList.contains('a11y-reduced-motion');
   root.querySelectorAll('.word-reveal').forEach(el => {
     if (el.dataset.wordReveal) return;
     el.dataset.wordReveal = '1';
+    if (motionLite) return;
     const words = el.textContent.trim().split(/\s+/);
     el.textContent = '';
     words.forEach((w, i) => {

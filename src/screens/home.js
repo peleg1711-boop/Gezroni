@@ -1,5 +1,5 @@
-import { STATIC_FARMS } from '../data/farms.js?v=20260611-audit-fixes';
-import { initNumberTickers, initWordReveal } from '../lib/magic-fx.js?v=20260612-textfx';
+import { STATIC_FARMS } from '../data/farms.js?v=20260614-mobile-mapfix5';
+import { initNumberTickers, initWordReveal } from '../lib/magic-fx.js?v=20260614-mobile-mapfix5';
 import { fetchFarms } from '../lib/firebase.js?v=20260612-firebase';
 import { getProduceImageSrc, getProduceAlt } from '../data/produce-art.js?v=20260611-audit-fixes';
 
@@ -415,8 +415,11 @@ function initFarmMarquee3d(farmsReady) {
   if (!stage) return () => {};
 
   const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const motionLite = reduced || window.matchMedia?.('(max-width: 767px), (hover: none) and (pointer: coarse)').matches;
   let rafId = null;
   let onScroll = null;
+  let observer = null;
+  let isVisible = true;
   let disposed = false;
 
   const cardHtml = farm => {
@@ -433,6 +436,12 @@ function initFarmMarquee3d(farmsReady) {
 
   const build = farms => {
     if (disposed || !farms.length) return;
+    if (motionLite) {
+      stage.closest('.farm-marquee-3d')?.classList.add('motion-lite');
+      stage.innerHTML = `<div class="fm3d-track fm3d-track-lite">${farms.slice(0, 8).map(cardHtml).join('')}</div>`;
+      return;
+    }
+
     const COLS = 4;
     const cols = Array.from({ length: COLS }, () => []);
     farms.forEach((f, i) => cols[i % COLS].push(f));
@@ -444,8 +453,6 @@ function initFarmMarquee3d(farmsReady) {
       return `<div class="fm3d-col"><div class="fm3d-track" data-dir="${i % 2 === 0 ? 1 : -1}">${inner}${inner}</div></div>`;
     }).join('');
 
-    if (reduced) return;
-
     const tracks = [...stage.querySelectorAll('.fm3d-track')].map(el => {
       const half = el.scrollHeight / 2;
       const dir = Number(el.dataset.dir);
@@ -456,6 +463,7 @@ function initFarmMarquee3d(farmsReady) {
     let lastScrollY = window.scrollY;
     let velocity = 0;
     onScroll = () => {
+      if (!isVisible) return;
       velocity += Math.abs(window.scrollY - lastScrollY) * 0.06;
       lastScrollY = window.scrollY;
     };
@@ -463,6 +471,10 @@ function initFarmMarquee3d(farmsReady) {
 
     const BASE = 0.4;
     const tick = () => {
+      if (!isVisible) {
+        rafId = requestAnimationFrame(tick);
+        return;
+      }
       velocity *= 0.94;
       const speed = BASE * (1 + Math.min(velocity, 10));
       tracks.forEach(t => {
@@ -477,6 +489,12 @@ function initFarmMarquee3d(farmsReady) {
       });
       rafId = requestAnimationFrame(tick);
     };
+    if ('IntersectionObserver' in window) {
+      observer = new IntersectionObserver(entries => {
+        isVisible = entries.some(entry => entry.isIntersecting);
+      }, { rootMargin: '120px 0px', threshold: 0.01 });
+      observer.observe(stage);
+    }
     rafId = requestAnimationFrame(tick);
   };
 
@@ -486,6 +504,7 @@ function initFarmMarquee3d(farmsReady) {
   return () => {
     disposed = true;
     if (rafId) cancelAnimationFrame(rafId);
+    if (observer) observer.disconnect();
     if (onScroll) window.removeEventListener('scroll', onScroll);
   };
 }

@@ -1,4 +1,5 @@
 import { getProduceAlt, getProduceImageSrc } from '../data/produce-art.js?v=20260611-audit-fixes';
+import { getFarmPhotoSrc } from '../data/farm-photos.js?v=20260614-mobile-mapfix5';
 
 export function createTextEl(tag, className, text) {
   const el = document.createElement(tag);
@@ -23,13 +24,15 @@ export function createFarmCard(farm, options) {
   const thumb = document.createElement('div');
   thumb.className = `farm-thumb farm-thumb-${farm.id}`;
   const leadProduce = produce[0];
-  const heroUrl = farm.hero_image_url || farm.heroImageUrl || '';
+  const heroUrl = getFarmPhotoSrc(farm);
   const thumbImage = document.createElement('img');
   thumbImage.className = 'farm-thumb-image';
+  thumbImage.loading = 'lazy';
+  thumbImage.decoding = 'async';
   if (heroUrl) thumbImage.classList.add('farm-thumb-photo');
   thumbImage.src = heroUrl || (leadProduce && leadProduce.image_url) || getProduceImageSrc(leadProduce);
   thumbImage.onerror = () => { thumbImage.src = getProduceImageSrc(leadProduce); thumbImage.classList.remove('farm-thumb-photo'); thumbImage.onerror = null; };
-  thumbImage.alt = leadProduce ? getProduceAlt(leadProduce) : 'תוצרת המשק';
+  thumbImage.alt = heroUrl ? `תמונת ${farm.name || 'המשק'}` : (leadProduce ? getProduceAlt(leadProduce) : 'תוצרת המשק');
   thumb.appendChild(thumbImage);
   visual.appendChild(thumb);
   card.appendChild(visual);
@@ -69,6 +72,8 @@ export function createFarmCard(farm, options) {
       chip.className = 'produce-chip';
       const chipImage = document.createElement('img');
       chipImage.className = 'produce-chip-image';
+      chipImage.loading = 'lazy';
+      chipImage.decoding = 'async';
       chipImage.src = item.image_url || getProduceImageSrc(item);
       chipImage.onerror = () => { chipImage.src = getProduceImageSrc(item); chipImage.onerror = null; };
       chipImage.alt = '';
